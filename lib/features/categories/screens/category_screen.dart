@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/category_model.dart';
 import '../repositories/category_repository.dart';
+import '../../../core/enums/transaction_type.dart';
 
 /// Screen responsible for managing Categories in the Mari-Rojmel application.
 /// Implementation finalized to production-grade standards.
@@ -18,9 +19,10 @@ enum _MenuAction { edit, delete }
 class _CategoryScreenState extends State<CategoryScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
-  
+
   List<CategoryModel> _categories = [];
   bool _isLoading = true;
+  //bool _hasChanges = false;
   String? _errorMessage;
   Timer? _debounce;
   TransactionType _selectedType = TransactionType.expense;
@@ -50,14 +52,20 @@ class _CategoryScreenState extends State<CategoryScreen> {
       _errorMessage = null;
     });
     try {
-      final data = await widget.repository.getActive(transactionType: _selectedType);
+      final data = await widget.repository.getActive(
+        transactionType: _selectedType,
+      );
       if (!mounted) return;
       setState(() {
         _categories = data;
         _isLoading = false;
       });
-    } on Exception catch (e) {
+    } on Exception catch (e, stackTrace) {
+      debugPrint('CATEGORY LOAD ERROR: $e');
+      debugPrintStack(stackTrace: stackTrace);
+
       if (!mounted) return;
+
       setState(() {
         _errorMessage = e.toString();
         _isLoading = false;
@@ -68,17 +76,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
   void _showSnackBar(String message, {VoidCallback? onUndo}) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(message),
-      action: onUndo != null ? SnackBarAction(label: 'UNDO', onPressed: onUndo) : null,
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        action: onUndo != null
+            ? SnackBarAction(label: 'UNDO', onPressed: onUndo)
+            : null,
+      ),
+    );
   }
 
   Future<void> _showAddDialog() async {
     final nameController = TextEditingController();
     final formKey = GlobalKey<FormState>();
     final focusNode = FocusNode();
-    
+
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -91,33 +103,36 @@ class _CategoryScreenState extends State<CategoryScreen> {
             focusNode: focusNode,
             autofocus: true,
             decoration: const InputDecoration(
-              labelText: 'Category Name', 
-              border: OutlineInputBorder()
-              ),
-            validator: (v) => 
-                (v == null || v.trim().isEmpty) 
-                ? 'Name is required' 
-                : null,
+              labelText: 'Category Name',
+              border: OutlineInputBorder(),
+            ),
+            validator: (v) =>
+                (v == null || v.trim().isEmpty) ? 'Name is required' : null,
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
           FilledButton(
             onPressed: () async {
               if (!formKey.currentState!.validate()) return;
               try {
-                final model = CategoryModel.empty().copyWith(name: nameController.text.trim(), transactionType: _selectedType);
+                final model = CategoryModel.empty().copyWith(
+                  name: nameController.text.trim(),
+                  transactionType: _selectedType,
+                );
                 await widget.repository.insert(model);
                 if (!ctx.mounted) return;
-                Navigator.pop(ctx, true);
+                Navigator.of(ctx).pop(true);
               } on DuplicateCategoryException {
-                _showSnackBar(
-                  'Category already exists.',
-                );
-              } on Exception{
-                _showSnackBar(
-                  'Unable to add category.',
-                );
+                _showSnackBar('Category already exists.');
+              } on Exception catch (e, stackTrace) {
+                debugPrint('CATEGORY ADD ERROR: $e');
+                debugPrintStack(stackTrace: stackTrace);
+
+                _showSnackBar('Unable to add category.');
               }
             },
             child: const Text('Save'),
@@ -126,28 +141,26 @@ class _CategoryScreenState extends State<CategoryScreen> {
       ),
     );
 
-    if (result == true) {
+    if (result == true && mounted) {
+      Future.microtask(() async {
+        if (!mounted) return;
+
         await _loadData();
 
-        if (!mounted) {
-          return;
-        }
+        if (!mounted) return;
 
-        _showSnackBar(
-          'Category added successfully.',
-        );
-      }
-    nameController.dispose();
-    focusNode.dispose();
+        _showSnackBar('Category added successfully.');
+      });
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      nameController.dispose();
+    });
+    //focusNode.dispose();
   }
 
-  Future<void> _showEditDialog(
-    CategoryModel model,
-  ) async {
+  Future<void> _showEditDialog(CategoryModel model) async {
     if (model.isDefault) {
-      _showSnackBar(
-        'Default categories cannot be modified.',
-      );
+      _showSnackBar('Default categories cannot be modified.');
       return;
     }
 
@@ -170,7 +183,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
               labelText: 'Category Name',
               border: OutlineInputBorder(),
             ),
-            validator: (v) => (v == null || v.trim().isEmpty) ? 'Name is required' : null,
+            validator: (v) =>
+                (v == null || v.trim().isEmpty) ? 'Name is required' : null,
           ),
         ),
         actions: [
@@ -184,22 +198,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
               try {
                 await widget.repository.update(
-                  model.copyWith(
-                    name: nameController.text.trim(),
-                  ),
+                  model.copyWith(name: nameController.text.trim()),
                 );
 
                 if (!ctx.mounted) return;
 
-                Navigator.pop(ctx, true);
+                Navigator.of(ctx).pop(true);
               } on DuplicateCategoryException {
-                _showSnackBar(
-                  'Category name already taken.',
-                );
+                _showSnackBar('Category name already taken.');
               } on Exception {
-                _showSnackBar(
-                  'Unable to update category.',
-                );
+                _showSnackBar('Unable to update category.');
               }
             },
             child: const Text('Save'),
@@ -208,17 +216,17 @@ class _CategoryScreenState extends State<CategoryScreen> {
       ),
     );
 
-    nameController.dispose();
-    focusNode.dispose();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      nameController.dispose();
+    });
+    //focusNode.dispose();
 
     if (result == true) {
       await _loadData();
 
       if (!mounted) return;
 
-      _showSnackBar(
-        'Category updated successfully.',
-      );
+      _showSnackBar('Category updated successfully.');
     }
   }
 
@@ -229,11 +237,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
         title: const Text('Delete Category'),
         content: Text('Are you sure you want to delete "${model.name}"?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
           FilledButton(
             style: FilledButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.errorContainer,
-                foregroundColor: Theme.of(context).colorScheme.onErrorContainer),
+              backgroundColor: Theme.of(context).colorScheme.errorContainer,
+              foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
+            ),
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Delete'),
           ),
@@ -267,30 +279,22 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
               if (!mounted) return;
 
-              _showSnackBar(
-                'Category restored.',
-              );
+              _showSnackBar('Category restored.');
             } on Exception {
               if (!mounted) return;
 
-              _showSnackBar(
-                'Unable to restore category.',
-              );
+              _showSnackBar('Unable to restore category.');
             }
           },
         );
       } on DefaultCategoryException {
         if (!mounted) return;
 
-        _showSnackBar(
-          'Default categories cannot be deleted.',
-        );
+        _showSnackBar('Default categories cannot be deleted.');
       } on Exception {
         if (!mounted) return;
 
-        _showSnackBar(
-          'Unable to delete category.',
-        );
+        _showSnackBar('Unable to delete category.');
       }
     }
   }
@@ -299,7 +303,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Categories (${_categories.length})')),
-      floatingActionButton: FloatingActionButton(tooltip: 'Add Category', onPressed: _showAddDialog, child: const Icon(Icons.add)),
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Add Category',
+        onPressed: _showAddDialog,
+        child: const Icon(Icons.add),
+      ),
       body: Column(
         children: [
           Padding(
@@ -311,35 +319,67 @@ class _CategoryScreenState extends State<CategoryScreen> {
               onChanged: (val) {
                 _debounce?.cancel();
                 _debounce = Timer(const Duration(milliseconds: 300), () async {
-                   try {
-                     final results = val.trim().isEmpty 
-                       ? await widget.repository.getActive(transactionType: _selectedType) 
-                       : await widget.repository.search(val.trim(), transactionType: _selectedType);
-                     if (mounted) setState(() => _categories = results);
-                   } catch (_) { if (mounted) _showSnackBar('Search error.'); }
+                  try {
+                    final results = val.trim().isEmpty
+                        ? await widget.repository.getActive(
+                            transactionType: _selectedType,
+                          )
+                        : await widget.repository.search(
+                            val.trim(),
+                            transactionType: _selectedType,
+                          );
+                    if (mounted) setState(() => _categories = results);
+                  } catch (_) {
+                    if (mounted) _showSnackBar('Search error.');
+                  }
                 });
               },
-              trailing: _searchController.text.isNotEmpty ? [
-                IconButton(
-                  tooltip: 'Clear search', 
-                  icon: const Icon(Icons.clear), 
-                  onPressed: () { 
-                    _searchController.clear(); 
-                    _searchFocusNode.unfocus(); 
-                    _loadData(); })] : []
-                    
+              trailing: _searchController.text.isNotEmpty
+                  ? [
+                      IconButton(
+                        tooltip: 'Clear search',
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          _searchFocusNode.unfocus();
+                          _loadData();
+                        },
+                      ),
+                    ]
+                  : [],
             ),
           ),
           SegmentedButton<TransactionType>(
-            segments: const [ButtonSegment(value: TransactionType.expense, label: Text('Expense')), ButtonSegment(value: TransactionType.income, label: Text('Income'))],
+            segments: const [
+              ButtonSegment(
+                value: TransactionType.expense,
+                label: Text('Expense'),
+              ),
+              ButtonSegment(
+                value: TransactionType.income,
+                label: Text('Income'),
+              ),
+            ],
             selected: {_selectedType},
-            onSelectionChanged: (val) { setState(() => _selectedType = val.first); _loadData(); },
+            onSelectionChanged: (val) {
+              setState(() => _selectedType = val.first);
+              _loadData();
+            },
           ),
           Expanded(
-            child: _isLoading ? const Center(child: CircularProgressIndicator.adaptive()) :
-                   _errorMessage != null ? _buildErrorView() :
-                   _categories.isEmpty ? _buildEmptyView() :
-                   RefreshIndicator(onRefresh: _loadData, child: ListView.builder(itemCount: _categories.length, itemBuilder: (ctx, i) => _buildCard(_categories[i]))),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator.adaptive())
+                : _errorMessage != null
+                ? _buildErrorView()
+                : _categories.isEmpty
+                ? _buildEmptyView()
+                : RefreshIndicator(
+                    onRefresh: _loadData,
+                    child: ListView.builder(
+                      itemCount: _categories.length,
+                      itemBuilder: (ctx, i) => _buildCard(_categories[i]),
+                    ),
+                  ),
           ),
         ],
       ),
@@ -349,23 +389,58 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Widget _buildCard(CategoryModel model) => Card(
     margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     child: ListTile(
-      leading: CircleAvatar(backgroundColor: Color(model.color), child: Text(model.icon)),
+      leading: CircleAvatar(
+        backgroundColor: Color(model.color),
+        child: Text(model.icon),
+      ),
       title: Semantics(label: 'Category Name', child: Text(model.name)),
-      subtitle: Wrap(spacing: 8, children: [
-        Chip(label: Text(model.transactionType.name.toUpperCase(), style: const TextStyle(fontSize: 10)), visualDensity: VisualDensity.compact),
-        if (model.isDefault) const Chip(label: Text('DEFAULT', style: TextStyle(fontSize: 10)), visualDensity: VisualDensity.compact),
-      ]),
-      trailing: Tooltip(message: model.isDefault ? 'Protected' : 'Actions', child: PopupMenuButton<_MenuAction>(
-        enabled: !model.isDefault,
-        onSelected: (action) => action == _MenuAction.edit ? _showEditDialog(model) : _handleDelete(model),
-        itemBuilder: (_) => const [
-          PopupMenuItem(value: _MenuAction.edit, child: ListTile(leading: Icon(Icons.edit), title: Text('Edit'), contentPadding: EdgeInsets.zero)),
-          PopupMenuItem(value: _MenuAction.delete, child: ListTile(leading: Icon(Icons.delete), title: Text('Delete'), contentPadding: EdgeInsets.zero)),
+      subtitle: Wrap(
+        spacing: 8,
+        children: [
+          Chip(
+            label: Text(
+              model.transactionType.name.toUpperCase(),
+              style: const TextStyle(fontSize: 10),
+            ),
+            visualDensity: VisualDensity.compact,
+          ),
+          if (model.isDefault)
+            const Chip(
+              label: Text('DEFAULT', style: TextStyle(fontSize: 10)),
+              visualDensity: VisualDensity.compact,
+            ),
         ],
-      )),
+      ),
+      trailing: Tooltip(
+        message: model.isDefault ? 'Protected' : 'Actions',
+        child: PopupMenuButton<_MenuAction>(
+          enabled: !model.isDefault,
+          onSelected: (action) => action == _MenuAction.edit
+              ? _showEditDialog(model)
+              : _handleDelete(model),
+          itemBuilder: (_) => const [
+            PopupMenuItem(
+              value: _MenuAction.edit,
+              child: ListTile(
+                leading: Icon(Icons.edit),
+                title: Text('Edit'),
+                contentPadding: EdgeInsets.zero,
+              ),
+            ),
+            PopupMenuItem(
+              value: _MenuAction.delete,
+              child: ListTile(
+                leading: Icon(Icons.delete),
+                title: Text('Delete'),
+                contentPadding: EdgeInsets.zero,
+              ),
+            ),
+          ],
+        ),
+      ),
     ),
   );
-  
+
   Widget _buildErrorView() {
     return Center(
       child: Padding(
@@ -388,14 +463,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
             Text(
               'Something went wrong while loading your categories.\nPlease try again.',
               textAlign: TextAlign.center,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurfaceVariant,
-                  ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 28),
             FilledButton.icon(
@@ -431,8 +501,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
             Text(
               'Create your first category to organize your income and expenses.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 28),

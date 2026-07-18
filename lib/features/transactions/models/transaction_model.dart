@@ -1,10 +1,5 @@
 import 'dart:convert';
-
-/// Transaction Type
-enum TransactionType {
-  income,
-  expense,
-}
+import '../../../core/enums/transaction_type.dart';
 
 /// Transaction Model
 ///
@@ -22,10 +17,7 @@ class TransactionModel {
     required this.createdAt,
     required this.updatedAt,
     required this.isDeleted,
-  }) : assert(
-          amount >= 0,
-          'Amount cannot be negative.',
-        );
+  }) : assert(amount >= 0, 'Amount cannot be negative.');
 
   /// SQLite Auto Increment ID
   final int? id;
@@ -74,7 +66,8 @@ class TransactionModel {
       isDeleted: false,
     );
   }
-    /// Returns a new TransactionModel with updated values.
+
+  /// Returns a new TransactionModel with updated values.
   TransactionModel copyWith({
     int? id,
     double? amount,
@@ -107,8 +100,8 @@ class TransactionModel {
       'id': id,
       'amount': amount,
       'transaction_type': transactionType.name,
-      'category_id': 0,
-      'payment_mode_id': 0,
+      'category_id': categoryId,
+      'payment_mode_id': paymentModeId,
       'transaction_date': transactionDate.toIso8601String(),
       'note': note,
       'created_at': createdAt.toIso8601String(),
@@ -118,9 +111,7 @@ class TransactionModel {
   }
 
   /// Create model from SQLite map.
-  factory TransactionModel.fromMap(
-    Map<String, dynamic> map,
-  ) {
+  factory TransactionModel.fromMap(Map<String, dynamic> map) {
     return TransactionModel(
       id: map['id'] as int?,
       amount: (map['amount'] as num).toDouble(),
@@ -129,16 +120,10 @@ class TransactionModel {
       ),
       categoryId: map['category_id'] as int,
       paymentModeId: map['payment_mode_id'] as int,
-      transactionDate: DateTime.parse(
-        map['transaction_date'] as String,
-      ),
+      transactionDate: DateTime.parse(map['transaction_date'] as String),
       note: (map['note'] as String?) ?? '',
-      createdAt: DateTime.parse(
-        map['created_at'] as String,
-      ),
-      updatedAt: DateTime.parse(
-        map['updated_at'] as String,
-      ),
+      createdAt: DateTime.parse(map['created_at'] as String),
+      updatedAt: DateTime.parse(map['updated_at'] as String),
       isDeleted: (map['is_deleted'] as int? ?? 0) == 1,
     );
   }
@@ -147,20 +132,15 @@ class TransactionModel {
   String toJson() => jsonEncode(toMap());
 
   /// Create model from JSON.
-  factory TransactionModel.fromJson(
-    String source,
-  ) {
-    return TransactionModel.fromMap(
-      jsonDecode(source) as Map<String, dynamic>,
-    );
+  factory TransactionModel.fromJson(String source) {
+    return TransactionModel.fromMap(jsonDecode(source) as Map<String, dynamic>);
   }
-    /// Returns true if transaction is Income.
-  bool get isIncome =>
-      transactionType == TransactionType.income;
+
+  /// Returns true if transaction is Income.
+  bool get isIncome => transactionType == TransactionType.income;
 
   /// Returns true if transaction is Expense.
-  bool get isExpense =>
-      transactionType == TransactionType.expense;
+  bool get isExpense => transactionType == TransactionType.expense;
 
   @override
   String toString() {
@@ -199,15 +179,15 @@ class TransactionModel {
 
   @override
   int get hashCode => Object.hash(
-        id,
-        amount,
-        transactionType,
-        categoryId,
-        paymentModeId,
-        transactionDate,
-        note,
-        createdAt,
-        updatedAt,
-        isDeleted,
-      );
+    id,
+    amount,
+    transactionType,
+    categoryId,
+    paymentModeId,
+    transactionDate,
+    note,
+    createdAt,
+    updatedAt,
+    isDeleted,
+  );
 }

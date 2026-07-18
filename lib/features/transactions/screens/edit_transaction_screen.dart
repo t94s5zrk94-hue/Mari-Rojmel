@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
-
+import '../../../core/enums/transaction_type.dart';
 import '../models/transaction_model.dart';
 import '../repositories/transaction_repository.dart';
 
 class EditTransactionScreen extends StatefulWidget {
   final TransactionModel transaction;
 
-  const EditTransactionScreen({
-    super.key,
-    required this.transaction,
-  });
+  const EditTransactionScreen({super.key, required this.transaction});
 
   @override
-  State<EditTransactionScreen> createState() =>
-      _EditTransactionScreenState();
+  State<EditTransactionScreen> createState() => _EditTransactionScreenState();
 }
 
-class _EditTransactionScreenState
-    extends State<EditTransactionScreen> {
+class _EditTransactionScreenState extends State<EditTransactionScreen> {
   late TextEditingController amountController;
   late TextEditingController notesController;
 
@@ -32,29 +27,24 @@ class _EditTransactionScreenState
   bool saving = false;
 
   @override
-    void initState() {
-      super.initState();
+  void initState() {
+    super.initState();
 
-      amountController = TextEditingController(
-        text: widget.transaction.amount.toStringAsFixed(0),
-      );
+    amountController = TextEditingController(
+      text: widget.transaction.amount.toStringAsFixed(0),
+    );
 
-      notesController = TextEditingController(
-        text: widget.transaction.note,
-      );
+    notesController = TextEditingController(text: widget.transaction.note);
 
-      paymentModeId =
-          widget.transaction.paymentModeId;
+    paymentModeId = widget.transaction.paymentModeId;
 
-      transactionType =
-          widget.transaction.transactionType;
+    transactionType = widget.transaction.transactionType;
 
-      categoryId =
-          widget.transaction.categoryId;
+    categoryId = widget.transaction.categoryId;
 
-      transactionDate =
-          widget.transaction.transactionDate;
-    }
+    transactionDate = widget.transaction.transactionDate;
+  }
+
   @override
   void dispose() {
     amountController.dispose();
@@ -96,32 +86,25 @@ class _EditTransactionScreenState
       updatedAt: DateTime.now(),
     );
 
-    await TransactionRepository.instance.update(
-      transaction,
-    );
+    await TransactionRepository.instance.update(transaction);
 
     if (!mounted) return;
 
     Navigator.pop(context, true);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Transaction Updated Successfully"),
-      ),
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Transaction Updated Successfully")),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Edit Transaction"),
-      ),
+      appBar: AppBar(title: const Text("Edit Transaction")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-
             TextField(
               controller: amountController,
               keyboardType: const TextInputType.numberWithOptions(
@@ -142,18 +125,9 @@ class _EditTransactionScreenState
                 border: OutlineInputBorder(),
               ),
               items: const [
-                DropdownMenuItem(
-                  value: 1,
-                  child: Text("Cash"),
-                ),
-                DropdownMenuItem(
-                  value: 2,
-                  child: Text("UPI"),
-                ),
-                DropdownMenuItem(
-                  value: 3,
-                  child: Text("Bank"),
-                ),
+                DropdownMenuItem(value: 1, child: Text("Cash")),
+                DropdownMenuItem(value: 2, child: Text("UPI")),
+                DropdownMenuItem(value: 3, child: Text("Bank")),
               ],
               onChanged: (value) {
                 if (value == null) return;
@@ -196,7 +170,6 @@ class _EditTransactionScreenState
 
             Row(
               children: [
-
                 Expanded(
                   child: OutlinedButton(
                     onPressed: saving
@@ -212,23 +185,15 @@ class _EditTransactionScreenState
 
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed:
-                        saving ? null : updateTransaction,
+                    onPressed: saving ? null : updateTransaction,
                     icon: saving
                         ? const SizedBox(
                             height: 18,
                             width: 18,
-                            child:
-                                CircularProgressIndicator(
-                              strokeWidth: 2,
-                            ),
+                            child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.save),
-                    label: Text(
-                      saving
-                          ? "Updating..."
-                          : "Update",
-                    ),
+                    label: Text(saving ? "Updating..." : "Update"),
                   ),
                 ),
               ],

@@ -13,6 +13,7 @@ import '../../categories/repositories/category_repository.dart';
 import '../../categories/screens/category_screen.dart';
 import '../../payment_modes/repositories/payment_mode_repository.dart';
 import '../../payment_modes/screens/payment_mode_screen.dart';
+import '../../reports/screens/reports_screen.dart';
 import '../../transactions/models/transaction_model.dart';
 import '../../transactions/repositories/transaction_repository.dart';
 import '../../../core/database/database_helper.dart';
@@ -20,30 +21,22 @@ import '../../../core/database/database_helper.dart';
 import '../models/dashboard_summary.dart';
 import '../services/dashboard_service.dart';
 
-
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({
-    super.key,
-  });
+  const DashboardScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() =>
-      _DashboardScreenState();
+  State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState
-    extends State<DashboardScreen> {
-  final DashboardService _dashboardService =
-      DashboardService.instance;
+class _DashboardScreenState extends State<DashboardScreen> {
+  final DashboardService _dashboardService = DashboardService.instance;
 
-  final TransactionRepository
-      _transactionRepository =
+  final TransactionRepository _transactionRepository =
       TransactionRepository.instance;
 
   DashboardSummary? _summary;
 
-  List<TransactionModel> _recentTransactions =
-      [];
+  List<TransactionModel> _recentTransactions = [];
 
   bool _isLoading = true;
 
@@ -53,13 +46,16 @@ class _DashboardScreenState
   void initState() {
     super.initState();
 
+    debugPrint('Dashboard initState');
+    debugPrint('Calling _loadDashboard');
+
     _loadDashboard();
   }
 
   Future<void> _loadDashboard() async {
-    if (!mounted) {
-      return;
-    }
+    debugPrint('1. Dashboard Start');
+
+    if (!mounted) return;
 
     setState(() {
       _isLoading = true;
@@ -67,12 +63,14 @@ class _DashboardScreenState
     });
 
     try {
-      final summary =
-          await _dashboardService.getSummary();
+      debugPrint('2. Calling getSummary()');
+      final summary = await _dashboardService.getSummary();
+      debugPrint('3. Summary Loaded');
 
-      final transactions =
-          await _transactionRepository
-              .getActive();
+      debugPrint('4. Loading Transactions');
+
+      final transactions = await _transactionRepository.getActive();
+      debugPrint('5. Transactions Loaded');
 
       if (!mounted) {
         return;
@@ -81,11 +79,11 @@ class _DashboardScreenState
       setState(() {
         _summary = summary;
 
-        _recentTransactions =
-            transactions.take(10).toList();
+        _recentTransactions = transactions.take(10).toList();
 
         _isLoading = false;
       });
+      debugPrint('6. Dashboard Done');
     } on Exception catch (e) {
       if (!mounted) {
         return;
@@ -102,9 +100,7 @@ class _DashboardScreenState
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => CategoryScreen(
-          repository: CategoryRepository(
-          DatabaseHelper.instance,
-          ),
+          repository: CategoryRepository(DatabaseHelper.instance),
         ),
       ),
     );
@@ -114,12 +110,16 @@ class _DashboardScreenState
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => PaymentModeScreen(
-          repository:PaymentModeRepository(
-            DatabaseHelper.instance,
-          ),
+          repository: PaymentModeRepository(DatabaseHelper.instance),
         ),
       ),
     );
+  }
+
+  void _openReports() {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const ReportsScreen()));
   }
 
   Future<void> _refresh() async {
@@ -139,42 +139,30 @@ class _DashboardScreenState
       return Colors.red;
     }
 
-    return Theme.of(context)
-        .colorScheme
-        .primary;
+    return Theme.of(context).colorScheme.primary;
   }
 
-  IconData _transactionIcon(
-    TransactionModel model,
-  ) {
+  IconData _transactionIcon(TransactionModel model) {
     return model.isIncome
         ? Icons.arrow_downward_rounded
         : Icons.arrow_upward_rounded;
   }
 
-  Color _transactionColor(
-    TransactionModel model,
-  ) {
-    return model.isIncome
-        ? Colors.green
-        : Colors.red;
+  Color _transactionColor(TransactionModel model) {
+    return model.isIncome ? Colors.green : Colors.red;
   }
-    @override
+
+  @override
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator.adaptive(),
-        ),
+        body: Center(child: CircularProgressIndicator.adaptive()),
       );
     }
 
     if (_errorMessage != null) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Dashboard'),
-          centerTitle: false,
-        ),
+        appBar: AppBar(title: const Text('Dashboard'), centerTitle: false),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -189,15 +177,10 @@ class _DashboardScreenState
                 const SizedBox(height: 16),
                 Text(
                   'Unable to load dashboard',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineSmall,
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  _errorMessage!,
-                  textAlign: TextAlign.center,
-                ),
+                Text(_errorMessage!, textAlign: TextAlign.center),
                 const SizedBox(height: 24),
                 FilledButton.icon(
                   onPressed: _refresh,
@@ -214,12 +197,7 @@ class _DashboardScreenState
     final summary = _summary!;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Mari-Rojmel',
-        ),
-        centerTitle: false,
-      ),
+      appBar: AppBar(title: const Text('Mari-Rojmel'), centerTitle: false),
       body: RefreshIndicator(
         onRefresh: _refresh,
         child: ListView(
@@ -227,59 +205,41 @@ class _DashboardScreenState
           children: [
             Text(
               'Good ${_greeting()}',
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineSmall
-                  ?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 6),
 
             Text(
               'Welcome back',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurfaceVariant,
-                  ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
 
             const SizedBox(height: 24),
 
             Card(
               elevation: 0,
-              color: Theme.of(context)
-                  .colorScheme
-                  .primaryContainer,
+              color: Theme.of(context).colorScheme.primaryContainer,
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Current Balance',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       _currency(summary.balance),
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineMedium
+                      style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(
-                            fontWeight:
-                                FontWeight.bold,
-                            color: _amountColor(
-                              summary.balance,
-                            ),
+                            fontWeight: FontWeight.bold,
+                            color: _amountColor(summary.balance),
                           ),
                     ),
                   ],
@@ -294,11 +254,8 @@ class _DashboardScreenState
                 Expanded(
                   child: _summaryCard(
                     title: 'Income',
-                    value: _currency(
-                      summary.todayIncome,
-                    ),
-                    icon: Icons
-                        .arrow_downward_rounded,
+                    value: _currency(summary.todayIncome),
+                    icon: Icons.arrow_downward_rounded,
                     color: Colors.green,
                   ),
                 ),
@@ -306,11 +263,8 @@ class _DashboardScreenState
                 Expanded(
                   child: _summaryCard(
                     title: 'Expense',
-                    value: _currency(
-                      summary.todayExpense,
-                    ),
-                    icon: Icons
-                        .arrow_upward_rounded,
+                    value: _currency(summary.todayExpense),
+                    icon: Icons.arrow_upward_rounded,
                     color: Colors.red,
                   ),
                 ),
@@ -324,9 +278,7 @@ class _DashboardScreenState
                 Expanded(
                   child: _summaryCard(
                     title: 'Balance',
-                    value: _currency(
-                      summary.balance,
-                    ),
+                    value: _currency(summary.balance),
                     icon: Icons.account_balance_wallet,
                     color: Colors.blue,
                   ),
@@ -335,8 +287,7 @@ class _DashboardScreenState
                 Expanded(
                   child: _summaryCard(
                     title: 'Transactions',
-                    value: summary.transactionCount
-                        .toString(),
+                    value: summary.transactionCount.toString(),
                     icon: Icons.receipt_long,
                     color: Colors.deepPurple,
                   ),
@@ -345,7 +296,7 @@ class _DashboardScreenState
             ),
 
             const SizedBox(height: 24),
-                        Text(
+            Text(
               'Quick Actions',
               style: Theme.of(context).textTheme.titleLarge,
             ),
@@ -365,7 +316,6 @@ class _DashboardScreenState
                   icon: Icons.add_circle_outline,
                   color: Colors.blue,
                   onTap: () {
-                    // TODO:
                     // Navigate to AddTransactionScreen
                   },
                 ),
@@ -385,9 +335,7 @@ class _DashboardScreenState
                   title: 'Reports',
                   icon: Icons.bar_chart_outlined,
                   color: Colors.deepPurple,
-                  onTap: () {
-                    // Reports Module
-                  },
+                  onTap: _openReports,
                 ),
               ],
             ),
@@ -395,20 +343,15 @@ class _DashboardScreenState
             const SizedBox(height: 24),
 
             Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'Recent Transactions',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
                 Text(
                   '${_recentTransactions.length} items',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
             ),
@@ -419,11 +362,7 @@ class _DashboardScreenState
               Card(
                 child: Padding(
                   padding: EdgeInsets.all(24),
-                  child: Center(
-                    child: Text(
-                      'No transactions found.',
-                    ),
-                  ),
+                  child: Center(child: Text('No transactions found.')),
                 ),
               )
             else
@@ -431,23 +370,16 @@ class _DashboardScreenState
                 (transaction) => Card(
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor:
-                          _transactionColor(
+                      backgroundColor: _transactionColor(
                         transaction,
                       ).withValues(alpha: .15),
                       child: Icon(
-                        _transactionIcon(
-                          transaction,
-                        ),
-                        color: _transactionColor(
-                          transaction,
-                        ),
+                        _transactionIcon(transaction),
+                        color: _transactionColor(transaction),
                       ),
                     ),
                     title: Text(
-                      transaction.note.isEmpty
-                          ? 'No Note'
-                          : transaction.note,
+                      transaction.note.isEmpty ? 'No Note' : transaction.note,
                     ),
                     subtitle: Text(
                       transaction.transactionDate
@@ -457,16 +389,10 @@ class _DashboardScreenState
                           .first,
                     ),
                     trailing: Text(
-                      _currency(
-                        transaction.amount,
-                      ),
+                      _currency(transaction.amount),
                       style: TextStyle(
-                        fontWeight:
-                            FontWeight.bold,
-                        color:
-                            _transactionColor(
-                          transaction,
-                        ),
+                        fontWeight: FontWeight.bold,
+                        color: _transactionColor(transaction),
                       ),
                     ),
                   ),
@@ -506,30 +432,17 @@ class _DashboardScreenState
         child: Column(
           children: [
             CircleAvatar(
-              backgroundColor:
-                  color.withValues(alpha: .15),
-              child: Icon(
-                icon,
-                color: color,
-              ),
+              backgroundColor: color.withValues(alpha: .15),
+              child: Icon(icon, color: color),
             ),
             const SizedBox(height: 12),
-            Text(
-              title,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleSmall,
-            ),
+            Text(title, style: Theme.of(context).textTheme.titleSmall),
             const SizedBox(height: 6),
             Text(
               value,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(
-                    fontWeight:
-                        FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -548,24 +461,16 @@ class _DashboardScreenState
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding:
-              const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
-            mainAxisAlignment:
-                MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 34,
-                color: color,
-              ),
+              Icon(icon, size: 34, color: color),
               const SizedBox(height: 12),
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall,
+                style: Theme.of(context).textTheme.titleSmall,
               ),
             ],
           ),

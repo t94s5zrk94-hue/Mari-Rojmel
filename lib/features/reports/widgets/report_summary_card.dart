@@ -1,0 +1,219 @@
+import 'package:flutter/material.dart';
+
+import '../models/report_summary.dart';
+
+/// ==========================================================
+/// Report Summary Card
+///
+/// Production Ready
+/// Material 3
+/// Responsive
+/// Reusable
+/// ==========================================================
+
+class ReportSummaryCard extends StatelessWidget {
+  const ReportSummaryCard({
+    super.key,
+    required this.summary,
+  });
+
+  final ReportSummary summary;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isWide = constraints.maxWidth >= 700;
+
+            if (isWide) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Report Summary',
+                    style: theme.textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: _buildColumnOne(theme),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildColumnTwo(theme),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Report Summary',
+                  style: theme.textTheme.titleLarge,
+                ),
+                const SizedBox(height: 20),
+                _buildColumnOne(theme),
+                const SizedBox(height: 12),
+                _buildColumnTwo(theme),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildColumnOne(ThemeData theme) {
+    return Column(
+      children: [
+        _SummaryTile(
+          title: 'Total Income',
+          value: summary.totalIncome,
+          color: Colors.green,
+          icon: Icons.trending_up,
+        ),
+        const SizedBox(height: 12),
+        _SummaryTile(
+          title: 'Total Expense',
+          value: summary.totalExpense,
+          color: Colors.red,
+          icon: Icons.trending_down,
+        ),
+        const SizedBox(height: 12),
+        _SummaryTile(
+          title: 'Net Balance',
+          value: summary.netBalance,
+          color: Colors.blue,
+          icon: Icons.account_balance_wallet,
+        ),
+        const SizedBox(height: 12),
+        _SummaryTile(
+          title: 'Transactions',
+          value: summary.totalTransactions.toDouble(),
+          color: Colors.deepPurple,
+          icon: Icons.receipt_long,
+          isCurrency: false,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildColumnTwo(ThemeData theme) {
+    return Column(
+      children: [
+        _SummaryTile(
+          title: 'Highest Income',
+          value: summary.highestIncome,
+          color: Colors.teal,
+          icon: Icons.arrow_circle_up,
+        ),
+        const SizedBox(height: 12),
+        _SummaryTile(
+          title: 'Highest Expense',
+          value: summary.highestExpense,
+          color: Colors.orange,
+          icon: Icons.arrow_circle_down,
+        ),
+        const SizedBox(height: 12),
+        _SummaryTile(
+          title: 'Average Income',
+          value: summary.averageIncome,
+          color: Colors.green,
+          icon: Icons.bar_chart,
+        ),
+        const SizedBox(height: 12),
+        _SummaryTile(
+          title: 'Average Expense',
+          value: summary.averageExpense,
+          color: Colors.red,
+          icon: Icons.stacked_bar_chart,
+        ),
+      ],
+    );
+  }
+  }
+
+class _SummaryTile extends StatelessWidget {
+  const _SummaryTile({
+    required this.title,
+    required this.value,
+    required this.color,
+    required this.icon,
+    this.isCurrency = true,
+  });
+
+  final String title;
+  final double value;
+  final Color color;
+  final IconData icon;
+  final bool isCurrency;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: color.withValues(alpha: 0.20),
+        ),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 22,
+            backgroundColor: color.withValues(alpha: 0.15),
+            child: Icon(
+              icon,
+              color: color,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _formatValue(),
+                  style: theme.textTheme.titleMedium
+                      ?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatValue() {
+    if (!isCurrency) {
+      return value.toInt().toString();
+    }
+
+    return '₹${value.toStringAsFixed(2)}';
+  }
+}

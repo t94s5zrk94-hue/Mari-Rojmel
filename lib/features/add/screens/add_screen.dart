@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../../core/enums/transaction_type.dart';
 import '../../parser/services/parser_service.dart';
 import '../../transactions/models/transaction_model.dart';
 import '../../transactions/repositories/transaction_repository.dart';
@@ -54,10 +54,7 @@ class _AddScreenState extends State<AddScreen> {
     );
 
     try {
-      final success =
-          await TransactionRepository.instance.insert(
-        transaction,
-      );
+      final success = await TransactionRepository.instance.insert(transaction);
 
       if (!success) {
         _showMessage('Failed to Save Transaction');
@@ -66,29 +63,21 @@ class _AddScreenState extends State<AddScreen> {
 
       controller.clear();
 
-      _showMessage(
-        'Transaction Saved Successfully',
-      );
+      _showMessage('Transaction Saved Successfully');
     } catch (e) {
       debugPrint(e.toString());
 
-      _showMessage(
-        'Failed to Save Transaction',
-      );
+      _showMessage('Failed to Save Transaction');
     }
   }
-    void _showMessage(String message) {
+
+  void _showMessage(String message) {
     if (!mounted) return;
 
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(message),
-        ),
-      );
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
-
 
   @override
   Widget build(BuildContext context) {

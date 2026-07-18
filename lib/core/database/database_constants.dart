@@ -18,7 +18,7 @@ class DatabaseConstants {
 
   static const String databaseName = 'mari_rojmel.db';
 
-  static const int databaseVersion = 1;
+  static const int databaseVersion = 4;
 
   // ==========================================================
   // Common Columns
@@ -74,6 +74,8 @@ class DatabaseConstants {
 
   static const String categoryIsActive = 'is_active';
 
+  static const String categoryTransactionType = 'transaction_type';
+
   // ==========================================================
   // Payment Mode Columns
   // ==========================================================
@@ -89,4 +91,16 @@ class DatabaseConstants {
   static const String paymentModeIsDefault = 'is_default';
 
   static const String paymentModeIsActive = 'is_active';
+
+  // ==========================================================
+  // Transaction Learning Table
+  // ==========================================================
+
+  static const String transactionLearningTable = 'transaction_learning';
+
+  static const String keyword = 'keyword';
+
+  static const String useCount = 'use_count';
+
+  static const String lastUsedAt = 'last_used_at';
 }

@@ -9,22 +9,25 @@ class PaymentModeModel {
     required this.isDefault,
     required this.isActive,
     required this.sortOrder,
+    required this.color,
   });
 
-  final String id;
+  final int? id;
   final String name;
   final String icon;
   final bool isDefault;
   final bool isActive;
   final int sortOrder;
+  final int color;
 
   PaymentModeModel copyWith({
-    String? id,
+    int? id,
     String? name,
     String? icon,
     bool? isDefault,
     bool? isActive,
     int? sortOrder,
+    int? color,
   }) {
     return PaymentModeModel(
       id: id ?? this.id,
@@ -33,30 +36,31 @@ class PaymentModeModel {
       isDefault: isDefault ?? this.isDefault,
       isActive: isActive ?? this.isActive,
       sortOrder: sortOrder ?? this.sortOrder,
+      color: color ?? this.color,
     );
   }
 
-  factory PaymentModeModel.fromMap(
-    Map<String, dynamic> map,
-  ) {
+  factory PaymentModeModel.fromMap(Map<String, dynamic> map) {
     return PaymentModeModel(
-      id: map['payment_mode_id'] as String,
+      id: map['id'] as int?,
       name: map['payment_mode_name'] as String,
       icon: (map['icon'] ?? '💳') as String,
       isDefault: (map['is_default'] ?? 0) == 1,
       isActive: (map['is_active'] ?? 1) == 1,
       sortOrder: (map['sort_order'] ?? 0) as int,
+      color: map['color'] as int,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'payment_mode_id': id,
+      'id': id,
       'payment_mode_name': name,
       'icon': icon,
       'is_default': isDefault ? 1 : 0,
       'is_active': isActive ? 1 : 0,
       'sort_order': sortOrder,
+      'color': color,
     };
   }
 
@@ -76,14 +80,8 @@ class PaymentModeModel {
   }
 
   @override
-  int get hashCode => Object.hash(
-        id,
-        name,
-        icon,
-        isDefault,
-        isActive,
-        sortOrder,
-      );
+  int get hashCode =>
+      Object.hash(id, name, icon, isDefault, isActive, sortOrder);
 
   @override
   String toString() {

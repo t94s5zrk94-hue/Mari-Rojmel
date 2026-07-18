@@ -1,4 +1,5 @@
 import '../models/category_model.dart';
+import '../../../core/enums/transaction_type.dart';
 
 class CategorySeedService {
   CategorySeedService._();
@@ -8,7 +9,6 @@ class CategorySeedService {
       // ===========================
       // Income Categories
       // ===========================
-
       CategoryModel(
         id: null,
         name: 'Salary',
@@ -78,7 +78,6 @@ class CategorySeedService {
       // ===========================
       // Expense Categories
       // ===========================
-
       CategoryModel(
         id: null,
         name: 'Food',

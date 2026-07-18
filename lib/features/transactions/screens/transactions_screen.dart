@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../../core/enums/transaction_type.dart';
 import '../models/transaction_model.dart';
 import '../repositories/transaction_repository.dart';
 import '../services/month_service.dart';
@@ -9,13 +9,10 @@ class TransactionsScreen extends StatefulWidget {
   const TransactionsScreen({super.key});
 
   @override
-  State<TransactionsScreen> createState() =>
-      _TransactionsScreenState();
+  State<TransactionsScreen> createState() => _TransactionsScreenState();
 }
 
-class _TransactionsScreenState
-    extends State<TransactionsScreen> {
-
+class _TransactionsScreenState extends State<TransactionsScreen> {
   List<TransactionModel> transactions = [];
 
   bool loading = true;
@@ -29,19 +26,15 @@ class _TransactionsScreenState
   }
 
   Future<void> loadTransactions() async {
-
     setState(() {
       loading = true;
     });
 
-    final all = await TransactionRepository.instance
-        .getActive();
+    final all = await TransactionRepository.instance.getActive();
 
     final data = all.where((transaction) {
-      return transaction.transactionDate.year ==
-              selectedMonth.year &&
-          transaction.transactionDate.month ==
-              selectedMonth.month;
+      return transaction.transactionDate.year == selectedMonth.year &&
+          transaction.transactionDate.month == selectedMonth.month;
     }).toList();
 
     if (!mounted) return;
@@ -52,15 +45,11 @@ class _TransactionsScreenState
     });
   }
 
-  Future<void> openEdit(
-      TransactionModel transaction) async {
-
+  Future<void> openEdit(TransactionModel transaction) async {
     final updated = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
-        builder: (_) => EditTransactionScreen(
-          transaction: transaction,
-        ),
+        builder: (_) => EditTransactionScreen(transaction: transaction),
       ),
     );
 
@@ -70,29 +59,20 @@ class _TransactionsScreenState
   }
 
   void previousMonth() {
-
     setState(() {
-      selectedMonth =
-          MonthService.instance.previousMonth(
-        selectedMonth,
-      );
+      selectedMonth = MonthService.instance.previousMonth(selectedMonth);
     });
 
     loadTransactions();
   }
 
   void nextMonth() {
-
-    if (MonthService.instance
-        .isCurrentMonth(selectedMonth)) {
+    if (MonthService.instance.isCurrentMonth(selectedMonth)) {
       return;
     }
 
     setState(() {
-      selectedMonth =
-          MonthService.instance.nextMonth(
-        selectedMonth,
-      );
+      selectedMonth = MonthService.instance.nextMonth(selectedMonth);
     });
 
     loadTransactions();
@@ -104,62 +84,38 @@ class _TransactionsScreenState
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
-      appBar: AppBar(
-        title: const Text("Transactions"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Transactions"), centerTitle: true),
 
       body: Column(
-
         children: [
-
           Container(
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 10,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Row(
-
               children: [
-
                 IconButton(
                   onPressed: previousMonth,
-                  icon: const Icon(
-                    Icons.chevron_left,
-                  ),
+                  icon: const Icon(Icons.chevron_left),
                 ),
 
                 Expanded(
                   child: Center(
                     child: Text(
-                      MonthService.instance
-                          .format(selectedMonth),
-                      style:
-                          const TextStyle(
+                      MonthService.instance.format(selectedMonth),
+                      style: const TextStyle(
                         fontSize: 20,
-                        fontWeight:
-                            FontWeight.bold,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
 
                 IconButton(
-                  onPressed: MonthService
-                          .instance
-                          .isCurrentMonth(
-                              selectedMonth)
+                  onPressed: MonthService.instance.isCurrentMonth(selectedMonth)
                       ? null
                       : nextMonth,
-                  icon: const Icon(
-                    Icons.chevron_right,
-                  ),
+                  icon: const Icon(Icons.chevron_right),
                 ),
-
               ],
             ),
           ),
@@ -167,24 +123,12 @@ class _TransactionsScreenState
           const Divider(height: 1),
 
           if (loading)
-            const Expanded(
-              child: Center(
-                child:
-                    CircularProgressIndicator(),
-              ),
-            )
+            const Expanded(child: Center(child: CircularProgressIndicator()))
           else if (transactions.isEmpty)
-            const Expanded(
-              child: Center(
-                child: Text(
-                  "No Transactions Found",
-                ),
-              ),
-            )
+            const Expanded(child: Center(child: Text("No Transactions Found")))
           else
             Expanded(
-
-                        child: RefreshIndicator(
+              child: RefreshIndicator(
                 onRefresh: loadTransactions,
                 child: ListView.builder(
                   itemCount: transactions.length,
@@ -198,107 +142,76 @@ class _TransactionsScreenState
 
                       showDate =
                           previous.transactionDate.day !=
-                                  t.transactionDate.day ||
-                              previous.transactionDate.month !=
-                                  t.transactionDate.month ||
-                              previous.transactionDate.year !=
-                                  t.transactionDate.year;
+                              t.transactionDate.day ||
+                          previous.transactionDate.month !=
+                              t.transactionDate.month ||
+                          previous.transactionDate.year !=
+                              t.transactionDate.year;
                     }
 
                     return Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         if (showDate)
                           Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(
-                              16,
-                              16,
-                              16,
-                              8,
-                            ),
+                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                             child: Text(
-                              formatDate(
-                                t.transactionDate,
-                              ),
-                              style:
-                                  const TextStyle(
+                              formatDate(t.transactionDate),
+                              style: const TextStyle(
                                 fontSize: 16,
-                                fontWeight:
-                                    FontWeight.bold,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
 
                         Card(
-                          margin:
-                              const EdgeInsets.symmetric(
+                          margin: const EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 4,
                           ),
                           child: ListTile(
-
                             leading: CircleAvatar(
                               backgroundColor:
                                   t.transactionType == TransactionType.income
-                                      ? Colors.green
-                                          .withValues(
-                                              alpha: 0.15)
-                                      : Colors.red
-                                          .withValues(
-                                              alpha: 0.15),
+                                  ? Colors.green.withValues(alpha: 0.15)
+                                  : Colors.red.withValues(alpha: 0.15),
                               child: Icon(
                                 t.transactionType == TransactionType.income
                                     ? Icons.arrow_downward
                                     : Icons.arrow_upward,
                                 color:
                                     t.transactionType == TransactionType.expense
-                                        ? Colors.green
-                                        : Colors.red,
+                                    ? Colors.green
+                                    : Colors.red,
                               ),
                             ),
 
                             title: Text(
                               t.note,
-                              style:
-                                  const TextStyle(
-                                fontWeight:
-                                    FontWeight.w600,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
 
                             subtitle: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment
-                                      .start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                Text('Mode: ${t.paymentModeId}'),
 
-                                Text(
-                                  'Mode: ${t.paymentModeId}'
-                                ),
-
-                                const SizedBox(
-                                    height: 4),
+                                const SizedBox(height: 4),
 
                                 Text(
                                   "₹ ${t.amount.toStringAsFixed(0)}",
-                                  style:
-                                      const TextStyle(
-                                    fontWeight:
-                                        FontWeight.bold,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-
                               ],
                             ),
 
                             trailing: Row(
-                              mainAxisSize:
-                                  MainAxisSize.min,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-
                                 IconButton(
                                   tooltip: "Edit",
                                   icon: const Icon(
@@ -317,34 +230,27 @@ class _TransactionsScreenState
                                     color: Colors.red,
                                   ),
                                   onPressed: () {
-
-                                    ScaffoldMessenger.of(
-                                            context)
-                                        .showSnackBar(
+                                    ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
                                           "Delete will be added in next step",
                                         ),
                                       ),
                                     );
-
                                   },
                                 ),
-
                               ],
                             ),
                           ),
                         ),
-
                       ],
                     );
                   },
                 ),
               ),
             ),
-
         ],
       ),
     );
   }
-}    
+}

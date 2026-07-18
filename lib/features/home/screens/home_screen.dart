@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../add/screens/add_screen.dart';
+import '../../transactions/screens/transaction_entry_screen.dart';
 import '../../dashboard/screens/dashboard_screen.dart';
 import '../../transactions/screens/transactions_screen.dart';
 
@@ -14,35 +13,41 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-    final List<Widget> _pages = const [
-    DashboardScreen(),
+  final List<Widget> _pages = [
+    const DashboardScreen(),
 
-    Center(
-      child: Text(
-        'Reports',
-        style: TextStyle(fontSize: 24),
-      ),
-    ),
+    const Center(child: Text('Reports', style: TextStyle(fontSize: 24))),
 
-    AddScreen(),
+    const SizedBox.shrink(),
 
-    TransactionsScreen(),
+    const TransactionsScreen(),
 
-    Center(
-      child: Text(
-        'Account',
-        style: TextStyle(fontSize: 24),
-      ),
-    ),
+    const Center(child: Text('Account', style: TextStyle(fontSize: 24))),
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_currentIndex],
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
-        onDestinationSelected: (index) {
+        onDestinationSelected: (index) async {
+          if (index == 2) {
+            final result = await Navigator.push<bool>(
+              context,
+              MaterialPageRoute(builder: (_) => const TransactionEntryScreen()),
+            );
+
+            if (!mounted) return;
+
+            if (result == true) {
+              setState(() {
+                _currentIndex = 3; // Transactions tab
+              });
+            }
+
+            return;
+          }
+
           setState(() {
             _currentIndex = index;
           });

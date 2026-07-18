@@ -1,50 +1,87 @@
-import 'package:sqflite/sqflite.dart';
-
-import '../../../core/database/database_constants.dart';
-import '../../../core/database/database_helper.dart';
 import '../models/transaction_model.dart';
+import '../repositories/transaction_repository.dart';
+import '../../../core/database/database_helper.dart';
+import '../repositories/transaction_learning_repository.dart';
+import 'transaction_learning_service.dart';
 
 class TransactionService {
   TransactionService._();
 
   static final TransactionService instance = TransactionService._();
 
-  Future<int> saveTransaction(TransactionModel transaction) async {
-    final Database db = await DatabaseHelper.instance.database;
+  final TransactionRepository _repository = TransactionRepository.instance;
 
-    return await db.insert(
-      DatabaseConstants.transactionsTable,
-      transaction.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+  final TransactionLearningService _learningService =
+      TransactionLearningService(
+        TransactionLearningRepository(DatabaseHelper.instance),
+      );
+
+  Future<bool> saveTransaction(TransactionModel transaction) async {
+    return _repository.insert(transaction);
   }
 
   Future<List<TransactionModel>> getAllTransactions() async {
-    final Database db = await DatabaseHelper.instance.database;
-
-    final List<Map<String, dynamic>> result = await db.query(
-      DatabaseConstants.transactionsTable,
-      orderBy: '${DatabaseConstants.transactionDate} DESC',
-    );
-
-    return result
-        .map((e) => TransactionModel.fromMap(e))
-        .toList();
+    return _repository.getAll();
   }
 
-  Future<void> deleteAllTransactions() async {
-    final Database db = await DatabaseHelper.instance.database;
-
-    await db.delete(DatabaseConstants.transactionsTable);
+  Future<TransactionModel?> getTransactionById(int id) async {
+    return _repository.getById(id);
   }
 
-  Future<int> getTransactionCount() async {
-    final Database db = await DatabaseHelper.instance.database;
+  Future<bool> updateTransaction(TransactionModel transaction) async {
+    return _repository.update(transaction);
+  }
 
-    final result = await db.rawQuery(
-      'SELECT COUNT(*) as total FROM ${DatabaseConstants.transactionsTable}',
+  Future<bool> deleteTransaction(int id) async {
+    return _repository.softDelete(id);
+  }
+
+  Future<bool> restoreTransaction(int id) async {
+    return _repository.restore(id);
+  }
+
+  Future<List<TransactionModel>> searchTransactions(String query) async {
+    return _repository.search(query);
+  }
+
+  Future<List<TransactionModel>> getActiveTransactions() async {
+    return _repository.getActive();
+  }
+
+  Future<List<TransactionModel>> getDeletedTransactions() async {
+    return _repository.getDeleted();
+  }
+
+  // ==========================================================
+  // Learning
+  // ==========================================================
+
+  Future<void> learnTransaction({
+    required String originalInput,
+    required int categoryId,
+  }) async {
+    await _learningService.learn(input: originalInput, categoryId: categoryId);
+  }
+
+  // ==========================================================
+  // Save & Learn
+  // ==========================================================
+
+  Future<bool> saveAndLearn({
+    required TransactionModel transaction,
+    required String originalInput,
+  }) async {
+    final success = await saveTransaction(transaction);
+
+    if (!success) {
+      return false;
+    }
+
+    await learnTransaction(
+      originalInput: originalInput,
+      categoryId: transaction.categoryId,
     );
 
-    return Sqflite.firstIntValue(result) ?? 0;
+    return true;
   }
 }

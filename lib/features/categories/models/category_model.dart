@@ -1,23 +1,5 @@
 import 'dart:convert';
-
-/// Transaction type for a category.
-enum TransactionType {
-  income,
-  expense;
-
-  String get value => name;
-
-  static TransactionType fromString(String? value) {
-    switch (value?.trim().toLowerCase()) {
-      case 'income':
-        return TransactionType.income;
-      case 'expense':
-        return TransactionType.expense;
-      default:
-        return TransactionType.expense;
-    }
-  }
-}
+import '../../../core/enums/transaction_type.dart';
 
 /// Category Model
 ///
@@ -124,9 +106,7 @@ class CategoryModel {
 
   /// JSON
   factory CategoryModel.fromJson(String source) {
-    return CategoryModel.fromMap(
-      jsonDecode(source) as Map<String, dynamic>,
-    );
+    return CategoryModel.fromMap(jsonDecode(source) as Map<String, dynamic>);
   }
 
   /// Validation
@@ -146,10 +126,7 @@ class CategoryModel {
   bool get isEnabled => isActive;
 
   CategoryModel normalized() {
-    return copyWith(
-      name: name.trim(),
-      icon: icon.trim(),
-    );
+    return copyWith(name: name.trim(), icon: icon.trim());
   }
 
   @override

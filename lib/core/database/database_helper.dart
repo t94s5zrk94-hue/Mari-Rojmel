@@ -1,172 +1,267 @@
+// ===============================================================
+// Mari-Rojmel
+// Database Helper
+//
+// Production Database V2
+// Part 1 / 5
+// ===============================================================
+
+import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../../features/categories/repositories/category_repository.dart';
-import '../../features/payment_modes/repositories/payment_mode_repository.dart';
 import 'database_constants.dart';
 
-/// ===============================================================
-/// Mari-Rojmel Database Helper
-///
-/// SQLite Database Manager
-/// Production Ready
-/// ===============================================================
 class DatabaseHelper {
   DatabaseHelper._();
 
-  static final DatabaseHelper instance =
-      DatabaseHelper._();
+  static final DatabaseHelper instance = DatabaseHelper._();
 
   Database? _database;
 
-  /// Returns the singleton database instance.
+  // ==========================================================
+  // Database Getter
+  // ==========================================================
+
   Future<Database> get database async {
     if (_database != null) {
       return _database!;
     }
-
     _database = await _initializeDatabase();
-
     return _database!;
   }
 
-  /// Initializes SQLite database.
+  // ==========================================================
+  // Initialize Database
+  // ==========================================================
+
   Future<Database> _initializeDatabase() async {
-    final databasePath =
-        await getDatabasesPath();
+    final databasesPath = await getDatabasesPath();
+    final path = join(databasesPath, DatabaseConstants.databaseName);
 
-    final path = join(
-      databasePath,
-      DatabaseConstants.databaseName,
-    );
-
-    return openDatabase(
+    final db = await openDatabase(
       path,
-      version:
-          DatabaseConstants.databaseVersion,
+      version: DatabaseConstants.databaseVersion,
+      onConfigure: _onConfigure,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
-      onConfigure: _onConfigure,
     );
+
+    return db;
   }
 
-  /// Configure SQLite.
-  Future<void> _onConfigure(
-    Database db,
-  ) async {
-    await db.execute(
-      'PRAGMA foreign_keys = ON;',
-    );
+  // ==========================================================
+  // Database Configuration
+  // ==========================================================
+
+  Future<void> _onConfigure(Database db) async {
+    await db.execute('PRAGMA foreign_keys = ON');
+
+    await db.rawQuery('PRAGMA journal_mode=WAL');
+
+    await db.rawQuery('PRAGMA synchronous=NORMAL');
   }
 
-  /// Database creation callback.
-  Future<void> _onCreate(
-    Database db,
-    int version,
-  ) async {
-        // ==========================================================
-        // Transactions Table
-        // ==========================================================
+  // ==========================================================
+  // Database Creation
+  // ==========================================================
 
-        await db.execute('''
-          CREATE TABLE ${DatabaseConstants.transactionsTable} (
-            ${DatabaseConstants.id} INTEGER PRIMARY KEY AUTOINCREMENT,
-
-            ${DatabaseConstants.amount} REAL NOT NULL,
-
-            ${DatabaseConstants.transactionType} TEXT NOT NULL,
-
-            ${DatabaseConstants.categoryId} INTEGER NOT NULL,
-
-            ${DatabaseConstants.paymentModeId} INTEGER NOT NULL,
-
-            ${DatabaseConstants.transactionDate} TEXT NOT NULL,
-
-            ${DatabaseConstants.note} TEXT NOT NULL DEFAULT '',
-
-            ${DatabaseConstants.createdAt} TEXT NOT NULL,
-
-            ${DatabaseConstants.updatedAt} TEXT NOT NULL,
-
-            ${DatabaseConstants.isDeleted} INTEGER NOT NULL DEFAULT 0
-          )
-        ''');
-
-        await db.execute('''
-          CREATE INDEX idx_transactions_date
-          ON ${DatabaseConstants.transactionsTable}
-          (${DatabaseConstants.transactionDate})
-        ''');
-
-        await db.execute('''
-          CREATE INDEX idx_transactions_category
-          ON ${DatabaseConstants.transactionsTable}
-          (${DatabaseConstants.categoryId})
-        ''');
-
-        await db.execute('''
-          CREATE INDEX idx_transactions_payment_mode
-          ON ${DatabaseConstants.transactionsTable}
-          (${DatabaseConstants.paymentModeId})
-        ''');
-
-        // ==========================================================
-        // Category Table
-        // ==========================================================
-
-        final categoryRepository =
-            CategoryRepository(
-          DatabaseHelper.instance,
-        );
-
-        await categoryRepository.createTable();
-
-        await categoryRepository.seedDefaults();
-
-        // ==========================================================
-        // Payment Mode Table
-        // ==========================================================
-
-        final paymentModeRepository =
-            PaymentModeRepository(
-          DatabaseHelper.instance,
-        );
-
-        await paymentModeRepository.createTable();
-
-        await paymentModeRepository.seedDefaults();
-    }
+  Future<void> _onCreate(Database db, int version) async {
+    await _createTransactionsTable(db);
+    await _createCategoriesTable(db);
+    await _createPaymentModesTable(db);
+    await _createTransactionLearningTable(db);
+    await _createIndexes(db);
+  }
 
   // ==========================================================
   // Database Upgrade
   // ==========================================================
 
-  Future<void> _onUpgrade(
-    Database db,
-    int oldVersion,
-    int newVersion,
-  ) async {
-    // Future database migrations.
-    //
-    // Example:
-    //
-    // if (oldVersion < 2) {
-    //   await db.execute(...);
-    // }
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion >= newVersion) {
+      return;
+    }
+
+    if (oldVersion < 4) {
+      await _migratePaymentModesToV4(db);
+    }
+  }
+  // ==========================================================
+  // Transactions Table
+  // ==========================================================
+
+  Future<void> _createTransactionsTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS ${DatabaseConstants.transactionsTable} (
+        ${DatabaseConstants.id} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${DatabaseConstants.amount} REAL NOT NULL,
+        ${DatabaseConstants.transactionType} TEXT NOT NULL,
+        ${DatabaseConstants.categoryId} INTEGER NOT NULL,
+        ${DatabaseConstants.paymentModeId} INTEGER NOT NULL,
+        ${DatabaseConstants.transactionDate} TEXT NOT NULL,
+        ${DatabaseConstants.note} TEXT NOT NULL DEFAULT '',
+        ${DatabaseConstants.createdAt} TEXT NOT NULL,
+        ${DatabaseConstants.updatedAt} TEXT NOT NULL,
+        ${DatabaseConstants.isDeleted} INTEGER NOT NULL DEFAULT 0
+      )
+    ''');
+  }
+
+  // ==========================================================
+  // Categories Table
+  // ==========================================================
+
+  Future<void> _createCategoriesTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS ${DatabaseConstants.categoriesTable} (
+        ${DatabaseConstants.id} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${DatabaseConstants.categoryName} TEXT NOT NULL,
+        ${DatabaseConstants.categoryIcon} TEXT NOT NULL,
+        ${DatabaseConstants.categoryColor} INTEGER NOT NULL,
+        ${DatabaseConstants.categoryTransactionType} TEXT NOT NULL,
+        ${DatabaseConstants.categorySortOrder} INTEGER NOT NULL,
+        ${DatabaseConstants.categoryIsDefault} INTEGER NOT NULL DEFAULT 0,
+        ${DatabaseConstants.categoryIsActive} INTEGER NOT NULL DEFAULT 1,
+        ${DatabaseConstants.createdAt} TEXT,
+        ${DatabaseConstants.updatedAt} TEXT
+      )
+    ''');
+  }
+  // ==========================================================
+  // Payment Modes Table
+  // ==========================================================
+
+  Future<void> _createPaymentModesTable(Database db) async {
+    await db.execute('''
+    CREATE TABLE IF NOT EXISTS ${DatabaseConstants.paymentModesTable} (
+      ${DatabaseConstants.id} INTEGER PRIMARY KEY AUTOINCREMENT,
+      ${DatabaseConstants.paymentModeName} TEXT NOT NULL,
+      ${DatabaseConstants.paymentModeIcon} TEXT NOT NULL,
+      ${DatabaseConstants.paymentModeColor} INTEGER NOT NULL,
+      ${DatabaseConstants.paymentModeSortOrder} INTEGER NOT NULL,
+      ${DatabaseConstants.paymentModeIsDefault} INTEGER NOT NULL DEFAULT 0,
+      ${DatabaseConstants.paymentModeIsActive} INTEGER NOT NULL DEFAULT 1,
+      ${DatabaseConstants.createdAt} TEXT,
+      ${DatabaseConstants.updatedAt} TEXT
+    )
+  ''');
+  }
+
+  Future<void> _migratePaymentModesToV4(Database db) async {
+    await db.transaction((txn) async {
+      // 1. Rename old table
+      await txn.execute('''
+      ALTER TABLE ${DatabaseConstants.paymentModesTable}
+      RENAME TO payment_modes_old
+    ''');
+
+      // 2. Create new table
+      await txn.execute('''
+      CREATE TABLE ${DatabaseConstants.paymentModesTable} (
+        ${DatabaseConstants.id} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${DatabaseConstants.paymentModeName} TEXT NOT NULL,
+        ${DatabaseConstants.paymentModeIcon} TEXT NOT NULL,
+        ${DatabaseConstants.paymentModeColor} INTEGER NOT NULL,
+        ${DatabaseConstants.paymentModeSortOrder} INTEGER NOT NULL,
+        ${DatabaseConstants.paymentModeIsDefault} INTEGER NOT NULL DEFAULT 0,
+        ${DatabaseConstants.paymentModeIsActive} INTEGER NOT NULL DEFAULT 1,
+        ${DatabaseConstants.createdAt} TEXT,
+        ${DatabaseConstants.updatedAt} TEXT
+      )
+    ''');
+
+      // 3. Copy data
+      await txn.execute('''
+      INSERT INTO ${DatabaseConstants.paymentModesTable} (
+        ${DatabaseConstants.paymentModeName},
+        ${DatabaseConstants.paymentModeIcon},
+        ${DatabaseConstants.paymentModeColor},
+        ${DatabaseConstants.paymentModeSortOrder},
+        ${DatabaseConstants.paymentModeIsDefault},
+        ${DatabaseConstants.paymentModeIsActive},
+        ${DatabaseConstants.createdAt},
+        ${DatabaseConstants.updatedAt}
+      )
+      SELECT
+        ${DatabaseConstants.paymentModeName},
+        ${DatabaseConstants.paymentModeIcon},
+        ${DatabaseConstants.paymentModeColor},
+        ${DatabaseConstants.paymentModeSortOrder},
+        ${DatabaseConstants.paymentModeIsDefault},
+        ${DatabaseConstants.paymentModeIsActive},
+        ${DatabaseConstants.createdAt},
+        ${DatabaseConstants.updatedAt}
+      FROM payment_modes_old
+    ''');
+    });
+  }
+  // ==========================================================
+  // Transaction Learning Table
+  // ==========================================================
+
+  Future<void> _createTransactionLearningTable(Database db) async {
+    await db.execute('''
+  CREATE TABLE IF NOT EXISTS
+  ${DatabaseConstants.transactionLearningTable}
+  (
+    ${DatabaseConstants.id}
+    INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    ${DatabaseConstants.keyword}
+    TEXT NOT NULL UNIQUE,
+
+    ${DatabaseConstants.categoryId}
+    INTEGER NOT NULL,
+
+    ${DatabaseConstants.useCount}
+    INTEGER NOT NULL DEFAULT 1,
+
+    ${DatabaseConstants.lastUsedAt}
+    TEXT NOT NULL,
+
+    ${DatabaseConstants.createdAt}
+    TEXT NOT NULL,
+
+    ${DatabaseConstants.updatedAt}
+    TEXT NOT NULL
+  )
+  ''');
+  }
+
+  // ==========================================================
+  // Database Indexes
+  // ==========================================================
+
+  Future<void> _createIndexes(Database db) async {
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_transactions_date ON ${DatabaseConstants.transactionsTable} (${DatabaseConstants.transactionDate})',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_transactions_category ON ${DatabaseConstants.transactionsTable} (${DatabaseConstants.categoryId})',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_transactions_payment ON ${DatabaseConstants.transactionsTable} (${DatabaseConstants.paymentModeId})',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_categories_name ON ${DatabaseConstants.categoriesTable} (${DatabaseConstants.categoryName})',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_payment_modes_name ON ${DatabaseConstants.paymentModesTable} (${DatabaseConstants.paymentModeName})',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_transaction_learning_keyword ON ${DatabaseConstants.transactionLearningTable} (${DatabaseConstants.keyword})',
+    );
   }
 
   // ==========================================================
   // Close Database
   // ==========================================================
 
-  Future<void> close() async {
-    if (_database == null) {
-      return;
+  Future<void> closeDatabase() async {
+    if (_database != null) {
+      await _database!.close();
+      _database = null;
     }
-
-    await _database!.close();
-
-    _database = null;
   }
 
   // ==========================================================
@@ -174,29 +269,18 @@ class DatabaseHelper {
   // ==========================================================
 
   Future<void> deleteDatabaseFile() async {
-    await close();
-
-    final databasePath =
-        await getDatabasesPath();
-
-    final path = join(
-      databasePath,
-      DatabaseConstants.databaseName,
-    );
-
-    await databaseFactory.deleteDatabase(
-      path,
-    );
+    await closeDatabase();
+    final databasesPath = await getDatabasesPath();
+    final path = join(databasesPath, DatabaseConstants.databaseName);
+    await databaseFactory.deleteDatabase(path);
   }
 
   // ==========================================================
-  // Recreate Database (Development Only)
+  // Reset Database
   // ==========================================================
 
   Future<void> resetDatabase() async {
     await deleteDatabaseFile();
-
-    await database;
+    _database = await _initializeDatabase();
   }
 }
-      
