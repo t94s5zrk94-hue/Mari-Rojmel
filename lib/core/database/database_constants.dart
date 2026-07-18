@@ -18,7 +18,7 @@ class DatabaseConstants {
 
   static const String databaseName = 'mari_rojmel.db';
 
-  static const int databaseVersion = 4;
+  static const int databaseVersion = 5;
 
   // ==========================================================
   // Common Columns
@@ -103,4 +103,19 @@ class DatabaseConstants {
   static const String useCount = 'use_count';
 
   static const String lastUsedAt = 'last_used_at';
+
+  // ==========================================================
+  // User Profile Table
+  // ==========================================================
+
+  static const String userProfileTable = 'user_profile';
+
+  // Columns
+  static const String columnUserId = 'id';
+  static const String columnUserName = 'name';
+  static const String columnUserMobileNumber = 'mobile_number';
+  static const String columnUserEmail = 'email';
+  static const String columnUserAddress = 'address';
+  static const String columnUserCreatedAt = 'created_at';
+  static const String columnUserUpdatedAt = 'updated_at';
 }

@@ -3,6 +3,9 @@ import '../../transactions/screens/transaction_entry_screen.dart';
 import '../../dashboard/screens/dashboard_screen.dart';
 import '../../transactions/screens/transactions_screen.dart';
 import '../../reports/screens/reports_screen.dart';
+import '../../account/screens/account_screen.dart';
+import '../../account/repositories/account_repository.dart';
+import '../../../core/database/database_helper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     const TransactionsScreen(),
 
-    const Center(child: Text('Account', style: TextStyle(fontSize: 24))),
+    AccountScreen(repository: AccountRepository(DatabaseHelper.instance)),
   ];
   @override
   Widget build(BuildContext context) {

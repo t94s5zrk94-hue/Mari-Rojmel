@@ -70,6 +70,7 @@ class DatabaseHelper {
     await _createCategoriesTable(db);
     await _createPaymentModesTable(db);
     await _createTransactionLearningTable(db);
+    await _createUserProfileTable(db);
     await _createIndexes(db);
   }
 
@@ -84,6 +85,10 @@ class DatabaseHelper {
 
     if (oldVersion < 4) {
       await _migratePaymentModesToV4(db);
+    }
+
+    if (oldVersion < 5) {
+      await _createUserProfileTable(db);
     }
   }
   // ==========================================================
@@ -107,6 +112,19 @@ class DatabaseHelper {
     ''');
   }
 
+  Future<void> _createUserProfileTable(Database db) async {
+    await db.execute('''
+    CREATE TABLE ${DatabaseConstants.userProfileTable} (
+      ${DatabaseConstants.columnUserId} INTEGER PRIMARY KEY,
+      ${DatabaseConstants.columnUserName} TEXT NOT NULL,
+      ${DatabaseConstants.columnUserMobileNumber} TEXT,
+      ${DatabaseConstants.columnUserEmail} TEXT,
+      ${DatabaseConstants.columnUserAddress} TEXT,
+      ${DatabaseConstants.columnUserCreatedAt} TEXT,
+      ${DatabaseConstants.columnUserUpdatedAt} TEXT
+    )
+  ''');
+  }
   // ==========================================================
   // Categories Table
   // ==========================================================
