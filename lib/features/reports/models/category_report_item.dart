@@ -32,9 +32,39 @@ class CategoryReportItem {
       icon: icon ?? this.icon,
       color: color ?? this.color,
       amount: amount ?? this.amount,
-      transactionCount:
-          transactionCount ?? this.transactionCount,
+      transactionCount: transactionCount ?? this.transactionCount,
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'categoryId': categoryId,
+      'name': name,
+      'icon': icon,
+      'color': color,
+      'amount': amount,
+      'transactionCount': transactionCount,
+    };
+  }
+
+  factory CategoryReportItem.fromMap(Map<String, dynamic> map) {
+    return CategoryReportItem(
+      categoryId: (map['categoryId'] as num).toInt(),
+      name: map['name'] as String,
+      icon: map['icon'] as String,
+      color: (map['color'] as num).toInt(),
+      amount: (map['amount'] as num).toDouble(),
+      transactionCount: (map['transactionCount'] as num).toInt(),
+    );
+  }
+  @override
+  String toString() {
+    return 'CategoryReportItem('
+        'categoryId: $categoryId, '
+        'name: $name, '
+        'amount: $amount, '
+        'transactionCount: $transactionCount'
+        ')';
   }
 
   @override
@@ -53,12 +83,6 @@ class CategoryReportItem {
   }
 
   @override
-  int get hashCode => Object.hash(
-        categoryId,
-        name,
-        icon,
-        color,
-        amount,
-        transactionCount,
-      );
+  int get hashCode =>
+      Object.hash(categoryId, name, icon, color, amount, transactionCount);
 }

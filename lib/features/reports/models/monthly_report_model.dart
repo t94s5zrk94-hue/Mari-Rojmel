@@ -1,103 +1,122 @@
 import 'package:flutter/foundation.dart';
 
-/// Immutable summary model used by the Reports module.
+/// Immutable monthly report model.
 ///
-/// This model represents the aggregated financial statistics for the
-/// selected reporting period.
+/// Represents the aggregated financial statistics for a
+/// specific month and year.
 @immutable
-class ReportSummary {
-  /// Total income amount.
+class MonthlyReportModel {
+  /// Creates a monthly report model.
+  const MonthlyReportModel({
+    required this.year,
+    required this.month,
+    required this.totalIncome,
+    required this.totalExpense,
+    required this.netBalance,
+    required this.totalTransactions,
+    required this.highestIncome,
+    required this.highestExpense,
+    required this.averageIncome,
+    required this.averageExpense,
+  });
+
+  /// Report year.
+  final int year;
+
+  /// Report month (1-12).
+  final int month;
+
+  /// Total income.
   final double totalIncome;
 
-  /// Total expense amount.
+  /// Total expense.
   final double totalExpense;
 
   /// Net balance (Income - Expense).
   final double netBalance;
 
-  /// Highest single income transaction.
-  final double highestIncome;
-
-  /// Highest single expense transaction.
-  final double highestExpense;
-
   /// Total number of transactions.
   final int totalTransactions;
 
-  /// Average income transaction amount.
+  /// Highest income transaction.
+  final double highestIncome;
+
+  /// Highest expense transaction.
+  final double highestExpense;
+
+  /// Average income transaction.
   final double averageIncome;
 
-  /// Average expense transaction amount.
+  /// Average expense transaction.
   final double averageExpense;
 
-  const ReportSummary({
-    required this.totalIncome,
-    required this.totalExpense,
-    required this.netBalance,
-    required this.highestIncome,
-    required this.highestExpense,
-    required this.totalTransactions,
-    required this.averageIncome,
-    required this.averageExpense,
-  });
-
-  /// Empty summary used as a safe default.
-  const ReportSummary.empty()
-    : totalIncome = 0,
+  /// Empty monthly report.
+  const MonthlyReportModel.empty()
+    : year = 0,
+      month = 0,
+      totalIncome = 0,
       totalExpense = 0,
       netBalance = 0,
+      totalTransactions = 0,
       highestIncome = 0,
       highestExpense = 0,
-      totalTransactions = 0,
       averageIncome = 0,
       averageExpense = 0;
 
-  /// Creates a copy with modified values.
-  ReportSummary copyWith({
+  /// Returns a copy with modified values.
+  MonthlyReportModel copyWith({
+    int? year,
+    int? month,
     double? totalIncome,
     double? totalExpense,
     double? netBalance,
+    int? totalTransactions,
     double? highestIncome,
     double? highestExpense,
-    int? totalTransactions,
     double? averageIncome,
     double? averageExpense,
   }) {
-    return ReportSummary(
+    return MonthlyReportModel(
+      year: year ?? this.year,
+      month: month ?? this.month,
       totalIncome: totalIncome ?? this.totalIncome,
       totalExpense: totalExpense ?? this.totalExpense,
       netBalance: netBalance ?? this.netBalance,
+      totalTransactions: totalTransactions ?? this.totalTransactions,
       highestIncome: highestIncome ?? this.highestIncome,
       highestExpense: highestExpense ?? this.highestExpense,
-      totalTransactions: totalTransactions ?? this.totalTransactions,
       averageIncome: averageIncome ?? this.averageIncome,
       averageExpense: averageExpense ?? this.averageExpense,
     );
   }
 
-  /// Serialize to Map.
+  /// Converts model to map.
   Map<String, dynamic> toMap() {
     return {
+      'year': year,
+      'month': month,
       'totalIncome': totalIncome,
       'totalExpense': totalExpense,
       'netBalance': netBalance,
+      'totalTransactions': totalTransactions,
       'highestIncome': highestIncome,
       'highestExpense': highestExpense,
-      'totalTransactions': totalTransactions,
       'averageIncome': averageIncome,
       'averageExpense': averageExpense,
     };
   }
 
-  /// Deserialize from Map.
-  factory ReportSummary.fromMap(Map<String, dynamic> map) {
-    return ReportSummary(
+  /// Creates model from map.
+  factory MonthlyReportModel.fromMap(Map<String, dynamic> map) {
+    return MonthlyReportModel(
+      year: (map['year'] as num?)?.toInt() ?? 0,
+      month: (map['month'] as num?)?.toInt() ?? 0,
       totalIncome: (map['totalIncome'] as num?)?.toDouble() ?? 0,
       totalExpense: (map['totalExpense'] as num?)?.toDouble() ?? 0,
       netBalance: (map['netBalance'] as num?)?.toDouble() ?? 0,
+      totalTransactions: (map['totalTransactions'] as num?)?.toInt() ?? 0,
       highestIncome: (map['highestIncome'] as num?)?.toDouble() ?? 0,
       highestExpense: (map['highestExpense'] as num?)?.toDouble() ?? 0,
-      totalTransactions: (map['totalTransactions'] as num?)?.toInt() ?? 0,
       averageIncome: (map['averageIncome'] as num?)?.toDouble() ?? 0,
       averageExpense: (map['averageExpense'] as num?)?.toDouble() ?? 0,
     );
@@ -105,13 +124,15 @@ class ReportSummary {
 
   @override
   String toString() {
-    return 'ReportSummary('
+    return 'MonthlyReportModel('
+        'year: $year, '
+        'month: $month, '
         'totalIncome: $totalIncome, '
         'totalExpense: $totalExpense, '
         'netBalance: $netBalance, '
+        'totalTransactions: $totalTransactions, '
         'highestIncome: $highestIncome, '
         'highestExpense: $highestExpense, '
-        'totalTransactions: $totalTransactions, '
         'averageIncome: $averageIncome, '
         'averageExpense: $averageExpense'
         ')';
@@ -119,30 +140,34 @@ class ReportSummary {
 
   @override
   bool operator ==(Object other) {
-    if (identical(this, other)) return true;
+    if (identical(this, other)) {
+      return true;
+    }
 
-    return other is ReportSummary &&
+    return other is MonthlyReportModel &&
+        other.year == year &&
+        other.month == month &&
         other.totalIncome == totalIncome &&
         other.totalExpense == totalExpense &&
         other.netBalance == netBalance &&
+        other.totalTransactions == totalTransactions &&
         other.highestIncome == highestIncome &&
         other.highestExpense == highestExpense &&
-        other.totalTransactions == totalTransactions &&
         other.averageIncome == averageIncome &&
         other.averageExpense == averageExpense;
   }
 
   @override
-  int get hashCode {
-    return Object.hash(
-      totalIncome,
-      totalExpense,
-      netBalance,
-      highestIncome,
-      highestExpense,
-      totalTransactions,
-      averageIncome,
-      averageExpense,
-    );
-  }
+  int get hashCode => Object.hash(
+    year,
+    month,
+    totalIncome,
+    totalExpense,
+    netBalance,
+    totalTransactions,
+    highestIncome,
+    highestExpense,
+    averageIncome,
+    averageExpense,
+  );
 }

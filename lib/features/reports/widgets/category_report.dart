@@ -3,6 +3,7 @@ import '../../../core/enums/transaction_type.dart';
 import '../../../core/database/database_helper.dart';
 import '../../categories/models/category_model.dart';
 import '../../categories/repositories/category_repository.dart';
+import '../models/category_report_item.dart';
 
 /// ==========================================================
 /// Category Report Widget
@@ -15,7 +16,7 @@ class CategoryReport extends StatefulWidget {
   const CategoryReport({super.key, required this.reportData});
 
   /// categoryId -> total amount
-  final Map<int, double> reportData;
+  final List<CategoryReportItem> reportData;
 
   @override
   State<CategoryReport> createState() => _CategoryReportState();
@@ -58,8 +59,8 @@ class _CategoryReportState extends State<CategoryReport> {
       return const Center(child: Text('No category report available.'));
     }
 
-    final reportItems = widget.reportData.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
+    final reportItems = [...widget.reportData]
+      ..sort((a, b) => b.amount.compareTo(a.amount));
 
     return Card(
       child: Padding(
@@ -83,11 +84,11 @@ class _CategoryReportState extends State<CategoryReport> {
                 final item = reportItems[index];
 
                 final category = _categories.firstWhere(
-                  (element) => element.id == item.key,
+                  (element) => element.id == item.categoryId,
                   orElse: () => _unknownCategory,
                 );
 
-                return _CategoryTile(category: category, amount: item.value);
+                return _CategoryTile(category: category, amount: item.amount);
               },
             ),
           ],
