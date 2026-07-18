@@ -5,10 +5,11 @@ class SaveTransactionButton extends StatelessWidget {
     super.key,
     required this.isSaving,
     required this.onPressed,
+    required this.buttonText,
   });
 
   final bool isSaving;
-
+  final String buttonText;
   final VoidCallback? onPressed;
 
   @override

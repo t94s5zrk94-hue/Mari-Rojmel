@@ -5,11 +5,11 @@ import 'package:flutter/foundation.dart';
 //import 'package:sqflite/sqflite.dart';
 
 class DashboardService {
-    DashboardService._();
+  DashboardService._();
 
-    static final DashboardService instance = DashboardService._();
+  static final DashboardService instance = DashboardService._();
 
-    Future<DashboardSummary> getSummary() async {
+  Future<DashboardSummary> getSummary() async {
     debugPrint('A');
 
     final db = await DatabaseHelper.instance.database;
@@ -18,6 +18,8 @@ class DashboardService {
 
     final rows = await db.query(
       DatabaseConstants.transactionsTable,
+      where: '${DatabaseConstants.isDeleted} = ?',
+      whereArgs: [0],
     );
 
     debugPrint('C rows = ${rows.length}');
@@ -26,12 +28,9 @@ class DashboardService {
     double expense = 0;
 
     for (final row in rows) {
-      final amount =
-          (row[DatabaseConstants.amount] as num)
-              .toDouble();
+      final amount = (row[DatabaseConstants.amount] as num).toDouble();
 
-      if (row[DatabaseConstants.transactionType] ==
-          'income') {
+      if (row[DatabaseConstants.transactionType] == 'income') {
         income += amount;
       } else {
         expense += amount;

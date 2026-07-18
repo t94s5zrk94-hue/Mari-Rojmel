@@ -119,7 +119,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
 
             const SizedBox(height: 16),
             DropdownButtonFormField<int>(
-              initialValue: paymentModeId,
+              initialValue: paymentModeId <= 2 ? paymentModeId : null,
               decoration: const InputDecoration(
                 labelText: "Payment Mode",
                 border: OutlineInputBorder(),

@@ -24,7 +24,11 @@ import '../models/transaction_model.dart';
 import '../repositories/transaction_repository.dart';
 
 class TransactionEntryScreen extends StatefulWidget {
-  const TransactionEntryScreen({super.key});
+  const TransactionEntryScreen({super.key, this.transaction});
+
+  final TransactionModel? transaction;
+
+  bool get isEdit => transaction != null;
 
   @override
   State<TransactionEntryScreen> createState() => _TransactionEntryScreenState();
@@ -47,7 +51,7 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
   DateTime _selectedDate = DateTime.now();
 
   File? _billImage;
-  bool _isSaving = false;
+  final bool _isSaving = false;
 
   final List<CategoryModel> _categories = <CategoryModel>[];
   final List<PaymentModeModel> _paymentModes = <PaymentModeModel>[];
@@ -102,6 +106,22 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
 
     _loadCategories();
     _loadPaymentModes();
+
+    if (widget.isEdit) {
+      _loadExistingTransaction();
+    }
+  }
+
+  void _loadExistingTransaction() {
+    final transaction = widget.transaction!;
+
+    _amountController.text = transaction.amount.toStringAsFixed(0);
+
+    _descriptionController.text = transaction.note;
+
+    _selectedType = transaction.transactionType;
+
+    _selectedDate = transaction.transactionDate;
   }
 
   @override
@@ -119,7 +139,9 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(title: const Text('Add Transaction')),
+      appBar: AppBar(
+        title: Text(widget.isEdit ? 'Edit Transaction' : 'Add Transaction'),
+      ),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -206,6 +228,9 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
 
                     SaveTransactionButton(
                       isSaving: _isSaving,
+                      buttonText: widget.isEdit
+                          ? "Update Transaction"
+                          : "Save Transaction",
                       onPressed: _saveTransaction,
                     ),
                   ],
@@ -217,6 +242,7 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
       ),
     );
   }
+
   Future<void> _saveTransaction() async {
     try {
       debugPrint("===== SAVE START =====");
@@ -247,7 +273,18 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
 
       debugPrint("Before Insert");
 
-      final success = await _transactionRepository.insert(model);
+      bool success;
+
+      if (widget.isEdit) {
+        success = await _transactionRepository.update(
+          model.copyWith(
+            id: widget.transaction!.id,
+            createdAt: widget.transaction!.createdAt,
+          ),
+        );
+      } else {
+        success = await _transactionRepository.insert(model);
+      }
 
       debugPrint("Insert Result = $success");
 
@@ -262,7 +299,7 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
       debugPrint("$s");
     }
   }
-  
+
   Future<void> _onQuickEntryChanged(String value) async {
     if (value.trim().isEmpty) {
       return;
@@ -291,6 +328,13 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
       _categories
         ..clear()
         ..addAll(categories);
+
+      if (widget.isEdit) {
+        _selectedCategory = _categories.cast<CategoryModel?>().firstWhere(
+          (e) => e?.id == widget.transaction!.categoryId,
+          orElse: () => null,
+        );
+      }
     });
   }
 
@@ -305,6 +349,15 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
       _paymentModes
         ..clear()
         ..addAll(paymentModes);
+
+      if (widget.isEdit) {
+        _selectedPaymentMode = _paymentModes
+            .cast<PaymentModeModel?>()
+            .firstWhere(
+              (e) => e?.id == widget.transaction!.paymentModeId,
+              orElse: () => null,
+            );
+      }
     });
   }
 
@@ -349,4 +402,3 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
     await _loadCategories();
   }
 }
-    

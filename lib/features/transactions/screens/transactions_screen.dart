@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../../core/enums/transaction_type.dart';
+import '../widgets/month_selector_widget.dart';
 import '../models/transaction_model.dart';
 import '../repositories/transaction_repository.dart';
 import '../services/month_service.dart';
-import 'edit_transaction_screen.dart';
+import 'transaction_entry_screen.dart';
+import '../../categories/models/category_model.dart';
+import '../../categories/repositories/category_repository.dart';
+import '../widgets/transaction_card_widget.dart';
+import '../../payment_modes/models/payment_mode_model.dart';
+import '../../payment_modes/repositories/payment_mode_repository.dart';
+import '../widgets/transaction_date_header.dart';
+import '../../../core/database/database_helper.dart';
+import '../widgets/empty_transaction_widget.dart';
 
 class TransactionsScreen extends StatefulWidget {
   const TransactionsScreen({super.key});
@@ -18,10 +26,22 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   bool loading = true;
 
   DateTime selectedMonth = DateTime.now();
+  late final CategoryRepository _categoryRepository;
+  late final PaymentModeRepository _paymentModeRepository;
+
+  Map<int, CategoryModel> _categoryMap = {};
+
+  Map<int, PaymentModeModel> _paymentModeMap = {};
 
   @override
   void initState() {
     super.initState();
+
+    final db = DatabaseHelper.instance;
+
+    _categoryRepository = CategoryRepository(db);
+    _paymentModeRepository = PaymentModeRepository(db);
+
     loadTransactions();
   }
 
@@ -29,6 +49,16 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     setState(() {
       loading = true;
     });
+
+    final categories = await _categoryRepository.getActive();
+
+    _categoryMap = {for (final category in categories) category.id!: category};
+
+    final paymentModes = await _paymentModeRepository.getActive();
+
+    _paymentModeMap = {
+      for (final paymentMode in paymentModes) paymentMode.id!: paymentMode,
+    };
 
     final all = await TransactionRepository.instance.getActive();
 
@@ -46,15 +76,15 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   }
 
   Future<void> openEdit(TransactionModel transaction) async {
-    final updated = await Navigator.push<bool>(
+    final updated = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => EditTransactionScreen(transaction: transaction),
+        builder: (_) => TransactionEntryScreen(transaction: transaction),
       ),
     );
 
     if (updated == true) {
-      loadTransactions();
+      await loadTransactions();
     }
   }
 
@@ -82,6 +112,44 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     return "${date.day}/${date.month}/${date.year}";
   }
 
+  Future<void> deleteTransaction(TransactionModel transaction) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Transaction'),
+          content: const Text(
+            'Are you sure you want to delete this transaction?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm != true) return;
+
+    await TransactionRepository.instance.softDelete(transaction.id!);
+
+    if (!mounted) return;
+
+    await loadTransactions();
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Transaction deleted successfully')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,43 +157,18 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
       body: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: previousMonth,
-                  icon: const Icon(Icons.chevron_left),
-                ),
-
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      MonthService.instance.format(selectedMonth),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-
-                IconButton(
-                  onPressed: MonthService.instance.isCurrentMonth(selectedMonth)
-                      ? null
-                      : nextMonth,
-                  icon: const Icon(Icons.chevron_right),
-                ),
-              ],
-            ),
+          MonthSelectorWidget(
+            monthText: MonthService.instance.format(selectedMonth),
+            onPrevious: previousMonth,
+            onNext: nextMonth,
+            isCurrentMonth: MonthService.instance.isCurrentMonth(selectedMonth),
           ),
-
           const Divider(height: 1),
 
           if (loading)
             const Expanded(child: Center(child: CircularProgressIndicator()))
           else if (transactions.isEmpty)
-            const Expanded(child: Center(child: Text("No Transactions Found")))
+            const Expanded(child: EmptyTransactionWidget())
           else
             Expanded(
               child: RefreshIndicator(
@@ -134,6 +177,11 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   itemCount: transactions.length,
                   itemBuilder: (context, index) {
                     final t = transactions[index];
+                    final category = _categoryMap[t.categoryId];
+                    final paymentMode = _paymentModeMap[t.paymentModeId];
+
+                    final categoryName = category?.name ?? 'Unknown';
+                    final paymentModeName = paymentMode?.name ?? 'Unknown';
 
                     bool showDate = true;
 
@@ -153,95 +201,13 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (showDate)
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                            child: Text(
-                              formatDate(t.transactionDate),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-
-                        Card(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor:
-                                  t.transactionType == TransactionType.income
-                                  ? Colors.green.withValues(alpha: 0.15)
-                                  : Colors.red.withValues(alpha: 0.15),
-                              child: Icon(
-                                t.transactionType == TransactionType.income
-                                    ? Icons.arrow_downward
-                                    : Icons.arrow_upward,
-                                color:
-                                    t.transactionType == TransactionType.expense
-                                    ? Colors.green
-                                    : Colors.red,
-                              ),
-                            ),
-
-                            title: Text(
-                              t.note,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Mode: ${t.paymentModeId}'),
-
-                                const SizedBox(height: 4),
-
-                                Text(
-                                  "₹ ${t.amount.toStringAsFixed(0)}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  tooltip: "Edit",
-                                  icon: const Icon(
-                                    Icons.edit,
-                                    color: Colors.blue,
-                                  ),
-                                  onPressed: () {
-                                    openEdit(t);
-                                  },
-                                ),
-
-                                IconButton(
-                                  tooltip: "Delete",
-                                  icon: const Icon(
-                                    Icons.delete,
-                                    color: Colors.red,
-                                  ),
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          "Delete will be added in next step",
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
+                          TransactionDateHeader(date: t.transactionDate),
+                        TransactionCardWidget(
+                          transaction: t,
+                          categoryName: categoryName,
+                          paymentModeName: paymentModeName,
+                          onEdit: () => openEdit(t),
+                          onDelete: () => deleteTransaction(t),
                         ),
                       ],
                     );
