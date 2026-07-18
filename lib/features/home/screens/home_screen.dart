@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../transactions/screens/transaction_entry_screen.dart';
 import '../../dashboard/screens/dashboard_screen.dart';
 import '../../transactions/screens/transactions_screen.dart';
+import '../../reports/screens/reports_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = [
     const DashboardScreen(),
 
-    const Center(child: Text('Reports', style: TextStyle(fontSize: 24))),
+    const ReportsScreen(),
 
     const SizedBox.shrink(),
 

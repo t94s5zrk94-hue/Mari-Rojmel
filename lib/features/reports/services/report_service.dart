@@ -1,6 +1,7 @@
 import '../models/category_report_item.dart';
 import '../repositories/report_repository.dart';
 import '../models/report_summary.dart';
+import '../models/payment_mode_report_item.dart';
 
 /// ==========================================================
 /// Report Filter
@@ -72,6 +73,17 @@ class ReportsService {
     final (startDate, endDate) = _resolveDateRange(filter);
 
     return _repository.getCategoryReport(
+      startDate: startDate,
+      endDate: endDate,
+    );
+  }
+
+  Future<List<PaymentModeReportItem>> getPaymentModeReport({
+    required ReportFilter filter,
+  }) async {
+    final (startDate, endDate) = _resolveDateRange(filter);
+
+    return _repository.getPaymentModeReport(
       startDate: startDate,
       endDate: endDate,
     );

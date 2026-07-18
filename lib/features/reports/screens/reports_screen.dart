@@ -8,14 +8,14 @@
 // ===============================================================
 
 import 'package:flutter/material.dart';
-
 import '../models/report_summary.dart';
 import '../services/report_service.dart';
 import '../widgets/report_filter_card.dart';
 import '../widgets/report_summary_card.dart';
+import '../models/category_report_item.dart';
+import '../models/payment_mode_report_item.dart';
 import '../widgets/category_report.dart';
 import '../widgets/payment_mode_report.dart';
-import '../models/category_report_item.dart';
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -33,6 +33,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
   List<CategoryReportItem> _categoryReport = [];
 
+  List<PaymentModeReportItem> _paymentModeReport = [];
+
   bool _isLoading = true;
 
   String? _errorMessage;
@@ -40,11 +42,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
   @override
   void initState() {
     super.initState();
-
+    debugPrint('REPORTS: initState');
     _loadReports();
   }
 
   Future<void> _loadReports() async {
+    debugPrint('REPORTS: initState');
     if (!mounted) {
       return;
     }
@@ -55,12 +58,18 @@ class _ReportsScreenState extends State<ReportsScreen> {
     });
 
     try {
-      final summary = await _reportsService.getSummary(filter: _selectedFilter);
+      final results = await Future.wait([
+        _reportsService.getSummary(filter: _selectedFilter),
+        _reportsService.getCategoryReport(filter: _selectedFilter),
+        _reportsService.getPaymentModeReport(filter: _selectedFilter),
+      ]);
 
-      final categoryReport = await _reportsService.getCategoryReport(
-        filter: _selectedFilter,
-      );
-
+      final summary = results[0] as ReportSummary;
+      debugPrint('REPORTS: Summary Loaded');
+      final categoryReport = results[1] as List<CategoryReportItem>;
+      debugPrint('REPORTS: Category Loaded ${categoryReport.length}');
+      final paymentModeReport = results[2] as List<PaymentModeReportItem>;
+      debugPrint('REPORTS: Payment Loaded ${paymentModeReport.length}');
       if (!mounted) {
         return;
       }
@@ -68,6 +77,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
       setState(() {
         _summary = summary;
         _categoryReport = categoryReport;
+        _paymentModeReport = paymentModeReport;
         _isLoading = false;
       });
     } on Exception catch (e) {
@@ -158,10 +168,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
             const SizedBox(height: 20),
 
-            //CategoryReport(reportData: _categoryReport),
+            CategoryReport(reportData: _categoryReport),
             const SizedBox(height: 20),
 
-            //PaymentModeReport(reportData: _paymentModeReport),
+            PaymentModeReport(reportData: _paymentModeReport),
             const SizedBox(height: 24),
           ],
         ),

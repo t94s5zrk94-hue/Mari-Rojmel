@@ -10,7 +10,7 @@
 // ===============================================================
 
 import 'package:sqflite/sqflite.dart';
-
+import '../models/payment_mode_report_item.dart';
 import '../../../core/database/database_constants.dart';
 import '../../../core/database/database_helper.dart';
 import '../../../core/enums/transaction_type.dart';
@@ -221,6 +221,65 @@ class ReportRepository {
         .toList(growable: false);
   }
 
+  Future<List<PaymentModeReportItem>> getPaymentModeReport({
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    final db = await _database;
+
+    final whereParts = <String>['t.${DatabaseConstants.isDeleted} = 0'];
+
+    final whereArgs = <Object?>[];
+
+    if (startDate != null) {
+      whereParts.add('t.${DatabaseConstants.transactionDate} >= ?');
+      whereArgs.add(startDate.toIso8601String());
+    }
+
+    if (endDate != null) {
+      whereParts.add('t.${DatabaseConstants.transactionDate} <= ?');
+      whereArgs.add(endDate.toIso8601String());
+    }
+
+    final result = await db.rawQuery('''
+    SELECT
+      p.${DatabaseConstants.id} AS payment_mode_id,
+      p.${DatabaseConstants.paymentModeName} AS payment_mode_name,
+      p.${DatabaseConstants.paymentModeIcon} AS payment_mode_icon,
+      p.${DatabaseConstants.paymentModeColor} AS payment_mode_color,
+
+      SUM(t.${DatabaseConstants.amount}) AS total_amount,
+      COUNT(t.${DatabaseConstants.id}) AS transaction_count
+
+    FROM ${DatabaseConstants.transactionsTable} t
+
+    INNER JOIN ${DatabaseConstants.paymentModesTable} p
+      ON t.${DatabaseConstants.paymentModeId} = p.${DatabaseConstants.id}
+
+    WHERE ${whereParts.join(' AND ')}
+
+    GROUP BY
+      p.${DatabaseConstants.id},
+      p.${DatabaseConstants.paymentModeName},
+      p.${DatabaseConstants.paymentModeIcon},
+      p.${DatabaseConstants.paymentModeColor}
+
+    ORDER BY total_amount DESC
+    ''', whereArgs);
+
+    return result
+        .map(
+          (row) => PaymentModeReportItem(
+            paymentModeId: (row['payment_mode_id'] as num).toInt(),
+            name: row['payment_mode_name'] as String,
+            icon: row['payment_mode_icon'] as String,
+            color: (row['payment_mode_color'] as num).toInt(),
+            amount: (row['total_amount'] as num).toDouble(),
+            transactionCount: (row['transaction_count'] as num).toInt(),
+          ),
+        )
+        .toList(growable: false);
+  }
   // ==========================================================
   // Monthly Report
   // ==========================================================

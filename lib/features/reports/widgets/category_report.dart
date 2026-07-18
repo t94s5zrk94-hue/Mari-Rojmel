@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/enums/transaction_type.dart';
-import '../../../core/database/database_helper.dart';
-import '../../categories/models/category_model.dart';
-import '../../categories/repositories/category_repository.dart';
 import '../models/category_report_item.dart';
 
 /// ==========================================================
@@ -12,55 +8,26 @@ import '../models/category_report_item.dart';
 /// Material 3
 /// Responsive
 /// ==========================================================
-class CategoryReport extends StatefulWidget {
+class CategoryReport extends StatelessWidget {
   const CategoryReport({super.key, required this.reportData});
 
-  /// categoryId -> total amount
   final List<CategoryReportItem> reportData;
 
   @override
-  State<CategoryReport> createState() => _CategoryReportState();
-}
-
-class _CategoryReportState extends State<CategoryReport> {
-  late final CategoryRepository _categoryRepository;
-
-  List<CategoryModel> _categories = [];
-
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _categoryRepository = CategoryRepository(DatabaseHelper.instance);
-
-    _loadCategories();
-  }
-
-  Future<void> _loadCategories() async {
-    final result = await _categoryRepository.getActive();
-
-    if (!mounted) return;
-
-    setState(() {
-      _categories = result;
-      _isLoading = false;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+    if (reportData.isEmpty) {
+      return const Card(
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: Center(child: Text('No category report available.')),
+        ),
+      );
     }
 
-    if (widget.reportData.isEmpty) {
-      return const Center(child: Text('No category report available.'));
-    }
-
-    final reportItems = [...widget.reportData]
-      ..sort((a, b) => b.amount.compareTo(a.amount));
+    final totalAmount = reportData.fold<double>(
+      0,
+      (sum, item) => sum + item.amount,
+    );
 
     return Card(
       child: Padding(
@@ -72,23 +39,24 @@ class _CategoryReportState extends State<CategoryReport> {
               'Category Report',
               style: Theme.of(context).textTheme.titleLarge,
             ),
+
             const SizedBox(height: 16),
+
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: reportItems.length,
+              itemCount: reportData.length,
 
               separatorBuilder: (context, index) => const Divider(height: 20),
 
               itemBuilder: (context, index) {
-                final item = reportItems[index];
+                final item = reportData[index];
 
-                final category = _categories.firstWhere(
-                  (element) => element.id == item.categoryId,
-                  orElse: () => _unknownCategory,
-                );
+                final percentage = totalAmount == 0
+                    ? 0.0
+                    : item.amount / totalAmount;
 
-                return _CategoryTile(category: category, amount: item.amount);
+                return _CategoryTile(item: item, percentage: percentage);
               },
             ),
           ],
@@ -96,46 +64,42 @@ class _CategoryReportState extends State<CategoryReport> {
       ),
     );
   }
-
-  static const CategoryModel _unknownCategory = CategoryModel(
-    id: -1,
-    name: 'Unknown Category',
-    icon: '❓',
-    color: 0xFF9E9E9E,
-    transactionType: TransactionType.expense,
-    isDefault: false,
-    isActive: true,
-    sortOrder: 9999,
-  );
 }
 
 class _CategoryTile extends StatelessWidget {
-  const _CategoryTile({required this.category, required this.amount});
+  const _CategoryTile({required this.item, required this.percentage});
 
-  final CategoryModel category;
-  final double amount;
+  final CategoryReportItem item;
+  final double percentage;
 
   @override
   Widget build(BuildContext context) {
-    final color = Color(category.color);
+    final color = Color(item.color);
 
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: CircleAvatar(
         backgroundColor: color.withValues(alpha: 0.12),
-        child: Text(category.icon, style: const TextStyle(fontSize: 18)),
+        child: Text(item.icon, style: const TextStyle(fontSize: 18)),
       ),
-      title: Text(category.name, maxLines: 1, overflow: TextOverflow.ellipsis),
-      trailing: Text(
-        _formatCurrency(amount),
-        style: Theme.of(
-          context,
-        ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+      title: Text(item.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+      subtitle: Text('${item.transactionCount} transactions'),
+      trailing: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            '₹${item.amount.toStringAsFixed(2)}',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+          ),
+          Text(
+            '${(percentage * 100).toStringAsFixed(1)}%',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
       ),
     );
-  }
-
-  String _formatCurrency(double value) {
-    return '₹${value.toStringAsFixed(2)}';
   }
 }
