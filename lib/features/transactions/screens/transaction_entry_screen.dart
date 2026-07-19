@@ -14,10 +14,9 @@ import '../widgets/payment_dropdown.dart';
 import '../widgets/quick_entry_card.dart';
 import '../widgets/save_transaction_button.dart';
 import '../widgets/type_dropdown.dart';
-import '../services/transaction_parser.dart';
+import '../../parser/services/transaction_parser.dart';
 import '../../../core/database/database_helper.dart';
 import '../../categories/repositories/category_repository.dart';
-import '../repositories/transaction_learning_repository.dart';
 import '../../payment_modes/screens/payment_mode_screen.dart';
 import '../../payment_modes/repositories/payment_mode_repository.dart';
 import '../models/transaction_model.dart';
@@ -98,12 +97,8 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
     super.initState();
 
     _transactionParser = TransactionParser(
-      learningRepository: TransactionLearningRepository(
-        DatabaseHelper.instance,
-      ),
       categoryRepository: CategoryRepository(DatabaseHelper.instance),
     );
-
     _loadCategories();
     _loadPaymentModes();
 
@@ -314,6 +309,13 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
       setState(() {
         _amountController.text = parsed.amount!.toStringAsFixed(0);
       });
+    }
+    if (parsed.transactionType != null) {
+      setState(() {
+        _selectedType = parsed.transactionType!;
+      });
+
+      await _loadCategories();
     }
   }
 
