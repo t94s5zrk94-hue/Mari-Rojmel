@@ -18,7 +18,7 @@ class DatabaseConstants {
 
   static const String databaseName = 'mari_rojmel.db';
 
-  static const int databaseVersion = 5;
+  static const int databaseVersion = 6;
 
   // ==========================================================
   // Common Columns
@@ -118,4 +118,18 @@ class DatabaseConstants {
   static const String columnUserAddress = 'address';
   static const String columnUserCreatedAt = 'created_at';
   static const String columnUserUpdatedAt = 'updated_at';
+
+  static const String appSettingsTable = 'app_settings';
+
+  static const String columnSettingsId = 'id';
+
+  static const String columnThemeMode = 'theme_mode';
+
+  static const String columnLanguage = 'language';
+
+  static const String columnCurrencySymbol = 'currency_symbol';
+
+  static const String columnDateFormat = 'date_format';
+
+  static const String columnNotificationsEnabled = 'notifications_enabled';
 }

@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'about_screen.dart';
 import 'profile_screen.dart';
 import '../repositories/account_repository.dart';
+import '../../settings/screens/settings_screen.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key, required this.repository});
@@ -112,7 +113,13 @@ class _AccountScreenState extends State<AccountScreen> {
                     leading: const Icon(Icons.settings_outlined),
                     title: const Text('App Settings'),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () => _showComingSoon('App Settings'),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const SettingsScreen(),
+                        ),
+                      );
+                    },
                   ),
                   const Divider(height: 1),
                   ListTile(

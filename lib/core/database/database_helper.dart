@@ -71,6 +71,7 @@ class DatabaseHelper {
     await _createPaymentModesTable(db);
     await _createTransactionLearningTable(db);
     await _createUserProfileTable(db);
+    await _createAppSettingsTable(db);
     await _createIndexes(db);
   }
 
@@ -90,6 +91,37 @@ class DatabaseHelper {
     if (oldVersion < 5) {
       await _createUserProfileTable(db);
     }
+
+    if (oldVersion < 6) {
+      await _createAppSettingsTable(db);
+    }
+  }
+
+  // ==========================================================
+  // App Settings Table
+  // ==========================================================
+
+  Future<void> _createAppSettingsTable(Database db) async {
+    await db.execute('''
+    CREATE TABLE IF NOT EXISTS ${DatabaseConstants.appSettingsTable} (
+      ${DatabaseConstants.columnSettingsId} INTEGER PRIMARY KEY,
+
+      ${DatabaseConstants.columnThemeMode} TEXT NOT NULL,
+
+      ${DatabaseConstants.columnLanguage} TEXT NOT NULL,
+
+      ${DatabaseConstants.columnCurrencySymbol} TEXT NOT NULL,
+
+      ${DatabaseConstants.columnDateFormat} TEXT NOT NULL,
+
+      ${DatabaseConstants.columnNotificationsEnabled}
+      INTEGER NOT NULL DEFAULT 1,
+
+      ${DatabaseConstants.createdAt} TEXT NOT NULL,
+
+      ${DatabaseConstants.updatedAt} TEXT NOT NULL
+    )
+  ''');
   }
   // ==========================================================
   // Transactions Table
