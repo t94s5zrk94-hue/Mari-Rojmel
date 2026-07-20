@@ -40,6 +40,7 @@ class DefaultPaymentModeException implements Exception {
 abstract class IPaymentModeRepository {
   Future<List<PaymentModeModel>> getActive();
   Future<List<PaymentModeModel>> search(String keyword);
+  Future<PaymentModeModel?> getDefaultPayment();
   Future<PaymentModeModel?> getById(int id);
   Future<bool> existsByName(String name, {int? excludeId});
   Future<bool> insert(PaymentModeModel model);
@@ -94,6 +95,27 @@ class PaymentModeRepository implements IPaymentModeRepository {
       orderBy: '$colSortOrder ASC',
     );
     return results.map((e) => _mapToModel(e)).toList();
+  }
+
+  @override
+  Future<PaymentModeModel?> getDefaultPayment() async {
+    final db = await _dbHelper.database;
+
+    final result = await db.query(
+      _tableName,
+      where:
+          '''
+      $colIsDefault = 1
+      AND $colIsActive = 1
+    ''',
+      limit: 1,
+    );
+
+    if (result.isEmpty) {
+      return null;
+    }
+
+    return _mapToModel(result.first);
   }
 
   @override

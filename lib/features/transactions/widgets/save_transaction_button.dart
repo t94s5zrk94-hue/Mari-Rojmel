@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class SaveTransactionButton extends StatelessWidget {
   const SaveTransactionButton({
@@ -26,7 +27,9 @@ class SaveTransactionButton extends StatelessWidget {
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
             : const Icon(Icons.save),
-        label: Text(isSaving ? 'Saving...' : 'Save Transaction'),
+        label: Text(
+          isSaving ? AppLocalizations.of(context)!.saving : buttonText,
+        ),
       ),
     );
   }

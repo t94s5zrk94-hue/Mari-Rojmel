@@ -20,7 +20,9 @@ import '../../categories/repositories/category_repository.dart';
 import '../../payment_modes/screens/payment_mode_screen.dart';
 import '../../payment_modes/repositories/payment_mode_repository.dart';
 import '../models/transaction_model.dart';
-import '../repositories/transaction_repository.dart';
+import '../repositories/transaction_learning_repository.dart';
+import '../services/transaction_service.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class TransactionEntryScreen extends StatefulWidget {
   const TransactionEntryScreen({super.key, this.transaction});
@@ -56,9 +58,7 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
   final List<PaymentModeModel> _paymentModes = <PaymentModeModel>[];
 
   late final TransactionParser _transactionParser;
-  final TransactionRepository _transactionRepository =
-      TransactionRepository.instance;
-
+  final TransactionService _transactionService = TransactionService.instance;
   final CategoryRepository _categoryRepository = CategoryRepository(
     DatabaseHelper.instance,
   );
@@ -98,9 +98,15 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
 
     _transactionParser = TransactionParser(
       categoryRepository: CategoryRepository(DatabaseHelper.instance),
+      paymentModeRepository: PaymentModeRepository(DatabaseHelper.instance),
+      learningRepository: TransactionLearningRepository(
+        DatabaseHelper.instance,
+      ),
     );
-    _loadCategories();
-    _loadPaymentModes();
+    Future.microtask(() async {
+      await _loadCategories();
+      await _loadPaymentModes();
+    });
 
     if (widget.isEdit) {
       _loadExistingTransaction();
@@ -135,7 +141,11 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Text(widget.isEdit ? 'Edit Transaction' : 'Add Transaction'),
+        title: Text(
+          widget.isEdit
+              ? AppLocalizations.of(context)!.editTransaction
+              : AppLocalizations.of(context)!.addTransaction,
+        ),
       ),
       body: SafeArea(
         child: LayoutBuilder(
@@ -224,8 +234,8 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
                     SaveTransactionButton(
                       isSaving: _isSaving,
                       buttonText: widget.isEdit
-                          ? "Update Transaction"
-                          : "Save Transaction",
+                          ? AppLocalizations.of(context)!.updateTransaction
+                          : AppLocalizations.of(context)!.saveTransaction,
                       onPressed: _saveTransaction,
                     ),
                   ],
@@ -240,18 +250,11 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
 
   Future<void> _saveTransaction() async {
     try {
-      debugPrint("===== SAVE START =====");
-
       if (_selectedCategory == null || _selectedPaymentMode == null) {
-        debugPrint("Category or PaymentMode is null");
         return;
       }
 
       final amount = double.tryParse(_amountController.text.trim());
-
-      debugPrint("Amount = $amount");
-      debugPrint("Category = ${_selectedCategory!.id}");
-      debugPrint("Payment = ${_selectedPaymentMode!.id}");
 
       final model = TransactionModel(
         id: null,
@@ -266,27 +269,25 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
         isDeleted: false,
       );
 
-      debugPrint("Before Insert");
-
       bool success;
 
       if (widget.isEdit) {
-        success = await _transactionRepository.update(
+        success = await _transactionService.updateTransaction(
           model.copyWith(
             id: widget.transaction!.id,
             createdAt: widget.transaction!.createdAt,
           ),
         );
       } else {
-        success = await _transactionRepository.insert(model);
+        success = await _transactionService.saveAndLearn(
+          transaction: model,
+          originalInput: _quickEntryController.text.trim(),
+        );
       }
-
-      debugPrint("Insert Result = $success");
 
       if (!mounted) return;
 
       if (success) {
-        debugPrint("Navigator Pop");
         Navigator.pop(context, true);
       }
     } catch (e, s) {
@@ -302,20 +303,36 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
 
     final parsed = await _transactionParser.parse(value);
 
-    debugPrint('Input : $value');
-    debugPrint('Amount : ${parsed.amount}');
-
     if (parsed.amount != null) {
       setState(() {
         _amountController.text = parsed.amount!.toStringAsFixed(0);
       });
     }
+
     if (parsed.transactionType != null) {
       setState(() {
         _selectedType = parsed.transactionType!;
       });
 
       await _loadCategories();
+    }
+
+    if (parsed.category != null) {
+      final selected = _categories
+          .where((e) => e.id == parsed.category!.id)
+          .firstOrNull;
+
+      if (selected != null) {
+        setState(() {
+          _selectedCategory = selected;
+        });
+      }
+    }
+
+    if (parsed.paymentMode != null) {
+      setState(() {
+        _selectedPaymentMode = parsed.paymentMode;
+      });
     }
   }
 
@@ -324,8 +341,15 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
       transactionType: _selectedType,
     );
 
-    if (!mounted) return;
+    final defaultCategory = await _categoryRepository.getDefaultCategory(
+      _selectedType,
+    );
+    for (final category in _categories) {
+      debugPrint('Category: ${category.id} - ${category.name}');
+    }
 
+    if (!mounted) return;
+    debugPrint('Category Count = ${_categories.length}');
     setState(() {
       _categories
         ..clear()
@@ -336,14 +360,21 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
           (e) => e?.id == widget.transaction!.categoryId,
           orElse: () => null,
         );
+      } else {
+        _selectedCategory ??= _categories.cast<CategoryModel?>().firstWhere(
+          (e) => e?.id == defaultCategory?.id,
+          orElse: () => null,
+        );
       }
     });
   }
 
   Future<void> _loadPaymentModes() async {
-    final paymentModes = await PaymentModeRepository(
-      DatabaseHelper.instance,
-    ).getActive();
+    final repository = PaymentModeRepository(DatabaseHelper.instance);
+
+    final paymentModes = await repository.getActive();
+
+    final defaultPayment = await repository.getDefaultPayment();
 
     if (!mounted) return;
 
@@ -359,6 +390,10 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
               (e) => e?.id == widget.transaction!.paymentModeId,
               orElse: () => null,
             );
+      } else {
+        _selectedPaymentMode ??= _paymentModes
+            .cast<PaymentModeModel?>()
+            .firstWhere((e) => e?.id == defaultPayment?.id, orElse: () => null);
       }
     });
   }

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-
+import '../../../l10n/generated/app_localizations.dart';
 import '../models/payment_mode_model.dart';
 import '../repositories/payment_mode_repository.dart';
 
@@ -115,7 +115,7 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
       } on Exception {
         if (!mounted) return;
 
-        _showSnackBar('Unable to search payment modes.');
+        _showSnackBar(AppLocalizations.of(context)!.searchError);
       }
     });
   }
@@ -131,6 +131,7 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
   }
 
   Future<void> _showAddDialog() async {
+    final l10n = AppLocalizations.of(context)!;
     final formKey = GlobalKey<FormState>();
     final nameController = TextEditingController();
 
@@ -148,7 +149,7 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
           ),
           contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
           actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          title: const Text('Add Payment Mode'),
+          title: Text(l10n.addPaymentMode),
           content: Form(
             key: formKey,
             child: TextFormField(
@@ -158,15 +159,15 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
               maxLength: 50,
               textCapitalization: TextCapitalization.words,
               textInputAction: TextInputAction.done,
-              decoration: const InputDecoration(
-                labelText: 'Payment Mode Name',
-                hintText: 'e.g. Credit Card',
-                prefixIcon: Icon(Icons.account_balance_wallet_outlined),
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.paymentModeName,
+                hintText: l10n.paymentModeNameHint,
+                prefixIcon: const Icon(Icons.account_balance_wallet_outlined),
+                border: const OutlineInputBorder(),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Payment mode name is required';
+                  return l10n.paymentModeRequired;
                 }
 
                 return null;
@@ -181,7 +182,7 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
               onPressed: () {
                 Navigator.of(dialogContext).pop(false);
               },
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () async {
@@ -214,14 +215,14 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
 
                   Navigator.of(dialogContext).pop(success);
                 } on DuplicatePaymentModeException {
-                  _showSnackBar('Payment mode already exists.');
+                  _showSnackBar(l10n.paymentModeAlreadyExists);
                 } catch (e) {
                   if (!dialogContext.mounted) return;
 
-                  _showSnackBar(e.toString());
+                  _showSnackBar(l10n.paymentModeAddFailed);
                 }
               },
-              child: const Text('Save'),
+              child: Text(l10n.save),
             ),
           ],
         );
@@ -233,11 +234,12 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
 
       if (!mounted) return;
 
-      _showSnackBar('Payment mode added successfully.');
+      _showSnackBar(l10n.paymentModeAdded);
     }
   }
 
   Future<void> _showEditDialog(PaymentModeModel model) async {
+    final l10n = AppLocalizations.of(context)!;
     final formKey = GlobalKey<FormState>();
     final nameController = TextEditingController(text: model.name);
 
@@ -255,7 +257,7 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
           ),
           contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
           actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          title: const Text('Edit Payment Mode'),
+          title: Text(l10n.editPaymentMode),
           content: Form(
             key: formKey,
             child: TextFormField(
@@ -264,14 +266,14 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
               maxLength: 50,
               textCapitalization: TextCapitalization.words,
               textInputAction: TextInputAction.done,
-              decoration: const InputDecoration(
-                labelText: 'Payment Mode Name',
+              decoration: InputDecoration(
+                labelText: l10n.paymentModeName,
                 prefixIcon: Icon(Icons.account_balance_wallet_outlined),
                 border: OutlineInputBorder(),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Payment mode name is required';
+                  return l10n.paymentModeRequired;
                 }
 
                 return null;
@@ -283,7 +285,7 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
               onPressed: () {
                 Navigator.of(dialogContext).pop(false);
               },
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () async {
@@ -310,14 +312,14 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
 
                   Navigator.of(dialogContext).pop(success);
                 } on DuplicatePaymentModeException {
-                  _showSnackBar('Payment mode already exists.');
+                  _showSnackBar(l10n.paymentModeAlreadyExists);
                 } on DefaultPaymentModeException {
-                  _showSnackBar('Default payment modes cannot be modified.');
+                  _showSnackBar(l10n.paymentModeUpdateFailed);
                 } on Exception {
-                  _showSnackBar('Unable to update payment mode.');
+                  _showSnackBar(l10n.paymentModeUpdateFailed);
                 }
               },
-              child: const Text('Save'),
+              child: Text(l10n.save),
             ),
           ],
         );
@@ -329,13 +331,14 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
 
       if (!mounted) return;
 
-      _showSnackBar('Payment mode updated successfully.');
+      _showSnackBar(l10n.paymentModeUpdated);
     }
   }
 
   Future<void> _handleDelete(PaymentModeModel model) async {
+    final l10n = AppLocalizations.of(context)!;
     if (model.id == null) {
-      _showSnackBar('Invalid payment mode.');
+      _showSnackBar(l10n.invalidPaymentMode);
       return;
     }
 
@@ -345,7 +348,7 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
       if (!mounted) return;
 
       if (!success) {
-        _showSnackBar('Unable to delete payment mode.');
+        _showSnackBar(l10n.paymentModeDeleteFailed);
         return;
       }
 
@@ -355,9 +358,9 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${model.name} deleted.'),
+          content: Text(l10n.paymentModeDeleted(model.name)),
           action: SnackBarAction(
-            label: 'UNDO',
+            label: l10n.undo,
             onPressed: () async {
               try {
                 await widget.repository.restore(model.id!);
@@ -368,18 +371,18 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
 
                 if (!mounted) return;
 
-                _showSnackBar('Payment mode restored.');
+                _showSnackBar(l10n.paymentModeRestored);
               } on Exception {
-                _showSnackBar('Unable to restore payment mode.');
+                _showSnackBar(l10n.paymentModeRestoreFailed);
               }
             },
           ),
         ),
       );
     } on DefaultPaymentModeException {
-      _showSnackBar('Default payment modes cannot be deleted.');
+      _showSnackBar(l10n.defaultPaymentModeDeleteProtected);
     } on Exception {
-      _showSnackBar('Unable to delete payment mode.');
+      _showSnackBar(l10n.paymentModeDeleteFailed);
     }
   }
 
@@ -388,12 +391,12 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
     child: SearchBar(
       controller: _searchController,
       focusNode: _searchFocusNode,
-      hintText: 'Search payment modes...',
+      hintText: AppLocalizations.of(context)!.searchPaymentModes,
       leading: const Icon(Icons.search),
       trailing: _searchController.text.isNotEmpty
           ? [
               IconButton(
-                tooltip: 'Clear search',
+                tooltip: AppLocalizations.of(context)!.clearSearch,
                 icon: const Icon(Icons.clear),
                 onPressed: _clearSearch,
               ),
@@ -422,18 +425,21 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
         leading: Text(model.icon, style: const TextStyle(fontSize: 24)),
         title: Text(model.name),
         subtitle: model.isDefault
-            ? const Align(
+            ? Align(
                 alignment: Alignment.centerLeft,
                 child: Chip(
-                  label: Text('DEFAULT', style: TextStyle(fontSize: 10)),
+                  label: Text(
+                    AppLocalizations.of(context)!.defaultLabel,
+                    style: TextStyle(fontSize: 10),
+                  ),
                   visualDensity: VisualDensity.compact,
                 ),
               )
             : null,
         trailing: Tooltip(
           message: model.isDefault
-              ? 'Default payment modes are protected'
-              : 'More actions',
+              ? AppLocalizations.of(context)!.protectedLabel
+              : AppLocalizations.of(context)!.actions,
           child: PopupMenuButton<_MenuAction>(
             onSelected: (action) {
               switch (action) {
@@ -452,18 +458,18 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
               PopupMenuItem<_MenuAction>(
                 value: _MenuAction.edit,
                 enabled: !model.isDefault,
-                child: const ListTile(
-                  leading: Icon(Icons.edit),
-                  title: Text('Edit'),
+                child: ListTile(
+                  leading: const Icon(Icons.edit),
+                  title: Text(AppLocalizations.of(context)!.edit),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
               PopupMenuItem<_MenuAction>(
                 value: _MenuAction.delete,
                 enabled: !model.isDefault,
-                child: const ListTile(
-                  leading: Icon(Icons.delete),
-                  title: Text('Delete'),
+                child: ListTile(
+                  leading: const Icon(Icons.delete),
+                  title: Text(AppLocalizations.of(context)!.delete),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
@@ -482,9 +488,9 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
         children: [
           const Icon(Icons.error_outline, size: 56, color: Colors.red),
           const SizedBox(height: 16),
-          const Text(
-            'Something went wrong',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          Text(
+            AppLocalizations.of(context)!.paymentModeLoadError,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(_errorMessage ?? 'Unknown error', textAlign: TextAlign.center),
@@ -492,7 +498,7 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
           FilledButton.icon(
             onPressed: _loadData,
             icon: const Icon(Icons.refresh),
-            label: const Text('Retry'),
+            label: Text(AppLocalizations.of(context)!.retry),
           ),
         ],
       ),
@@ -507,20 +513,20 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
         children: [
           const Icon(Icons.account_balance_wallet_outlined, size: 56),
           const SizedBox(height: 16),
-          const Text(
-            'No Payment Modes',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          Text(
+            AppLocalizations.of(context)!.noPaymentModesYet,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Create your first payment mode.',
+          Text(
+            AppLocalizations.of(context)!.createFirstPaymentMode,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
           FilledButton.icon(
             onPressed: _showAddDialog,
             icon: const Icon(Icons.add),
-            label: const Text('Add Payment Mode'),
+            label: Text(AppLocalizations.of(context)!.addPaymentMode),
           ),
         ],
       ),
@@ -530,14 +536,16 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Payment Modes (${_paymentModes.length})'),
+        title: Text(
+          '${AppLocalizations.of(context)!.paymentModes} (${_paymentModes.length})',
+        ),
         centerTitle: false,
       ),
       floatingActionButton: FloatingActionButton.extended(
-        tooltip: 'Add Payment Mode',
+        tooltip: AppLocalizations.of(context)!.addPaymentMode,
         onPressed: _showAddDialog,
         icon: const Icon(Icons.add),
-        label: const Text('Add'),
+        label: Text(AppLocalizations.of(context)!.add),
       ),
       body: SafeArea(
         child: Column(

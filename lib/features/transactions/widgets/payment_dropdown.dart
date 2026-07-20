@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../../l10n/generated/app_localizations.dart';
 import '../../payment_modes/models/payment_mode_model.dart';
 
 class PaymentDropdown extends StatelessWidget {
@@ -27,9 +27,10 @@ class PaymentDropdown extends StatelessWidget {
         Expanded(
           child: DropdownButtonFormField<PaymentModeModel>(
             initialValue: selectedPaymentMode,
-            decoration: const InputDecoration(
-              labelText: 'Payment',
-              border: OutlineInputBorder(),
+
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.paymentModes,
+              border: const OutlineInputBorder(),
             ),
             items: paymentModes
                 .map(
@@ -46,7 +47,7 @@ class PaymentDropdown extends StatelessWidget {
         const SizedBox(width: 8),
 
         IconButton(
-          tooltip: 'Add Payment Mode',
+          tooltip: AppLocalizations.of(context)!.addPaymentMode,
           onPressed: onAddPaymentMode,
           icon: const Icon(Icons.add_circle_outline),
         ),

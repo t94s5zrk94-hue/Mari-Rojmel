@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../../l10n/generated/app_localizations.dart';
 import '../models/report_summary.dart';
 
 /// ==========================================================
@@ -12,10 +12,7 @@ import '../models/report_summary.dart';
 /// ==========================================================
 
 class ReportSummaryCard extends StatelessWidget {
-  const ReportSummaryCard({
-    super.key,
-    required this.summary,
-  });
+  const ReportSummaryCard({super.key, required this.summary});
 
   final ReportSummary summary;
 
@@ -36,20 +33,17 @@ class ReportSummaryCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Report Summary',
+                    AppLocalizations.of(context)!.reportSummary,
                     style: theme.textTheme.titleLarge,
                   ),
+
                   const SizedBox(height: 20),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: _buildColumnOne(theme),
-                      ),
+                      Expanded(child: _buildColumnOne(context, theme)),
                       const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildColumnTwo(theme),
-                      ),
+                      Expanded(child: _buildColumnTwo(context, theme)),
                     ],
                   ),
                 ],
@@ -60,13 +54,13 @@ class ReportSummaryCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Report Summary',
+                  AppLocalizations.of(context)!.reportSummary,
                   style: theme.textTheme.titleLarge,
                 ),
                 const SizedBox(height: 20),
-                _buildColumnOne(theme),
+                _buildColumnOne(context, theme),
                 const SizedBox(height: 12),
-                _buildColumnTwo(theme),
+                _buildColumnTwo(context, theme),
               ],
             );
           },
@@ -75,32 +69,32 @@ class ReportSummaryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildColumnOne(ThemeData theme) {
+  Widget _buildColumnOne(BuildContext context, ThemeData theme) {
     return Column(
       children: [
         _SummaryTile(
-          title: 'Total Income',
+          title: AppLocalizations.of(context)!.totalIncome,
           value: summary.totalIncome,
           color: Colors.green,
           icon: Icons.trending_up,
         ),
         const SizedBox(height: 12),
         _SummaryTile(
-          title: 'Total Expense',
+          title: AppLocalizations.of(context)!.totalExpense,
           value: summary.totalExpense,
           color: Colors.red,
           icon: Icons.trending_down,
         ),
         const SizedBox(height: 12),
         _SummaryTile(
-          title: 'Net Balance',
+          title: AppLocalizations.of(context)!.netBalance,
           value: summary.netBalance,
           color: Colors.blue,
           icon: Icons.account_balance_wallet,
         ),
         const SizedBox(height: 12),
         _SummaryTile(
-          title: 'Transactions',
+          title: AppLocalizations.of(context)!.totalTransactions,
           value: summary.totalTransactions.toDouble(),
           color: Colors.deepPurple,
           icon: Icons.receipt_long,
@@ -110,32 +104,32 @@ class ReportSummaryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildColumnTwo(ThemeData theme) {
+  Widget _buildColumnTwo(BuildContext context, ThemeData theme) {
     return Column(
       children: [
         _SummaryTile(
-          title: 'Highest Income',
+          title: AppLocalizations.of(context)!.highestIncome,
           value: summary.highestIncome,
           color: Colors.teal,
           icon: Icons.arrow_circle_up,
         ),
         const SizedBox(height: 12),
         _SummaryTile(
-          title: 'Highest Expense',
+          title: AppLocalizations.of(context)!.highestExpense,
           value: summary.highestExpense,
           color: Colors.orange,
           icon: Icons.arrow_circle_down,
         ),
         const SizedBox(height: 12),
         _SummaryTile(
-          title: 'Average Income',
+          title: AppLocalizations.of(context)!.averageIncome,
           value: summary.averageIncome,
           color: Colors.green,
           icon: Icons.bar_chart,
         ),
         const SizedBox(height: 12),
         _SummaryTile(
-          title: 'Average Expense',
+          title: AppLocalizations.of(context)!.averageExpense,
           value: summary.averageExpense,
           color: Colors.red,
           icon: Icons.stacked_bar_chart,
@@ -143,7 +137,7 @@ class ReportSummaryCard extends StatelessWidget {
       ],
     );
   }
-  }
+}
 
 class _SummaryTile extends StatelessWidget {
   const _SummaryTile({
@@ -169,35 +163,25 @@ class _SummaryTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withValues(alpha: 0.20),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.20)),
       ),
       child: Row(
         children: [
           CircleAvatar(
             radius: 22,
             backgroundColor: color.withValues(alpha: 0.15),
-            child: Icon(
-              icon,
-              color: color,
-            ),
+            child: Icon(icon, color: color),
           ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: theme.textTheme.bodyMedium,
-                ),
+                Text(title, style: theme.textTheme.bodyMedium),
                 const SizedBox(height: 4),
                 Text(
                   _formatValue(),
-                  style: theme.textTheme.titleMedium
-                      ?.copyWith(
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),

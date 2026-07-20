@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -12,7 +13,7 @@ class AboutScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('About')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.about)),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(16),
@@ -44,7 +45,7 @@ class AboutScreen extends StatelessWidget {
 
             Center(
               child: Text(
-                'Version $_appVersion',
+                AppLocalizations.of(context)!.versionLabel(_appVersion),
                 style: theme.textTheme.bodyMedium,
               ),
             ),
@@ -53,7 +54,7 @@ class AboutScreen extends StatelessWidget {
 
             Center(
               child: Text(
-                'Gujarati Digital Expense & Income Manager',
+                AppLocalizations.of(context)!.appTagline,
                 style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
@@ -63,10 +64,10 @@ class AboutScreen extends StatelessWidget {
 
             Card(
               child: Column(
-                children: const [
+                children: [
                   ListTile(
                     leading: Icon(Icons.person_outline),
-                    title: Text('Developer'),
+                    title: Text(AppLocalizations.of(context)!.developer),
                     subtitle: Text(_developerName),
                   ),
                 ],
@@ -80,28 +81,28 @@ class AboutScreen extends StatelessWidget {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.privacy_tip_outlined),
-                    title: const Text('Privacy Policy'),
+                    title: Text(AppLocalizations.of(context)!.privacyPolicy),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {},
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.description_outlined),
-                    title: const Text('Terms & Conditions'),
+                    title: Text(AppLocalizations.of(context)!.termsConditions),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {},
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.share_outlined),
-                    title: const Text('Share App'),
+                    title: Text(AppLocalizations.of(context)!.shareApp),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {},
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.star_outline),
-                    title: const Text('Rate App'),
+                    title: Text(AppLocalizations.of(context)!.rateApp),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {},
                   ),
@@ -113,7 +114,7 @@ class AboutScreen extends StatelessWidget {
 
             Center(
               child: Text(
-                '© 2026 Mari-Rojmel',
+                AppLocalizations.of(context)!.copyright,
                 style: theme.textTheme.bodySmall,
               ),
             ),
@@ -122,7 +123,7 @@ class AboutScreen extends StatelessWidget {
 
             Center(
               child: Text(
-                'Made with ❤️ in India',
+                AppLocalizations.of(context)!.madeInIndia,
                 style: theme.textTheme.bodySmall,
               ),
             ),

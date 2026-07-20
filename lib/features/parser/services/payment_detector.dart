@@ -11,7 +11,15 @@
 
 import '../constants/parser_keywords.dart';
 
-enum DetectedPaymentType { cash, upi, bank, card, unknown }
+enum DetectedPaymentType {
+  cash,
+  upi,
+  bank,
+  debitCard,
+  creditCard,
+  cheque,
+  unknown,
+}
 
 class PaymentDetector {
   const PaymentDetector._();
@@ -24,20 +32,34 @@ class PaymentDetector {
     for (final token in tokens) {
       final normalized = token.trim().toLowerCase();
 
-      if (_contains(ParserKeywords.cashKeywords, normalized)) {
-        return DetectedPaymentType.cash;
+      // Credit Card
+      if (_contains(ParserKeywords.creditCardKeywords, normalized)) {
+        return DetectedPaymentType.creditCard;
       }
 
+      // Debit Card
+      if (_contains(ParserKeywords.debitCardKeywords, normalized)) {
+        return DetectedPaymentType.debitCard;
+      }
+
+      // UPI
       if (_contains(ParserKeywords.upiKeywords, normalized)) {
         return DetectedPaymentType.upi;
       }
 
+      // Bank Transfer
       if (_contains(ParserKeywords.bankKeywords, normalized)) {
         return DetectedPaymentType.bank;
       }
 
-      if (_contains(ParserKeywords.cardKeywords, normalized)) {
-        return DetectedPaymentType.card;
+      // Cheque
+      if (_contains(ParserKeywords.chequeKeywords, normalized)) {
+        return DetectedPaymentType.cheque;
+      }
+
+      // Cash
+      if (_contains(ParserKeywords.cashKeywords, normalized)) {
+        return DetectedPaymentType.cash;
       }
     }
 
@@ -60,10 +82,12 @@ class PaymentDetector {
     for (final token in tokens) {
       final normalized = token.trim().toLowerCase();
 
-      if (_contains(ParserKeywords.cashKeywords, normalized) ||
+      if (_contains(ParserKeywords.creditCardKeywords, normalized) ||
+          _contains(ParserKeywords.debitCardKeywords, normalized) ||
           _contains(ParserKeywords.upiKeywords, normalized) ||
           _contains(ParserKeywords.bankKeywords, normalized) ||
-          _contains(ParserKeywords.cardKeywords, normalized)) {
+          _contains(ParserKeywords.chequeKeywords, normalized) ||
+          _contains(ParserKeywords.cashKeywords, normalized)) {
         return token;
       }
     }

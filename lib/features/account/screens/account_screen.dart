@@ -8,7 +8,7 @@
 // Flutter 3.x
 // Material 3
 // ===============================================================
-
+import '../../../l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'about_screen.dart';
 import 'profile_screen.dart';
@@ -50,9 +50,9 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   void _showComingSoon(String title) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('$title will be available soon.')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context)!.comingSoon(title))),
+    );
   }
 
   // ==========================================================
@@ -63,11 +63,11 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Account'),
+        title: Text(AppLocalizations.of(context)!.account),
         centerTitle: true,
         actions: [
           IconButton(
-            tooltip: 'Refresh',
+            tooltip: AppLocalizations.of(context)!.refresh,
             icon: const Icon(Icons.refresh),
             onPressed: () {
               setState(() {});
@@ -79,15 +79,17 @@ class _AccountScreenState extends State<AccountScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
           children: [
-            _buildSectionTitle('Profile'),
+            _buildSectionTitle(AppLocalizations.of(context)!.profile),
             const SizedBox(height: 8),
             Card(
               child: Column(
                 children: [
                   ListTile(
                     leading: const CircleAvatar(child: Icon(Icons.person)),
-                    title: const Text('Profile'),
-                    subtitle: const Text('Manage your personal information'),
+                    title: Text(AppLocalizations.of(context)!.profile),
+                    subtitle: Text(
+                      AppLocalizations.of(context)!.profileDescription,
+                    ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: _openProfile,
                   ),
@@ -98,20 +100,20 @@ class _AccountScreenState extends State<AccountScreen> {
             Card(
               child: ListTile(
                 leading: const Icon(Icons.info_outline),
-                title: const Text('Version'),
+                title: Text(AppLocalizations.of(context)!.version),
                 subtitle: const Text(_appVersion),
                 enabled: false,
               ),
             ),
             const SizedBox(height: 24),
-            _buildSectionTitle('Application'),
+            _buildSectionTitle(AppLocalizations.of(context)!.application),
             const SizedBox(height: 8),
             Card(
               child: Column(
                 children: [
                   ListTile(
                     leading: const Icon(Icons.settings_outlined),
-                    title: const Text('App Settings'),
+                    title: Text(AppLocalizations.of(context)!.appSettings),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
                       Navigator.of(context).push(
@@ -124,14 +126,14 @@ class _AccountScreenState extends State<AccountScreen> {
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.backup_outlined),
-                    title: const Text('Backup & Restore'),
+                    title: Text(AppLocalizations.of(context)!.backupRestore),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => _showComingSoon('Backup & Restore'),
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.info_outline),
-                    title: const Text('About'),
+                    title: Text(AppLocalizations.of(context)!.about),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
                       Navigator.of(context).push(

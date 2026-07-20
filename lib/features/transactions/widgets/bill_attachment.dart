@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import '../../../l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class BillAttachment extends StatelessWidget {
@@ -25,7 +25,7 @@ class BillAttachment extends StatelessWidget {
         OutlinedButton.icon(
           onPressed: onGalleryTap,
           icon: const Icon(Icons.attach_file),
-          label: const Text('Add Bill'),
+          label: Text(AppLocalizations.of(context)!.addBill),
         ),
 
         const SizedBox(height: 12),
@@ -48,7 +48,7 @@ class BillAttachment extends StatelessWidget {
               TextButton.icon(
                 onPressed: onRemoveTap,
                 icon: const Icon(Icons.delete_outline),
-                label: const Text('Remove Bill'),
+                label: Text(AppLocalizations.of(context)!.removeBill),
               ),
             ],
           ),

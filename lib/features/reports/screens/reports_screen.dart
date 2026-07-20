@@ -16,6 +16,7 @@ import '../models/category_report_item.dart';
 import '../models/payment_mode_report_item.dart';
 import '../widgets/category_report.dart';
 import '../widgets/payment_mode_report.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -114,7 +115,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
     if (_errorMessage != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Reports'), centerTitle: false),
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context)!.reports),
+          centerTitle: false,
+        ),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -128,7 +132,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Unable to load reports',
+                  AppLocalizations.of(context)!.unableToLoadReports,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 8),
@@ -137,7 +141,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 FilledButton.icon(
                   onPressed: _refresh,
                   icon: const Icon(Icons.refresh),
-                  label: const Text('Retry'),
+                  label: Text(AppLocalizations.of(context)!.retry),
                 ),
               ],
             ),
@@ -149,7 +153,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
     final summary = _summary!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Reports'), centerTitle: false),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.reports),
+        centerTitle: false,
+      ),
       body: RefreshIndicator(
         onRefresh: _refresh,
         child: ListView(

@@ -6,6 +6,7 @@ import '../../reports/screens/reports_screen.dart';
 import '../../account/screens/account_screen.dart';
 import '../../account/repositories/account_repository.dart';
 import '../../../core/database/database_helper.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,21 +18,34 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
-    const DashboardScreen(),
+  Widget _buildPage() {
+    switch (_currentIndex) {
+      case 0:
+        return const DashboardScreen();
 
-    const ReportsScreen(),
+      case 1:
+        return const ReportsScreen();
 
-    const SizedBox.shrink(),
+      case 2:
+        return const SizedBox.shrink();
 
-    const TransactionsScreen(),
+      case 3:
+        return const TransactionsScreen();
 
-    AccountScreen(repository: AccountRepository(DatabaseHelper.instance)),
-  ];
+      case 4:
+        return AccountScreen(
+          repository: AccountRepository(DatabaseHelper.instance),
+        );
+
+      default:
+        return const DashboardScreen();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_currentIndex],
+      body: _buildPage(),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (index) async {
@@ -56,31 +70,31 @@ class _HomeScreenState extends State<HomeScreen> {
             _currentIndex = index;
           });
         },
-        destinations: const [
+        destinations: [
           NavigationDestination(
             icon: Icon(Icons.dashboard_outlined),
             selectedIcon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+            label: AppLocalizations.of(context)!.navDashboard,
           ),
           NavigationDestination(
             icon: Icon(Icons.bar_chart_outlined),
             selectedIcon: Icon(Icons.bar_chart),
-            label: 'Reports',
+            label: AppLocalizations.of(context)!.navReports,
           ),
           NavigationDestination(
             icon: Icon(Icons.add_circle_outline),
             selectedIcon: Icon(Icons.add_circle),
-            label: 'Add',
+            label: AppLocalizations.of(context)!.navAdd,
           ),
           NavigationDestination(
             icon: Icon(Icons.receipt_long_outlined),
             selectedIcon: Icon(Icons.receipt_long),
-            label: 'Transactions',
+            label: AppLocalizations.of(context)!.navTransactions,
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person),
-            label: 'Account',
+            label: AppLocalizations.of(context)!.navAccount,
           ),
         ],
       ),

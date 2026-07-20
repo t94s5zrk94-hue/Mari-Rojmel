@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../../l10n/generated/app_localizations.dart';
 import '../services/report_service.dart';
 
 /// ==========================================================
@@ -34,13 +34,11 @@ class ReportFilterCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: LayoutBuilder(
           builder: (context, constraints) {
-
             return Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Report Filter',
+                  AppLocalizations.of(context)!.reportFilter,
                   style: theme.textTheme.titleLarge,
                 ),
                 const SizedBox(height: 16),
@@ -49,62 +47,49 @@ class ReportFilterCard extends StatelessWidget {
                   runSpacing: 8,
                   children: [
                     _buildChip(
-                      label: 'Today',
-                      selected: selectedFilter.type ==
-                          ReportFilterType.today,
+                      label: AppLocalizations.of(context)!.today,
+                      selected: selectedFilter.type == ReportFilterType.today,
                       onTap: () {
-                        onFilterChanged(
-                          const ReportFilter.today(),
-                        );
+                        onFilterChanged(const ReportFilter.today());
                       },
                     ),
                     _buildChip(
-                      label: 'This Week',
-                      selected: selectedFilter.type ==
-                          ReportFilterType.thisWeek,
+                      label: AppLocalizations.of(context)!.thisWeek,
+                      selected:
+                          selectedFilter.type == ReportFilterType.thisWeek,
                       onTap: () {
-                        onFilterChanged(
-                          const ReportFilter.thisWeek(),
-                        );
+                        onFilterChanged(const ReportFilter.thisWeek());
                       },
                     ),
                     _buildChip(
-                      label: 'This Month',
-                      selected: selectedFilter.type ==
-                          ReportFilterType.thisMonth,
+                      label: AppLocalizations.of(context)!.thisMonth,
+                      selected:
+                          selectedFilter.type == ReportFilterType.thisMonth,
                       onTap: () {
-                        onFilterChanged(
-                          const ReportFilter.thisMonth(),
-                        );
+                        onFilterChanged(const ReportFilter.thisMonth());
                       },
                     ),
                     _buildChip(
-                      label: 'This Year',
-                      selected: selectedFilter.type ==
-                          ReportFilterType.thisYear,
+                      label: AppLocalizations.of(context)!.thisYear,
+                      selected:
+                          selectedFilter.type == ReportFilterType.thisYear,
                       onTap: () {
-                        onFilterChanged(
-                          const ReportFilter.thisYear(),
-                        );
+                        onFilterChanged(const ReportFilter.thisYear());
                       },
                     ),
                     _buildChip(
-                      label: 'Custom',
-                      selected: selectedFilter.type ==
-                          ReportFilterType.custom,
+                      label: AppLocalizations.of(context)!.custom,
+                      selected: selectedFilter.type == ReportFilterType.custom,
                       onTap: () => _pickDateRange(context),
                     ),
                   ],
                 ),
-                if (selectedFilter.type ==
-                    ReportFilterType.custom)
+                if (selectedFilter.type == ReportFilterType.custom)
                   Padding(
-                    padding:
-                        const EdgeInsets.only(top: 16),
+                    padding: const EdgeInsets.only(top: 16),
                     child: Text(
-                      _dateRangeText(),
-                      style:
-                          theme.textTheme.bodyMedium,
+                      _dateRangeText(context),
+                      style: theme.textTheme.bodyMedium,
                     ),
                   ),
               ],
@@ -126,21 +111,16 @@ class ReportFilterCard extends StatelessWidget {
       onSelected: (_) => onTap(),
     );
   }
-    Future<void> _pickDateRange(
-    BuildContext context,
-  ) async {
+
+  Future<void> _pickDateRange(BuildContext context) async {
     final now = DateTime.now();
 
     final range = await showDateRangePicker(
       context: context,
       firstDate: DateTime(2000),
       lastDate: DateTime(now.year + 10),
-      initialDateRange: customStartDate != null &&
-              customEndDate != null
-          ? DateTimeRange(
-              start: customStartDate!,
-              end: customEndDate!,
-            )
+      initialDateRange: customStartDate != null && customEndDate != null
+          ? DateTimeRange(start: customStartDate!, end: customEndDate!)
           : null,
     );
 
@@ -148,18 +128,12 @@ class ReportFilterCard extends StatelessWidget {
       return;
     }
 
-    onFilterChanged(
-      ReportFilter.custom(
-        from: range.start,
-        to: range.end,
-      ),
-    );
+    onFilterChanged(ReportFilter.custom(from: range.start, to: range.end));
   }
 
-  String _dateRangeText() {
-    if (customStartDate == null ||
-        customEndDate == null) {
-      return 'No date range selected';
+  String _dateRangeText(BuildContext context) {
+    if (customStartDate == null || customEndDate == null) {
+      return AppLocalizations.of(context)!.noDateRangeSelected;
     }
 
     return '${_formatDate(customStartDate!)}'
@@ -169,8 +143,7 @@ class ReportFilterCard extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     final day = date.day.toString().padLeft(2, '0');
-    final month =
-        date.month.toString().padLeft(2, '0');
+    final month = date.month.toString().padLeft(2, '0');
     final year = date.year.toString();
 
     return '$day/$month/$year';

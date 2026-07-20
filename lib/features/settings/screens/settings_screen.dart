@@ -8,13 +8,16 @@
 // Flutter 3.x
 // Material 3
 // ===============================================================
-
+import '../../../l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../app/theme/theme_provider.dart';
 import '../../../core/database/database_helper.dart';
 import '../models/app_settings_model.dart';
 import '../repositories/settings_repository.dart';
 import '../services/settings_service.dart';
+import '../../language/screens/language_screen.dart';
+import '../../../core/localization/app_locale.dart';
+import '../../../main.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -70,26 +73,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (_errorMessage != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Settings')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.settings)),
         body: Center(child: Text(_errorMessage!)),
       );
     }
 
     if (_settings == null) {
-      return const Scaffold(body: Center(child: Text('Settings not found')));
+      return Scaffold(
+        body: Center(
+          child: Text(AppLocalizations.of(context)!.settingsNotFound),
+        ),
+      );
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings'), centerTitle: true),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.settings),
+        centerTitle: true,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const _SectionHeader(title: 'Appearance'),
+          _SectionHeader(title: AppLocalizations.of(context)!.appearance),
           const SizedBox(height: 8),
           Card(
             child: ListTile(
               leading: const Icon(Icons.palette_outlined),
-              title: const Text('Theme'),
+              title: Text(AppLocalizations.of(context)!.theme),
               subtitle: Text(_themeText(_settings!.themeMode)),
               trailing: const Icon(Icons.chevron_right),
               onTap: () {
@@ -99,42 +109,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          const _SectionHeader(title: 'Language'),
+          _SectionHeader(title: AppLocalizations.of(context)!.language),
           const SizedBox(height: 8),
           Card(
             child: ListTile(
               leading: const Icon(Icons.language_outlined),
-              title: const Text('Language'),
-              subtitle: Text(_languageText(_settings!.language)),
+              title: Text(AppLocalizations.of(context)!.language),
+              subtitle: Text(
+                languageController.state.appLocale == AppLocale.english
+                    ? 'English'
+                    : 'ગુજરાતી',
+              ),
               trailing: const Icon(Icons.chevron_right),
-              onTap: () {},
+              onTap: () async {
+                await Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => LanguageScreen()));
+
+                if (!mounted) return;
+
+                final settings = await _service.getSettings();
+
+                setState(() {
+                  _settings = settings;
+                });
+              },
             ),
           ),
           const SizedBox(height: 24),
-          const _SectionHeader(title: 'Regional'),
+          _SectionHeader(title: AppLocalizations.of(context)!.regional),
           const SizedBox(height: 8),
           Card(
             child: ListTile(
               leading: const Icon(Icons.currency_rupee),
-              title: const Text('Currency'),
-              subtitle: Text(_settings!.currencySymbol),
+              title: Text(AppLocalizations.of(context)!.currency),
+              subtitle: Text(AppLocalizations.of(context)!.indianRupee),
             ),
           ),
           Card(
             child: ListTile(
               leading: const Icon(Icons.date_range_outlined),
-              title: const Text('Date Format'),
-              subtitle: Text(_dateFormatText(_settings!.dateFormat)),
+              title: Text(AppLocalizations.of(context)!.dateFormat),
+              subtitle: Text(AppLocalizations.of(context)!.defaultDateFormat),
             ),
           ),
           const SizedBox(height: 24),
-          const _SectionHeader(title: 'Notifications'),
+          _SectionHeader(title: AppLocalizations.of(context)!.notifications),
           const SizedBox(height: 8),
           Card(
             child: SwitchListTile(
               secondary: const Icon(Icons.notifications_outlined),
-              title: const Text('Notifications'),
-              subtitle: const Text('Enable or Disable Notifications'),
+              title: Text(AppLocalizations.of(context)!.notifications),
+              subtitle: Text(
+                AppLocalizations.of(context)!.enableDisableNotifications,
+              ),
               value: _settings!.notificationsEnabled,
               onChanged: (value) async {
                 await _service.updateNotifications(value);
@@ -150,12 +178,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          const _SectionHeader(title: 'About'),
+          _SectionHeader(title: AppLocalizations.of(context)!.about),
           const SizedBox(height: 8),
-          const Card(
+          Card(
             child: ListTile(
               leading: Icon(Icons.info_outline),
-              title: Text('App Version'),
+              title: Text(AppLocalizations.of(context)!.appVersion),
               subtitle: Text('v1.0.0'),
             ),
           ),
@@ -167,23 +195,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _selectTheme() async {
     final theme = await showDialog<AppThemeMode>(
       context: context,
-      builder: (context) => SimpleDialog(
-        title: const Text('Select Theme'),
-        children: [
-          SimpleDialogOption(
-            onPressed: () => Navigator.pop(context, AppThemeMode.system),
-            child: const Text('System'),
-          ),
-          SimpleDialogOption(
-            onPressed: () => Navigator.pop(context, AppThemeMode.light),
-            child: const Text('Light'),
-          ),
-          SimpleDialogOption(
-            onPressed: () => Navigator.pop(context, AppThemeMode.dark),
-            child: const Text('Dark'),
-          ),
-        ],
-      ),
+      builder: (dialogContext) {
+        final l10n = AppLocalizations.of(context)!;
+
+        return SimpleDialog(
+          title: Text(l10n.selectTheme),
+          children: [
+            SimpleDialogOption(
+              onPressed: () =>
+                  Navigator.pop(dialogContext, AppThemeMode.system),
+              child: Text(l10n.system),
+            ),
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(dialogContext, AppThemeMode.light),
+              child: Text(l10n.light),
+            ),
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(dialogContext, AppThemeMode.dark),
+              child: Text(l10n.dark),
+            ),
+          ],
+        );
+      },
     );
 
     if (theme == null) {
@@ -206,33 +239,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   String _themeText(AppThemeMode mode) {
+    final l10n = AppLocalizations.of(context)!;
+
     switch (mode) {
       case AppThemeMode.system:
-        return 'System';
+        return l10n.system;
+
       case AppThemeMode.light:
-        return 'Light';
+        return l10n.light;
+
       case AppThemeMode.dark:
-        return 'Dark';
-    }
-  }
-
-  String _languageText(AppLanguage language) {
-    switch (language) {
-      case AppLanguage.english:
-        return 'English';
-      case AppLanguage.gujarati:
-        return 'Gujarati';
-    }
-  }
-
-  String _dateFormatText(DateFormatType format) {
-    switch (format) {
-      case DateFormatType.ddMMyyyy:
-        return 'dd/MM/yyyy';
-      case DateFormatType.mmDDyyyy:
-        return 'MM/dd/yyyy';
-      case DateFormatType.yyyyMMdd:
-        return 'yyyy-MM-dd';
+        return l10n.dark;
     }
   }
 }

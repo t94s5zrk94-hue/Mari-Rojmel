@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class QuickEntryCard extends StatelessWidget {
   const QuickEntryCard({
@@ -17,11 +18,11 @@ class QuickEntryCard extends StatelessWidget {
       controller: controller,
       autofocus: true,
       textInputAction: TextInputAction.done,
-      decoration: const InputDecoration(
-        labelText: 'Quick Entry',
-        hintText: 'Example: 500 Milk',
-        prefixIcon: Icon(Icons.flash_on),
-        border: OutlineInputBorder(),
+      decoration: InputDecoration(
+        labelText: AppLocalizations.of(context)!.quickEntry,
+        hintText: AppLocalizations.of(context)!.quickEntryHint,
+        prefixIcon: const Icon(Icons.flash_on),
+        border: const OutlineInputBorder(),
       ),
       onChanged: onChanged,
     );

@@ -48,6 +48,8 @@ abstract class ICategoryRepository {
     TransactionType? transactionType,
   });
 
+  Future<CategoryModel?> getDefaultCategory(TransactionType transactionType);
+
   Future<CategoryModel?> getById(int id);
 
   Future<bool> existsByName(
@@ -85,6 +87,31 @@ class CategoryRepository implements ICategoryRepository {
   static const String colSortOrder = 'sort_order';
   static const String colCreatedAt = 'created_at';
   static const String colUpdatedAt = 'updated_at';
+
+  @override
+  Future<CategoryModel?> getDefaultCategory(
+    TransactionType transactionType,
+  ) async {
+    final db = await _databaseHelper.database;
+
+    final result = await db.query(
+      tableName,
+      where:
+          '''
+      $colIsDefault = 1
+      AND $colIsActive = 1
+      AND $colTransactionType = ?
+    ''',
+      whereArgs: [transactionType.value],
+      limit: 1,
+    );
+
+    if (result.isEmpty) {
+      return null;
+    }
+
+    return _mapToModel(result.first);
+  }
 
   @override
   Future<List<CategoryModel>> getActive({

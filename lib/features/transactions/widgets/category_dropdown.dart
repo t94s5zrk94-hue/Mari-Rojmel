@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../categories/models/category_model.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class CategoryDropdown extends StatelessWidget {
   const CategoryDropdown({
@@ -27,9 +28,9 @@ class CategoryDropdown extends StatelessWidget {
         Expanded(
           child: DropdownButtonFormField<CategoryModel>(
             initialValue: selectedCategory,
-            decoration: const InputDecoration(
-              labelText: 'Category',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.categories,
+              border: const OutlineInputBorder(),
             ),
             items: categories
                 .map(
@@ -46,7 +47,7 @@ class CategoryDropdown extends StatelessWidget {
         const SizedBox(width: 8),
 
         IconButton(
-          tooltip: 'Add Category',
+          tooltip: AppLocalizations.of(context)!.addCategory,
           onPressed: onAddCategory,
           icon: const Icon(Icons.add_circle_outline),
         ),

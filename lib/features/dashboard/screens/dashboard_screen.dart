@@ -8,7 +8,7 @@
 // ===============================================================
 
 import 'package:flutter/material.dart';
-
+import '../../../l10n/generated/app_localizations.dart';
 import '../../categories/repositories/category_repository.dart';
 import '../../categories/screens/category_screen.dart';
 import '../../payment_modes/repositories/payment_mode_repository.dart';
@@ -162,7 +162,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (_errorMessage != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Dashboard'), centerTitle: false),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.dashboard)),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -176,7 +176,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Unable to load dashboard',
+                  AppLocalizations.of(context)!.unableToLoadDashboard,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 8),
@@ -185,7 +185,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 FilledButton.icon(
                   onPressed: _refresh,
                   icon: const Icon(Icons.refresh),
-                  label: const Text('Retry'),
+                  label: Text(AppLocalizations.of(context)!.retry),
                 ),
               ],
             ),
@@ -204,16 +204,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             Text(
-              'Good ${_greeting()}',
+              _greeting(),
               style: Theme.of(
                 context,
               ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
-
             const SizedBox(height: 6),
 
             Text(
-              'Welcome back',
+              AppLocalizations.of(context)!.welcomeBack,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -230,7 +229,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Current Balance',
+                      AppLocalizations.of(context)!.currentBalance,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 8),
@@ -253,7 +252,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               children: [
                 Expanded(
                   child: _summaryCard(
-                    title: 'Income',
+                    title: AppLocalizations.of(context)!.income,
                     value: _currency(summary.todayIncome),
                     icon: Icons.arrow_downward_rounded,
                     color: Colors.green,
@@ -262,7 +261,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _summaryCard(
-                    title: 'Expense',
+                    title: AppLocalizations.of(context)!.expense,
                     value: _currency(summary.todayExpense),
                     icon: Icons.arrow_upward_rounded,
                     color: Colors.red,
@@ -277,7 +276,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               children: [
                 Expanded(
                   child: _summaryCard(
-                    title: 'Balance',
+                    title: AppLocalizations.of(context)!.balance,
                     value: _currency(summary.balance),
                     icon: Icons.account_balance_wallet,
                     color: Colors.blue,
@@ -286,7 +285,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _summaryCard(
-                    title: 'Transactions',
+                    title: AppLocalizations.of(context)!.transactionCount,
                     value: summary.transactionCount.toString(),
                     icon: Icons.receipt_long,
                     color: Colors.deepPurple,
@@ -297,7 +296,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             const SizedBox(height: 24),
             Text(
-              'Quick Actions',
+              AppLocalizations.of(context)!.quickActions,
               style: Theme.of(context).textTheme.titleLarge,
             ),
 
@@ -312,7 +311,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               childAspectRatio: 1.35,
               children: [
                 _quickActionCard(
-                  title: 'Add Transaction',
+                  title: AppLocalizations.of(context)!.addTransaction,
                   icon: Icons.add_circle_outline,
                   color: Colors.blue,
                   onTap: () {
@@ -320,19 +319,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   },
                 ),
                 _quickActionCard(
-                  title: 'Categories',
+                  title: AppLocalizations.of(context)!.categories,
                   icon: Icons.category_outlined,
                   color: Colors.orange,
                   onTap: _openCategories,
                 ),
                 _quickActionCard(
-                  title: 'Payment Modes',
+                  title: AppLocalizations.of(context)!.paymentModes,
                   icon: Icons.account_balance_wallet_outlined,
                   color: Colors.green,
                   onTap: _openPaymentModes,
                 ),
                 _quickActionCard(
-                  title: 'Reports',
+                  title: AppLocalizations.of(context)!.reports,
                   icon: Icons.bar_chart_outlined,
                   color: Colors.deepPurple,
                   onTap: _openReports,
@@ -346,11 +345,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Recent Transactions',
+                  AppLocalizations.of(context)!.recentTransactions,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 Text(
-                  '${_recentTransactions.length} items',
+                  '${_recentTransactions.length} ${AppLocalizations.of(context)!.items}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
@@ -362,7 +361,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Card(
                 child: Padding(
                   padding: EdgeInsets.all(24),
-                  child: Center(child: Text('No transactions found.')),
+                  child: Center(
+                    child: Text(
+                      AppLocalizations.of(context)!.noTransactionsFound,
+                    ),
+                  ),
                 ),
               )
             else
@@ -379,7 +382,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
                     title: Text(
-                      transaction.note.isEmpty ? 'No Note' : transaction.note,
+                      transaction.note.isEmpty
+                          ? AppLocalizations.of(context)!.noNote
+                          : transaction.note,
                     ),
                     subtitle: Text(
                       transaction.transactionDate
@@ -410,14 +415,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final hour = DateTime.now().hour;
 
     if (hour < 12) {
-      return 'Morning';
+      return AppLocalizations.of(context)!.goodMorning;
     }
 
     if (hour < 17) {
-      return 'Afternoon';
+      return AppLocalizations.of(context)!.goodAfternoon;
     }
 
-    return 'Evening';
+    return AppLocalizations.of(context)!.goodEvening;
   }
 
   Widget _summaryCard({

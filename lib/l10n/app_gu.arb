@@ -1,0 +1,291 @@
+{
+  "@@locale": "gu",
+
+  "appName": "મારી રોજમેલ",
+  "dashboard": "ડેશબોર્ડ",
+  "reports": "રિપોર્ટ",
+  "transactionCount": "રોજમેલ",
+  "account": "એકાઉન્ટ",
+  "add": "ઉમેરો",
+  "save": "સાચવો",
+  "cancel": "રદ કરો",
+
+
+"goodMorning": "સુપ્રભાત",
+
+"goodAfternoon": "શુભ બપોર",
+
+"goodEvening": "શુભ સાંજ",
+
+"welcomeBack": "ફરી સ્વાગત છે",
+
+"currentBalance": "હાલની બેલેન્સ",
+
+"income": "આવક",
+
+"expense": "ખર્ચ",
+
+"balance": "બેલેન્સ",
+
+"quickActions": "ઝડપી વિકલ્પો",
+
+"addTransaction": "રોજમેલ ઉમેરો",
+
+"categories": "કેટેગરી",
+
+"paymentModes": "ચુકવણી પદ્ધતિ",
+
+"recentTransactions": "તાજેતરની રોજમેલ",
+
+"items": "એન્ટ્રી",
+
+"noTransactionsFound": "કોઈ રોજમેલ મળી નથી.",
+
+"noNote": "નોંધ નથી",
+
+"retry": "ફરી પ્રયાસ કરો",
+
+"unableToLoadDashboard": "ડેશબોર્ડ લોડ કરવામાં નિષ્ફળતા",
+
+"deleteTransaction": "રોજમેલ કાઢી નાખો",
+
+"transactions": "રોજમેલ",
+
+"editTransaction": "રોજમેલમાં ફેરફાર કરો",
+
+"updateTransaction": "રોજમેલ અપડેટ કરો",
+
+"saveTransaction": "રોજમેલ સાચવો",
+
+"amount": "રકમ",
+
+"enterAmount": "રકમ દાખલ કરો",
+
+"description": "વર્ણન",
+
+"enterDescription": "વર્ણન દાખલ કરો (વૈકલ્પિક)",
+
+"date": "તારીખ",
+
+"type": "પ્રકાર",
+
+"addCategory": "કેટેગરી ઉમેરો",
+
+"addPaymentMode": "ચુકવણી પદ્ધતિ ઉમેરો",
+
+"quickEntry": "ઝડપી એન્ટ્રી",
+
+"quickEntryHint": "ઉદાહરણ: 500 દૂધ",
+
+"saving": "સાચવી રહ્યું છે...",
+
+"addBill": "બિલ ઉમેરો",
+
+"removeBill": "બિલ દૂર કરો",
+
+"searchCategories": "કેટેગરી શોધો...",
+
+"searchError": "શોધ દરમિયાન ભૂલ આવી.",
+
+"categoryName": "કેટેગરીનું નામ",
+
+"nameRequired": "નામ જરૂરી છે",
+
+"editCategory": "કેટેગરી સંપાદિત કરો",
+
+"categoryAlreadyExists": "કેટેગરી પહેલેથી અસ્તિત્વમાં છે.",
+
+"categoryAdded": "કેટેગરી સફળતાપૂર્વક ઉમેરાઈ.",
+
+"categoryUpdated": "કેટેગરી સફળતાપૂર્વક સુધારાઈ.",
+
+"categoryUpdateFailed": "કેટેગરી સુધારી શકાઈ નથી.",
+
+"categoryAddFailed": "કેટેગરી ઉમેરી શકાઈ નથી.",
+
+"defaultCategoryProtected": "ડિફૉલ્ટ કેટેગરીમાં ફેરફાર કરી શકાતો નથી.",
+
+"categoryNameTaken": "આ કેટેગરીનું નામ પહેલેથી ઉપયોગમાં છે.",
+
+"deleteCategoryConfirmation": "\"{name}\" કેટેગરી કાઢી નાખવા માંગો છો?",
+
+"defaultLabel": "ડિફૉલ્ટ",
+
+"deleteCategory": "કેટેગરી કાઢી નાખો",
+
+"delete": "કાઢી નાખો",
+
+"invalidCategory": "અમાન્ય કેટેગરી.",
+
+"categoryDeleted": "{name} કાઢી નાખવામાં આવી.",
+
+"categoryRestored": "કેટેગરી પુનઃસ્થાપિત થઈ.",
+
+"unableToRestoreCategory": "કેટેગરી પુનઃસ્થાપિત કરી શકાઈ નથી.",
+
+"defaultCategoryDeleteProtected": "ડિફૉલ્ટ કેટેગરી કાઢી શકાતી નથી.",
+
+"categoryDeleteFailed": "કેટેગરી કાઢી શકાઈ નથી.",
+
+"clearSearch": "શોધ સાફ કરો",
+
+"protectedLabel": "સુરક્ષિત",
+"actions": "ક્રિયાઓ",
+"edit": "સંપાદિત કરો",
+"noCategoriesYet": "હજુ કોઈ કેટેગરી નથી",
+"createFirstCategory": "તમારી આવક અને ખર્ચને વ્યવસ્થિત કરવા માટે તમારી પ્રથમ કેટેગરી બનાવો.",
+"undo": "પાછું કરો",
+"unableToLoadCategories": "કેટેગરી લોડ કરી શકાઈ નથી",
+"categoryLoadError": "કેટેગરી લોડ કરતી વખતે સમસ્યા આવી.\nકૃપા કરીને ફરી પ્રયાસ કરો.",
+
+"paymentModeName": "ચુકવણી પદ્ધતિનું નામ",
+
+"paymentModeNameHint": "દા.ત. ક્રેડિટ કાર્ડ",
+
+"searchPaymentModes": "ચુકવણી પદ્ધતિ શોધો...",
+
+"paymentModeRequired": "ચુકવણી પદ્ધતિનું નામ જરૂરી છે",
+
+"editPaymentMode": "ચુકવણી પદ્ધતિ સંપાદિત કરો",
+
+"deletePaymentMode": "ચુકવણી પદ્ધતિ કાઢી નાખો",
+
+"paymentModeAlreadyExists": "ચુકવણી પદ્ધતિ પહેલેથી અસ્તિત્વમાં છે.",
+
+"paymentModeAdded": "ચુકવણી પદ્ધતિ સફળતાપૂર્વક ઉમેરાઈ.",
+
+"paymentModeUpdated": "ચુકવણી પદ્ધતિ સફળતાપૂર્વક સુધારાઈ.",
+
+"paymentModeDeleted": "{name} કાઢી નાખવામાં આવી.",
+
+"paymentModeRestored": "ચુકવણી પદ્ધતિ પુનઃસ્થાપિત થઈ.",
+
+"paymentModeAddFailed": "ચુકવણી પદ્ધતિ ઉમેરી શકાઈ નથી.",
+
+"paymentModeUpdateFailed": "ચુકવણી પદ્ધતિ સુધારી શકાઈ નથી.",
+
+"paymentModeDeleteFailed": "ચુકવણી પદ્ધતિ કાઢી શકાઈ નથી.",
+
+"paymentModeRestoreFailed": "ચુકવણી પદ્ધતિ પુનઃસ્થાપિત કરી શકાઈ નથી.",
+
+"invalidPaymentMode": "અમાન્ય ચુકવણી પદ્ધતિ.",
+
+"defaultPaymentModeProtected": "ડિફૉલ્ટ ચુકવણી પદ્ધતિમાં ફેરફાર કરી શકાતો નથી.",
+
+"defaultPaymentModeDeleteProtected": "ડિફૉલ્ટ ચુકવણી પદ્ધતિ કાઢી શકાતી નથી.",
+
+"deletePaymentModeConfirmation": "\"{name}\" ચુકવણી પદ્ધતિ કાઢી નાખવા માંગો છો?",
+
+"unableToLoadPaymentModes": "ચુકવણી પદ્ધતિ લોડ કરી શકાઈ નથી",
+
+"paymentModeLoadError": "ચુકવણી પદ્ધતિ લોડ કરતી વખતે સમસ્યા આવી.\nકૃપા કરીને ફરી પ્રયાસ કરો.",
+
+"noPaymentModesYet": "હજુ કોઈ ચુકવણી પદ્ધતિ નથી",
+
+"createFirstPaymentMode": "તમારી પ્રથમ ચુકવણી પદ્ધતિ બનાવો.",
+
+
+"unknownError": "અજાણી ભૂલ",
+"thisMonth": "આ મહિનો",
+"lastMonth": "ગયા મહિને",
+"thisYear": "આ વર્ષ",
+"customRange": "કસ્ટમ સમયગાળો",
+
+"reportSummary": "રિપોર્ટ સારાંશ",
+"categoryReport": "કેટેગરી રિપોર્ટ",
+"paymentModeReport": "ચુકવણી પદ્ધતિ રિપોર્ટ",
+
+"noReportData": "કોઈ રિપોર્ટ ઉપલબ્ધ નથી",
+
+"selectDateRange": "તારીખનો સમયગાળો પસંદ કરો",
+"fromDate": "શરૂઆતની તારીખ",
+"toDate": "અંતિમ તારીખ",
+
+"exportReport": "રિપોર્ટ એક્સપોર્ટ કરો",
+
+"unableToLoadReports": "રિપોર્ટ લોડ કરવામાં નિષ્ફળ",
+
+"reportFilter": "રિપોર્ટ ફિલ્ટર",
+"today": "આજે",
+"thisWeek": "આ અઠવાડિયું",
+"custom": "કસ્ટમ",
+"noDateRangeSelected": "કોઈ તારીખનો સમયગાળો પસંદ કરેલ નથી",
+
+"totalIncome": "કુલ આવક",
+"totalExpense": "કુલ ખર્ચ",
+"netBalance": "ચોખ્ખી બેલેન્સ",
+"totalTransactions": "કુલ રોજમેલ",
+"highestIncome": "સૌથી વધુ આવક",
+"highestExpense": "સૌથી વધુ ખર્ચ",
+"averageIncome": "સરેરાશ આવક",
+"averageExpense": "સરેરાશ ખર્ચ",
+"noCategoryReportAvailable": "કોઈ કેટેગરી રિપોર્ટ ઉપલબ્ધ નથી.",
+"paymentModeReportTitle": "ચુકવણી પદ્ધતિ રિપોર્ટ",
+"noPaymentModeReportAvailable": "ચુકવણી પદ્ધતિનો કોઈ રિપોર્ટ ઉપલબ્ધ નથી.",
+"navDashboard": "ડેશબોર્ડ",
+"navReports": "રિપોર્ટ્સ",
+"navAdd": "ઉમેરો",
+"navTransactions": "રોજમેલ",
+"navAccount": "એકાઉન્ટ",
+"profile": "પ્રોફાઇલ",
+"profileDescription": "તમારી વ્યક્તિગત માહિતીનું સંચાલન કરો",
+"version": "વર્ઝન",
+"application": "એપ્લિકેશન",
+"appSettings": "એપ સેટિંગ્સ",
+"backupRestore": "બેકઅપ અને રિસ્ટોર",
+"about": "અમારા વિશે",
+"refresh": "રીફ્રેશ",
+"comingSoon": "{title} ટૂંક સમયમાં ઉપલબ્ધ થશે.",
+"@comingSoon": {
+  "placeholders": {
+    "title": {}
+  }
+},
+"name": "નામ",
+"enterYourName": "તમારું નામ દાખલ કરો",
+"mobileNumber": "મોબાઇલ નંબર",
+"email": "ઈમેલ",
+"address": "સરનામું",
+"enterYourAddress": "તમારું સરનામું દાખલ કરો",
+"validName": "માન્ય નામ દાખલ કરો.",
+"validMobileNumber": "માન્ય મોબાઇલ નંબર દાખલ કરો.",
+"validEmailAddress": "માન્ય ઈમેલ સરનામું દાખલ કરો.",
+"profileSavedSuccessfully": "પ્રોફાઇલ સફળતાપૂર્વક સાચવાઈ.",
+
+
+"versionLabel": "વર્ઝન {version}",
+"@versionLabel": {
+  "placeholders": {
+    "version": {}
+  }
+},
+
+"appTagline": "ગુજરાતી ડિજિટલ આવક અને ખર્ચ વ્યવસ્થાપક",
+
+"developer": "ડેવલપર",
+"privacyPolicy": "ગોપનીયતા નીતિ",
+"termsConditions": "નિયમો અને શરતો",
+"shareApp": "એપ શેર કરો",
+"rateApp": "એપને રેટિંગ આપો",
+
+"copyright": "© 2026 મારી રોજમેલ",
+"madeInIndia": "❤️ સાથે ભારતમાં બનાવેલ",
+
+"settings": "સેટિંગ્સ",
+"appearance": "દેખાવ",
+"theme": "થીમ",
+"language": "ભાષા",
+"regional": "પ્રાદેશિક",
+"currency": "ચલણ",
+"dateFormat": "તારીખનું ફોર્મેટ",
+"notifications": "સૂચનાઓ",
+"enableDisableNotifications": "સૂચનાઓ ચાલુ અથવા બંધ કરો",
+"appVersion": "એપ વર્ઝન",
+"selectTheme": "થીમ પસંદ કરો",
+"system": "સિસ્ટમ",
+"light": "લાઇટ",
+"dark": "ડાર્ક",
+"settingsNotFound": "સેટિંગ્સ મળી નથી",
+"indianRupee": "₹ ભારતીય રૂપિયા (INR)",
+"defaultDateFormat": "dd/MM/yyyy (ભારત)"
+}

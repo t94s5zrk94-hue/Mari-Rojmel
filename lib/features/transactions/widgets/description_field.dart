@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class DescriptionField extends StatelessWidget {
   const DescriptionField({super.key, required this.controller, this.onChanged});
@@ -14,11 +15,11 @@ class DescriptionField extends StatelessWidget {
       minLines: 1,
       maxLines: 2,
       textInputAction: TextInputAction.newline,
-      decoration: const InputDecoration(
-        labelText: 'Description',
-        hintText: 'Enter description (Optional)',
-        prefixIcon: Icon(Icons.notes),
-        border: OutlineInputBorder(),
+      decoration: InputDecoration(
+        labelText: AppLocalizations.of(context)!.description,
+        hintText: AppLocalizations.of(context)!.enterDescription,
+        prefixIcon: const Icon(Icons.notes),
+        border: const OutlineInputBorder(),
       ),
       onChanged: onChanged,
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/payment_mode_report_item.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 /// ==========================================================
 /// Payment Mode Report
@@ -16,10 +17,14 @@ class PaymentModeReport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (reportData.isEmpty) {
-      return const Card(
+      return Card(
         child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Center(child: Text('No payment mode report available.')),
+          padding: const EdgeInsets.all(24),
+          child: Center(
+            child: Text(
+              AppLocalizations.of(context)!.noPaymentModeReportAvailable,
+            ),
+          ),
         ),
       );
     }
@@ -36,7 +41,7 @@ class PaymentModeReport extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Payment Mode Report',
+              AppLocalizations.of(context)!.paymentModeReportTitle,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
@@ -79,7 +84,9 @@ class _PaymentModeTile extends StatelessWidget {
         child: Text(item.icon, style: const TextStyle(fontSize: 18)),
       ),
       title: Text(item.name, maxLines: 1, overflow: TextOverflow.ellipsis),
-      subtitle: Text('${item.transactionCount} transactions'),
+      subtitle: Text(
+        '${item.transactionCount} ${AppLocalizations.of(context)!.transactions}',
+      ),
       trailing: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,

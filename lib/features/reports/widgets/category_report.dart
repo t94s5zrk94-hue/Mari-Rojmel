@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/category_report_item.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 /// ==========================================================
 /// Category Report Widget
@@ -16,10 +17,14 @@ class CategoryReport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (reportData.isEmpty) {
-      return const Card(
+      return Card(
         child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Center(child: Text('No category report available.')),
+          padding: const EdgeInsets.all(24),
+          child: Center(
+            child: Text(
+              AppLocalizations.of(context)!.noCategoryReportAvailable,
+            ),
+          ),
         ),
       );
     }
@@ -36,7 +41,7 @@ class CategoryReport extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Category Report',
+              AppLocalizations.of(context)!.categoryReport,
               style: Theme.of(context).textTheme.titleLarge,
             ),
 
@@ -83,7 +88,9 @@ class _CategoryTile extends StatelessWidget {
         child: Text(item.icon, style: const TextStyle(fontSize: 18)),
       ),
       title: Text(item.name, maxLines: 1, overflow: TextOverflow.ellipsis),
-      subtitle: Text('${item.transactionCount} transactions'),
+      subtitle: Text(
+        '${item.transactionCount} ${AppLocalizations.of(context)!.transactions}',
+      ),
       trailing: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,

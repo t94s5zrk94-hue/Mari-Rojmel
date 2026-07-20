@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/category_model.dart';
 import '../repositories/category_repository.dart';
 import '../../../core/enums/transaction_type.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 /// Screen responsible for managing Categories in the Mari-Rojmel application.
 /// Implementation finalized to production-grade standards.
@@ -80,13 +81,17 @@ class _CategoryScreenState extends State<CategoryScreen> {
       SnackBar(
         content: Text(message),
         action: onUndo != null
-            ? SnackBarAction(label: 'UNDO', onPressed: onUndo)
+            ? SnackBarAction(
+                label: AppLocalizations.of(context)!.undo,
+                onPressed: onUndo,
+              )
             : null,
       ),
     );
   }
 
   Future<void> _showAddDialog() async {
+    final l10n = AppLocalizations.of(context)!;
     final nameController = TextEditingController();
     final formKey = GlobalKey<FormState>();
     final focusNode = FocusNode();
@@ -95,25 +100,26 @@ class _CategoryScreenState extends State<CategoryScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: const Text('Add Category'),
+        title: Text(l10n.addCategory),
         content: Form(
           key: formKey,
           child: TextFormField(
             controller: nameController,
             focusNode: focusNode,
             autofocus: true,
-            decoration: const InputDecoration(
-              labelText: 'Category Name',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.categoryName,
+              border: const OutlineInputBorder(),
             ),
-            validator: (v) =>
-                (v == null || v.trim().isEmpty) ? 'Name is required' : null,
+            validator: (v) => (v == null || v.trim().isEmpty)
+                ? AppLocalizations.of(context)!.nameRequired
+                : null,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           FilledButton(
             onPressed: () async {
@@ -127,15 +133,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 if (!ctx.mounted) return;
                 Navigator.of(ctx).pop(true);
               } on DuplicateCategoryException {
-                _showSnackBar('Category already exists.');
+                _showSnackBar(l10n.categoryAlreadyExists);
               } on Exception catch (e, stackTrace) {
                 debugPrint('CATEGORY ADD ERROR: $e');
                 debugPrintStack(stackTrace: stackTrace);
 
-                _showSnackBar('Unable to add category.');
+                _showSnackBar(l10n.categoryAddFailed);
               }
             },
-            child: const Text('Save'),
+            child: Text(AppLocalizations.of(context)!.save),
           ),
         ],
       ),
@@ -149,18 +155,19 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
         if (!mounted) return;
 
-        _showSnackBar('Category added successfully.');
+        _showSnackBar(l10n.categoryAdded);
       });
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       nameController.dispose();
     });
-    //focusNode.dispose();
+    focusNode.dispose();
   }
 
   Future<void> _showEditDialog(CategoryModel model) async {
+    final l10n = AppLocalizations.of(context)!;
     if (model.isDefault) {
-      _showSnackBar('Default categories cannot be modified.');
+      _showSnackBar(AppLocalizations.of(context)!.defaultCategoryProtected);
       return;
     }
 
@@ -172,25 +179,26 @@ class _CategoryScreenState extends State<CategoryScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: const Text('Edit Category'),
+        title: Text(AppLocalizations.of(context)!.editCategory),
         content: Form(
           key: formKey,
           child: TextFormField(
             controller: nameController,
             focusNode: focusNode,
             autofocus: true,
-            decoration: const InputDecoration(
-              labelText: 'Category Name',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.categoryName,
+              border: const OutlineInputBorder(),
             ),
-            validator: (v) =>
-                (v == null || v.trim().isEmpty) ? 'Name is required' : null,
+            validator: (v) => (v == null || v.trim().isEmpty)
+                ? AppLocalizations.of(context)!.nameRequired
+                : null,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           FilledButton(
             onPressed: () async {
@@ -205,12 +213,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
                 Navigator.of(ctx).pop(true);
               } on DuplicateCategoryException {
-                _showSnackBar('Category name already taken.');
+                _showSnackBar(l10n.categoryNameTaken);
               } on Exception {
-                _showSnackBar('Unable to update category.');
+                _showSnackBar(l10n.categoryUpdateFailed);
               }
             },
-            child: const Text('Save'),
+            child: Text(AppLocalizations.of(context)!.save),
           ),
         ],
       ),
@@ -219,27 +227,30 @@ class _CategoryScreenState extends State<CategoryScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       nameController.dispose();
     });
-    //focusNode.dispose();
+    focusNode.dispose();
 
     if (result == true) {
       await _loadData();
 
       if (!mounted) return;
 
-      _showSnackBar('Category updated successfully.');
+      _showSnackBar(AppLocalizations.of(context)!.categoryUpdated);
     }
   }
 
   Future<void> _handleDelete(CategoryModel model) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Category'),
-        content: Text('Are you sure you want to delete "${model.name}"?'),
+        title: Text(AppLocalizations.of(context)!.deleteCategory),
+        content: Text(
+          AppLocalizations.of(context)!.deleteCategoryConfirmation(model.name),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
@@ -247,14 +258,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
               foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
             ),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete'),
+            child: Text(AppLocalizations.of(context)!.delete),
           ),
         ],
       ),
     );
     if (confirmed == true) {
       if (model.id == null) {
-        _showSnackBar('Invalid category.');
+        _showSnackBar(l10n.invalidCategory);
         return;
       }
 
@@ -268,7 +279,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
         if (!mounted) return;
 
         _showSnackBar(
-          '${model.name} deleted.',
+          l10n.categoryDeleted(model.name),
+
           onUndo: () async {
             try {
               await widget.repository.restore(model.id!);
@@ -279,22 +291,22 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
               if (!mounted) return;
 
-              _showSnackBar('Category restored.');
+              _showSnackBar(l10n.categoryRestored);
             } on Exception {
               if (!mounted) return;
 
-              _showSnackBar('Unable to restore category.');
+              _showSnackBar(l10n.unableToRestoreCategory);
             }
           },
         );
       } on DefaultCategoryException {
         if (!mounted) return;
 
-        _showSnackBar('Default categories cannot be deleted.');
+        _showSnackBar(l10n.defaultCategoryDeleteProtected);
       } on Exception {
         if (!mounted) return;
 
-        _showSnackBar('Unable to delete category.');
+        _showSnackBar(l10n.categoryDeleteFailed);
       }
     }
   }
@@ -302,9 +314,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Categories (${_categories.length})')),
+      appBar: AppBar(
+        title: Text(
+          '${AppLocalizations.of(context)!.categories} (${_categories.length})',
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
-        tooltip: 'Add Category',
+        tooltip: AppLocalizations.of(context)!.addCategory,
         onPressed: _showAddDialog,
         child: const Icon(Icons.add),
       ),
@@ -315,10 +331,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
             child: SearchBar(
               controller: _searchController,
               focusNode: _searchFocusNode,
-              hintText: 'Search categories...',
+              hintText: AppLocalizations.of(context)!.searchCategories,
               onChanged: (val) {
                 _debounce?.cancel();
                 _debounce = Timer(const Duration(milliseconds: 300), () async {
+                  final l10n = AppLocalizations.of(context)!;
                   try {
                     final results = val.trim().isEmpty
                         ? await widget.repository.getActive(
@@ -330,14 +347,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           );
                     if (mounted) setState(() => _categories = results);
                   } catch (_) {
-                    if (mounted) _showSnackBar('Search error.');
+                    if (mounted) _showSnackBar(l10n.searchError);
                   }
                 });
               },
               trailing: _searchController.text.isNotEmpty
                   ? [
                       IconButton(
-                        tooltip: 'Clear search',
+                        tooltip: AppLocalizations.of(context)!.clearSearch,
                         icon: const Icon(Icons.clear),
                         onPressed: () {
                           _searchController.clear();
@@ -350,14 +367,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
             ),
           ),
           SegmentedButton<TransactionType>(
-            segments: const [
+            segments: [
               ButtonSegment(
                 value: TransactionType.expense,
-                label: Text('Expense'),
+                label: Text(AppLocalizations.of(context)!.expense),
               ),
               ButtonSegment(
                 value: TransactionType.income,
-                label: Text('Income'),
+                label: Text(AppLocalizations.of(context)!.income),
               ),
             ],
             selected: {_selectedType},
@@ -393,7 +410,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
         backgroundColor: Color(model.color),
         child: Text(model.icon),
       ),
-      title: Semantics(label: 'Category Name', child: Text(model.name)),
+      title: Semantics(
+        label: AppLocalizations.of(context)!.categoryName,
+        child: Text(model.name),
+      ),
       subtitle: Wrap(
         spacing: 8,
         children: [
@@ -405,25 +425,30 @@ class _CategoryScreenState extends State<CategoryScreen> {
             visualDensity: VisualDensity.compact,
           ),
           if (model.isDefault)
-            const Chip(
-              label: Text('DEFAULT', style: TextStyle(fontSize: 10)),
+            Chip(
+              label: Text(
+                AppLocalizations.of(context)!.defaultLabel,
+                style: const TextStyle(fontSize: 10),
+              ),
               visualDensity: VisualDensity.compact,
             ),
         ],
       ),
       trailing: Tooltip(
-        message: model.isDefault ? 'Protected' : 'Actions',
+        message: model.isDefault
+            ? AppLocalizations.of(context)!.protectedLabel
+            : AppLocalizations.of(context)!.actions,
         child: PopupMenuButton<_MenuAction>(
           enabled: !model.isDefault,
           onSelected: (action) => action == _MenuAction.edit
               ? _showEditDialog(model)
               : _handleDelete(model),
-          itemBuilder: (_) => const [
+          itemBuilder: (_) => [
             PopupMenuItem(
               value: _MenuAction.edit,
               child: ListTile(
                 leading: Icon(Icons.edit),
-                title: Text('Edit'),
+                title: Text(AppLocalizations.of(context)!.edit),
                 contentPadding: EdgeInsets.zero,
               ),
             ),
@@ -431,7 +456,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               value: _MenuAction.delete,
               child: ListTile(
                 leading: Icon(Icons.delete),
-                title: Text('Delete'),
+                title: Text(AppLocalizations.of(context)!.delete),
                 contentPadding: EdgeInsets.zero,
               ),
             ),
@@ -455,13 +480,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              'Unable to Load Categories',
+              AppLocalizations.of(context)!.unableToLoadCategories,
               style: Theme.of(context).textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
-              'Something went wrong while loading your categories.\nPlease try again.',
+              AppLocalizations.of(context)!.categoryLoadError,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -471,7 +496,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
             FilledButton.icon(
               onPressed: _loadData,
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: Text(AppLocalizations.of(context)!.retry),
             ),
           ],
         ),
@@ -493,13 +518,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              'No Categories Yet',
+              AppLocalizations.of(context)!.noCategoriesYet,
               style: Theme.of(context).textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
-              'Create your first category to organize your income and expenses.',
+              AppLocalizations.of(context)!.createFirstCategory,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -509,7 +534,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
             FilledButton.icon(
               onPressed: _showAddDialog,
               icon: const Icon(Icons.add),
-              label: const Text('Add Category'),
+              label: Text(AppLocalizations.of(context)!.addCategory),
             ),
           ],
         ),

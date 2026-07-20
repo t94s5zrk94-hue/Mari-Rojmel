@@ -12,6 +12,8 @@ import '../../payment_modes/repositories/payment_mode_repository.dart';
 import '../widgets/transaction_date_header.dart';
 import '../../../core/database/database_helper.dart';
 import '../widgets/empty_transaction_widget.dart';
+import '../../../core/navigation/app_route_observer.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class TransactionsScreen extends StatefulWidget {
   const TransactionsScreen({super.key});
@@ -20,7 +22,8 @@ class TransactionsScreen extends StatefulWidget {
   State<TransactionsScreen> createState() => _TransactionsScreenState();
 }
 
-class _TransactionsScreenState extends State<TransactionsScreen> {
+class _TransactionsScreenState extends State<TransactionsScreen>
+    with RouteAware {
   List<TransactionModel> transactions = [];
 
   bool loading = true;
@@ -42,6 +45,22 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     _categoryRepository = CategoryRepository(db);
     _paymentModeRepository = PaymentModeRepository(db);
 
+    loadTransactions();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final route = ModalRoute.of(context);
+
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void didPopNext() {
     loadTransactions();
   }
 
@@ -151,9 +170,18 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   }
 
   @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Transactions"), centerTitle: true),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.transactions),
+        centerTitle: true,
+      ),
 
       body: Column(
         children: [

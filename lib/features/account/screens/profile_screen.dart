@@ -10,7 +10,7 @@
 // ===============================================================
 
 import 'package:flutter/material.dart';
-
+import '../../../l10n/generated/app_localizations.dart';
 import '../models/user_profile_model.dart';
 import '../repositories/account_repository.dart';
 
@@ -160,7 +160,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _profile = profile;
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile saved successfully.')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.profileSavedSuccessfully,
+            ),
+          ),
         );
       }
     } catch (error) {
@@ -188,11 +192,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final text = value?.trim() ?? '';
 
     if (text.isEmpty) {
-      return 'Name is required.';
+      return AppLocalizations.of(context)!.nameRequired;
     }
 
     if (text.length < 2) {
-      return 'Enter a valid name.';
+      return AppLocalizations.of(context)!.validName;
     }
 
     return null;
@@ -208,7 +212,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final mobileRegExp = RegExp(r'^[0-9]{10}$');
 
     if (!mobileRegExp.hasMatch(text)) {
-      return 'Enter a valid mobile number.';
+      return AppLocalizations.of(context)!.validMobileNumber;
     }
 
     return null;
@@ -224,7 +228,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final emailRegExp = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
     if (!emailRegExp.hasMatch(text)) {
-      return 'Enter a valid email address.';
+      return AppLocalizations.of(context)!.validEmailAddress;
     }
 
     return null;
@@ -242,7 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(AppLocalizations.of(context)!.profile),
         centerTitle: true,
         actions: [
           Padding(
@@ -256,7 +260,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.save),
-              label: const Text('Save'),
+              label: Text(AppLocalizations.of(context)!.save),
             ),
           ),
         ],
@@ -284,9 +288,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         TextFormField(
                           controller: _nameController,
                           focusNode: _nameFocus,
-                          decoration: const InputDecoration(
-                            labelText: 'Name',
-                            hintText: 'Enter your name',
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context)!.name,
+                            hintText: AppLocalizations.of(
+                              context,
+                            )!.enterYourName,
                             prefixIcon: Icon(Icons.person_outline),
                             border: OutlineInputBorder(),
                           ),
@@ -301,8 +307,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         TextFormField(
                           controller: _mobileController,
                           focusNode: _mobileFocus,
-                          decoration: const InputDecoration(
-                            labelText: 'Mobile Number',
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(
+                              context,
+                            )!.mobileNumber,
                             hintText: '9876543210',
                             prefixIcon: Icon(Icons.phone_outlined),
                             border: OutlineInputBorder(),
@@ -320,8 +328,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         TextFormField(
                           controller: _emailController,
                           focusNode: _emailFocus,
-                          decoration: const InputDecoration(
-                            labelText: 'Email',
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context)!.email,
                             hintText: 'example@email.com',
                             prefixIcon: Icon(Icons.email_outlined),
                             border: OutlineInputBorder(),
@@ -337,9 +345,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         TextFormField(
                           controller: _addressController,
                           focusNode: _addressFocus,
-                          decoration: const InputDecoration(
-                            labelText: 'Address',
-                            hintText: 'Enter your address',
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context)!.address,
+                            hintText: AppLocalizations.of(
+                              context,
+                            )!.enterYourAddress,
                             prefixIcon: Icon(Icons.home_outlined),
                             border: OutlineInputBorder(),
                             alignLabelWithHint: true,

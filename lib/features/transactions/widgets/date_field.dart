@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class DateField extends StatelessWidget {
   const DateField({super.key, required this.selectedDate, required this.onTap});
@@ -14,12 +14,14 @@ class DateField extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: InputDecorator(
-        decoration: const InputDecoration(
-          labelText: 'Date',
-          border: OutlineInputBorder(),
-          prefixIcon: Icon(Icons.calendar_today),
+        decoration: InputDecoration(
+          labelText: AppLocalizations.of(context)!.date,
+          border: const OutlineInputBorder(),
+          prefixIcon: const Icon(Icons.calendar_today),
         ),
-        child: Text(DateFormat('dd/MM/yyyy').format(selectedDate)),
+        child: Text(
+          MaterialLocalizations.of(context).formatCompactDate(selectedDate),
+        ),
       ),
     );
   }

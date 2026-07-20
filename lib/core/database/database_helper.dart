@@ -10,6 +10,7 @@ import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'database_constants.dart';
+import 'database_initializer.dart';
 
 class DatabaseHelper {
   DatabaseHelper._();
@@ -332,5 +333,8 @@ class DatabaseHelper {
   Future<void> resetDatabase() async {
     await deleteDatabaseFile();
     _database = await _initializeDatabase();
+
+    // Seed default data
+    await DatabaseInitializer.instance.initialize();
   }
 }

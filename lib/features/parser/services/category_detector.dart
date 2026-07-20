@@ -38,6 +38,13 @@ class CategoryDetector {
 
     return null;
   }
+  // ===============================================================
+  // Find By Id
+  // ===============================================================
+
+  Future<CategoryModel?> findById(int id) async {
+    return _repository.getById(id);
+  }
 
   Future<bool> hasCategory(
     List<String> tokens, {

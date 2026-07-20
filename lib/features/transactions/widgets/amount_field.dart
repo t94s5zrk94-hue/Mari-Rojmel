@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class AmountField extends StatelessWidget {
   const AmountField({super.key, required this.controller, this.onChanged});
@@ -16,11 +17,11 @@ class AmountField extends StatelessWidget {
           controller: controller,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           textInputAction: TextInputAction.next,
-          decoration: const InputDecoration(
-            labelText: 'Amount',
-            hintText: 'Enter amount',
-            prefixIcon: Icon(Icons.currency_rupee),
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.amount,
+            hintText: AppLocalizations.of(context)!.enterAmount,
+            prefixIcon: const Icon(Icons.currency_rupee),
+            border: const OutlineInputBorder(),
           ),
           onChanged: onChanged,
         ),

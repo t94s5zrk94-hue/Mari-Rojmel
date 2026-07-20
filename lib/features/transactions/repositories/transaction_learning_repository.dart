@@ -6,7 +6,6 @@
 // ===============================================================
 
 import 'package:sqflite/sqflite.dart';
-
 import '../../../core/database/database_helper.dart';
 import '../models/transaction_learning_model.dart';
 
@@ -38,6 +37,20 @@ class TransactionLearningRepository {
     }
 
     return TransactionLearningModel.fromMap(result.first);
+  }
+
+  Future<TransactionLearningModel?> findByKeywords(
+    List<String> keywords,
+  ) async {
+    for (final keyword in keywords) {
+      final learning = await findByKeyword(keyword);
+
+      if (learning != null) {
+        return learning;
+      }
+    }
+
+    return null;
   }
 
   // ===============================================================

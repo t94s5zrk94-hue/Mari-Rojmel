@@ -1,0 +1,594 @@
+{
+  "@@locale": "en",
+
+  "appName": "Mari Rojmel",
+  "@appName": {
+    "description": "Application name"
+  },
+
+  "dashboard": "Dashboard",
+  "@dashboard": {
+    "description": "Dashboard screen title"
+  },
+
+  "reports": "Reports",
+  "@reports": {
+    "description": "Reports screen title"
+  },
+
+  "transactionCount": "Transactions",
+"@transactionCount": {
+  "description": "Transaction count summary card"
+},
+
+  "account": "Account",
+  "@account": {
+    "description": "Account screen title"
+  },
+
+  "add": "Add",
+  "@add": {
+    "description": "Add button"
+  },
+
+  "save": "Save",
+  "@save": {
+    "description": "Save button"
+  },
+
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button"
+  },
+"goodMorning": "Morning",
+"@goodMorning": {
+  "description": "Morning greeting"
+},
+
+"goodAfternoon": "Afternoon",
+"@goodAfternoon": {
+  "description": "Afternoon greeting"
+},
+
+"goodEvening": "Evening",
+"@goodEvening": {
+  "description": "Evening greeting"
+},
+
+"welcomeBack": "Welcome back",
+"@welcomeBack": {
+  "description": "Dashboard welcome message"
+},
+
+"currentBalance": "Current Balance",
+"@currentBalance": {
+  "description": "Current balance title"
+},
+
+"income": "Income",
+"@income": {
+  "description": "Income label"
+},
+
+"expense": "Expense",
+"@expense": {
+  "description": "Expense label"
+},
+
+"balance": "Balance",
+"@balance": {
+  "description": "Balance label"
+},
+
+"quickActions": "Quick Actions",
+"@quickActions": {
+  "description": "Quick actions section"
+},
+
+"addTransaction": "Add Transaction",
+"@addTransaction": {
+  "description": "Add transaction action"
+},
+
+"categories": "Categories",
+"@categories": {
+  "description": "Categories action"
+},
+
+"paymentModes": "Payment Modes",
+"@paymentModes": {
+  "description": "Payment modes action"
+},
+
+"recentTransactions": "Recent Transactions",
+"@recentTransactions": {
+  "description": "Recent transactions title"
+},
+
+"items": "items",
+"@items": {
+  "description": "Items suffix"
+},
+
+"noTransactionsFound": "No transactions found.",
+"@noTransactionsFound": {
+  "description": "Empty transactions message"
+},
+
+"noNote": "No Note",
+"@noNote": {
+  "description": "Empty note text"
+},
+
+"retry": "Retry",
+"@retry": {
+  "description": "Retry button"
+},
+
+"unableToLoadDashboard": "Unable to load dashboard",
+"@unableToLoadDashboard": {
+  "description": "Dashboard load error"
+},
+"deleteTransaction": "Delete Transaction",
+"@deleteTransaction": {
+  "description": "Delete transaction dialog title"
+},
+"transactions": "Transactions",
+"@transactions": {
+  "description": "Transactions screen title"
+},
+"editTransaction": "Edit Transaction",
+"@editTransaction": {
+  "description": "Edit transaction screen title"
+},
+"updateTransaction": "Update Transaction",
+"@updateTransaction": {},
+
+"saveTransaction": "Save Transaction",
+"@saveTransaction": {
+  "description": "Save transaction button"
+},
+
+"amount": "Amount",
+"@amount": {
+  "description": "Amount field label"
+},
+
+"enterAmount": "Enter amount",
+"@enterAmount": {
+  "description": "Amount field hint"
+},
+
+"description": "Description",
+"@description": {
+  "description": "Description field label"
+},
+
+"enterDescription": "Enter description (Optional)",
+"@enterDescription": {
+  "description": "Description field hint"
+},
+
+"date": "Date",
+"@date": {
+  "description": "Transaction date field label"
+},
+
+"type": "Type",
+"@type": {
+  "description": "Transaction type field label"
+},
+
+"addCategory": "Add Category",
+"@addCategory": {
+  "description": "Tooltip for add category button"
+},
+
+"addPaymentMode": "Add Payment Mode",
+"@addPaymentMode": {
+  "description": "Tooltip for add payment mode button"
+},
+
+"quickEntry": "Quick Entry",
+"@quickEntry": {
+  "description": "Quick entry field label"
+},
+
+"quickEntryHint": "Example: 500 Milk",
+"@quickEntryHint": {
+  "description": "Quick entry example"
+},
+
+"saving": "Saving...",
+"@saving": {
+  "description": "Saving progress text"
+},
+
+"addBill": "Add Bill",
+"@addBill": {
+  "description": "Button to attach a bill image"
+},
+
+"removeBill": "Remove Bill",
+"@removeBill": {
+  "description": "Button to remove the attached bill image"
+},
+
+"searchCategories": "Search categories...",
+"@searchCategories": {
+  "description": "Search category hint"
+},
+
+"searchError": "Search error.",
+"@searchError": {
+  "description": "Category search error"
+},
+
+"categoryName": "Category Name",
+"@categoryName": {
+  "description": "Category name field label"
+},
+
+"nameRequired": "Name is required",
+"@nameRequired": {
+  "description": "Validation message when category name is empty"
+},
+
+"editCategory": "Edit Category",
+"@editCategory": {
+  "description": "Edit category dialog title"
+},
+
+"categoryAlreadyExists": "Category already exists.",
+"@categoryAlreadyExists": {},
+"categoryAdded": "Category added successfully.",
+"@categoryAdded": {},
+"categoryUpdated": "Category updated successfully.",
+"@categoryUpdated": {},
+"categoryUpdateFailed": "Unable to update category.",
+"@categoryUpdateFailed": {},
+"categoryAddFailed": "Unable to add category.",
+"@categoryAddFailed": {},
+"defaultCategoryProtected": "Default categories cannot be modified.",
+"@defaultCategoryProtected": {},
+"categoryNameTaken": "Category name already taken.",
+"@categoryNameTaken": {},
+
+"deleteCategoryConfirmation": "Are you sure you want to delete \"{name}\"?",
+"@deleteCategoryConfirmation": {
+  "placeholders": {
+    "name": {}
+  }
+},
+
+"defaultLabel": "DEFAULT",
+"@defaultLabel": {
+  "description": "Label shown for default categories"
+},
+
+"deleteCategory": "Delete Category",
+"@deleteCategory": {
+  "description": "Delete category dialog title"
+},
+
+"delete": "Delete",
+"@delete": {
+  "description": "Delete button"
+},
+
+"invalidCategory": "Invalid category.",
+"@invalidCategory": {},
+"categoryDeleted": "{name} deleted.",
+"@categoryDeleted": {
+  "description": "Category deleted message",
+  "placeholders": {
+    "name": {}
+  }
+},
+
+"categoryRestored": "Category restored.",
+"@categoryRestored": {},
+"unableToRestoreCategory": "Unable to restore category.",
+"@unableToRestoreCategory": {},
+"defaultCategoryDeleteProtected": "Default categories cannot be deleted.",
+"@defaultCategoryDeleteProtected": {},
+"categoryDeleteFailed": "Unable to delete category.",
+"@categoryDeleteFailed": {},
+
+"clearSearch": "Clear search",
+"@clearSearch": {},
+
+"protectedLabel": "Protected",
+"@protectedLabel": {},
+"actions": "Actions",
+"@actions": {},
+
+"edit": "Edit",
+"@edit": {},
+"noCategoriesYet": "No Categories Yet",
+"@noCategoriesYet": {},
+"createFirstCategory": "Create your first category to organize your income and expenses.",
+"@createFirstCategory": {},
+"undo": "UNDO",
+"@undo": {},
+"unableToLoadCategories": "Unable to Load Categories",
+"@unableToLoadCategories": {},
+"categoryLoadError": "Something went wrong while loading your categories.\nPlease try again.",
+"@categoryLoadError": {},
+
+"paymentModeName": "Payment Mode Name",
+"@paymentModeName": {
+  "description": "Payment mode name field label"
+},
+
+"paymentModeNameHint": "e.g. Credit Card",
+"@paymentModeNameHint": {
+  "description": "Payment mode name hint"
+},
+
+"searchPaymentModes": "Search payment modes...",
+"@searchPaymentModes": {
+  "description": "Search payment modes hint"
+},
+
+"paymentModeRequired": "Payment mode name is required",
+"@paymentModeRequired": {
+  "description": "Validation message"
+},
+
+"editPaymentMode": "Edit Payment Mode",
+"@editPaymentMode": {
+  "description": "Edit payment mode dialog title"
+},
+
+"deletePaymentMode": "Delete Payment Mode",
+"@deletePaymentMode": {
+  "description": "Delete payment mode dialog title"
+},
+
+"paymentModeAlreadyExists": "Payment mode already exists.",
+"@paymentModeAlreadyExists": {},
+
+"paymentModeAdded": "Payment mode added successfully.",
+"@paymentModeAdded": {},
+
+"paymentModeUpdated": "Payment mode updated successfully.",
+"@paymentModeUpdated": {},
+
+"paymentModeDeleted": "{name} deleted.",
+"@paymentModeDeleted": {
+  "placeholders": {
+    "name": {}
+  }
+},
+
+"paymentModeRestored": "Payment mode restored.",
+"@paymentModeRestored": {},
+
+"paymentModeAddFailed": "Unable to add payment mode.",
+"@paymentModeAddFailed": {},
+
+"paymentModeUpdateFailed": "Unable to update payment mode.",
+"@paymentModeUpdateFailed": {},
+
+"paymentModeDeleteFailed": "Unable to delete payment mode.",
+"@paymentModeDeleteFailed": {},
+
+"paymentModeRestoreFailed": "Unable to restore payment mode.",
+"@paymentModeRestoreFailed": {},
+
+"invalidPaymentMode": "Invalid payment mode.",
+"@invalidPaymentMode": {},
+
+"defaultPaymentModeProtected": "Default payment modes cannot be modified.",
+"@defaultPaymentModeProtected": {},
+
+"defaultPaymentModeDeleteProtected": "Default payment modes cannot be deleted.",
+"@defaultPaymentModeDeleteProtected": {},
+
+"deletePaymentModeConfirmation": "Are you sure you want to delete \"{name}\"?",
+"@deletePaymentModeConfirmation": {
+  "placeholders": {
+    "name": {}
+  }
+},
+
+"unableToLoadPaymentModes": "Unable to Load Payment Modes",
+"@unableToLoadPaymentModes": {},
+
+"paymentModeLoadError": "Something went wrong while loading your payment modes.\nPlease try again.",
+"@paymentModeLoadError": {},
+
+"noPaymentModesYet": "No Payment Modes Yet",
+"@noPaymentModesYet": {},
+
+"createFirstPaymentMode": "Create your first payment mode.",
+"@createFirstPaymentMode": {},
+
+
+  "unknownError": "Unknown error",
+  "@unknownError": {},
+
+
+  "thisMonth": "This Month",
+  "@thisMonth": {},
+  "lastMonth": "Last Month",
+  "@lastMonth": {},
+  "thisYear": "This Year",
+  "@thisYear": {},
+  "customRange": "Custom Range",
+  "@customRange": {},
+
+  "reportSummary": "Report Summary",
+  "@reportSummary": {},
+  "categoryReport": "Category Report",
+  "@categoryReport": {},
+  "paymentModeReport": "Payment Mode Report",
+  "@paymentModeReport": {},
+
+  "noReportData": "No report data available",
+  "@noReportData": {},
+
+  "selectDateRange": "Select date range",
+  "@selectDateRange": {},
+  "fromDate": "From Date",
+  "@fromDate": {},
+  "toDate": "To Date",
+  "@toDate": {},
+
+  "exportReport": "Export Report",
+  "@exportReport": {},
+  
+"unableToLoadReports": "Unable to load reports",
+"@unableToLoadReports": {},
+
+"reportFilter": "Report Filter",
+"@reportFilter": {},
+"today": "Today",
+"@today": {},
+"thisWeek": "This Week",
+"@thisWeek": {},
+"custom": "Custom",
+"@custom": {},
+"noDateRangeSelected": "No date range selected",
+"@noDateRangeSelected": {},
+
+"totalIncome": "Total Income",
+"@totalIncome": {},
+"totalExpense": "Total Expense",
+"@totalExpense": {},
+"netBalance": "Net Balance",
+"@netBalance": {},
+"totalTransactions": "Transactions",
+"@totalTransactions": {},
+"highestIncome": "Highest Income",
+"@highestIncome": {},
+"highestExpense": "Highest Expense",
+"@highestExpense": {},
+"averageIncome": "Average Income",
+"@averageIncome": {},
+"averageExpense": "Average Expense",
+"@averageExpense": {},
+"noCategoryReportAvailable": "No category report available",
+"@noCategoryReportAvailable": {},
+"paymentModeReportTitle": "Payment Mode Report",
+"@paymentModeReportTitle": {},
+"noPaymentModeReportAvailable": "No payment mode report available.",
+"@noPaymentModeReportAvailable": {},
+"navDashboard": "Dashboard",
+"@navDashboard": {},
+"navReports": "Reports",
+"@navReports": {},
+"navAdd": "Add",
+"@navAdd": {},
+"navTransactions": "Transactions",
+"@navTransactions": {},
+"navAccount": "Account",
+"@navAccount": {},
+"profile": "Profile",
+"@profile": {},
+"profileDescription": "Manage your personal information",
+"@profileDescription": {},
+"version": "Version",
+"@version": {},
+"application": "Application",
+"@application": {},
+"appSettings": "App Settings",
+"@appSettings": {},
+"backupRestore": "Backup & Restore",
+"@backupRestore": {},
+"about": "About",
+"@about": {},
+"refresh": "Refresh",
+"@refresh": {},
+"comingSoon": "{title} will be available soon.",
+"@comingSoon": {
+  "placeholders": {
+    "title": {}
+  }
+},
+"name": "Name",
+"@name": {},
+"enterYourName": "Enter your name",
+"@enterYourName": {},
+"mobileNumber": "Mobile Number",
+"@mobileNumber": {},
+"email": "Email",
+"@email": {},
+"address": "Address",
+"@address": {},
+"enterYourAddress": "Enter your address",
+"@enterYourAddress": {},
+
+"validName": "Enter a valid name.",
+"@validName": {},
+"validMobileNumber": "Enter a valid mobile number.",
+"@validMobileNumber": {},
+"validEmailAddress": "Enter a valid email address.",
+"@validEmailAddress": {},
+"profileSavedSuccessfully": "Profile saved successfully.",
+"@profileSavedSuccessfully": {},
+
+"versionLabel": "Version {version}",
+"@versionLabel": {
+  "placeholders": {
+    "version": {}
+  }
+},
+
+"appTagline": "Gujarati Digital Expense & Income Manager",
+"@appTagline": {},
+
+"developer": "Developer",
+"@developer": {},
+"privacyPolicy": "Privacy Policy",
+"@privacyPolicy": {},
+"termsConditions": "Terms & Conditions",
+"@termsConditions": {},
+"shareApp": "Share App",
+"@shareApp": {},
+"rateApp": "Rate App",
+"@rateApp": {},
+
+"copyright": "© 2026 Mari-Rojmel",
+"@copyright": {},
+"madeInIndia": "Made with ❤️ in India",
+"@madeInIndia": {},
+
+"settings": "Settings",
+"@settings": {},
+"appearance": "Appearance",
+"@appearance": {},
+"theme": "Theme",
+"@theme": {},
+"language": "Language",
+"@language": {},
+"regional": "Regional",
+"@regional": {},
+"currency": "Currency",
+"@currency": {},
+"dateFormat": "Date Format",
+"@dateFormat": {},
+"notifications": "Notifications",
+"@notifications": {},
+"enableDisableNotifications": "Enable or disable notifications",
+"@enableDisableNotifications": {},
+"appVersion": "App Version",
+"@appVersion": {},
+"selectTheme": "Select Theme",
+"@selectTheme": {},
+"system": "System",
+"@system": {},
+"light": "Light",
+"@light": {},
+"dark": "Dark",
+"@dark": {},
+"settingsNotFound": "Settings not found",
+"@settingsNotFound": {},
+"indianRupee": "₹ Indian Rupee (INR)",
+"@indianRupee": {},
+"defaultDateFormat": "dd/MM/yyyy (India)",
+"@defaultDateFormat": {}
+}
+
+

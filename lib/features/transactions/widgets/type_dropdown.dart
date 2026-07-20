@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/enums/transaction_type.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class TypeDropdown extends StatelessWidget {
   const TypeDropdown({super.key, required this.value, required this.onChanged});
@@ -15,18 +16,18 @@ class TypeDropdown extends StatelessWidget {
       children: [
         DropdownButtonFormField<TransactionType>(
           initialValue: value,
-          decoration: const InputDecoration(
-            labelText: 'Type',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.type,
+            border: const OutlineInputBorder(),
           ),
-          items: const [
+          items: [
             DropdownMenuItem(
               value: TransactionType.expense,
-              child: Text('Expense'),
+              child: Text(AppLocalizations.of(context)!.expense),
             ),
             DropdownMenuItem(
               value: TransactionType.income,
-              child: Text('Income'),
+              child: Text(AppLocalizations.of(context)!.income),
             ),
           ],
           onChanged: onChanged,

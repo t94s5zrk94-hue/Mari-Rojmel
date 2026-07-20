@@ -12,16 +12,23 @@ import '../../categories/repositories/category_repository.dart';
 import 'amount_detector.dart';
 import 'category_detector.dart';
 import 'payment_detector.dart';
+import '../../payment_modes/repositories/payment_mode_repository.dart';
+import '../../payment_modes/services/payment_mode_detector.dart';
 import 'tokenizer.dart';
 import 'type_detector.dart';
 import '../models/parsed_transaction_model.dart';
+import '../../transactions/repositories/transaction_learning_repository.dart';
 
 class TransactionParser {
-  TransactionParser({required CategoryRepository categoryRepository})
-    : _categoryDetector = CategoryDetector(categoryRepository);
-
+  TransactionParser({
+    required CategoryRepository categoryRepository,
+    required PaymentModeRepository paymentModeRepository,
+    required this._learningRepository,
+  }) : _categoryDetector = CategoryDetector(categoryRepository),
+       _paymentModeDetector = PaymentModeDetector(paymentModeRepository);
+  final TransactionLearningRepository _learningRepository;
   final CategoryDetector _categoryDetector;
-
+  final PaymentModeDetector _paymentModeDetector;
   Future<ParsedTransactionModel> parse(String input) async {
     final tokens = Tokenizer.tokenize(input);
 
@@ -53,18 +60,19 @@ class TransactionParser {
     // Category
     // ----------------------------------------------------------
 
-    final category = await _categoryDetector.detect(
-      tokens,
-      transactionType: transactionType,
-    );
+    final learning = await _learningRepository.findByKeywords(tokens);
 
+    final category = learning != null
+        ? await _categoryDetector.findById(learning.categoryId)
+        : await _categoryDetector.detect(
+            tokens,
+            transactionType: transactionType,
+          );
     // ----------------------------------------------------------
     // Payment Mode
     // ----------------------------------------------------------
 
-    // Database integration will be added in next phase.
-    const paymentMode = null;
-
+    final paymentMode = await _paymentModeDetector.detect(tokens);
     // ----------------------------------------------------------
     // Confidence
     // ----------------------------------------------------------

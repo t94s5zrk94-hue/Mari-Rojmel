@@ -50,9 +50,7 @@ abstract interface class ITransactionRepository {
 
   Future<List<TransactionModel>> getDeleted();
 
-  Future<List<TransactionModel>> search(
-    String query,
-  );
+  Future<List<TransactionModel>> search(String query);
 
   Future<void> seedDefaultData();
 }
@@ -61,26 +59,18 @@ abstract interface class ITransactionRepository {
 /// Repository Implementation
 /// ==========================================================
 
-class TransactionRepository
-    implements ITransactionRepository {
+class TransactionRepository implements ITransactionRepository {
+  TransactionRepository._({DatabaseHelper? databaseHelper})
+    : _databaseHelper = databaseHelper ?? DatabaseHelper.instance;
 
-  TransactionRepository._({
-    DatabaseHelper? databaseHelper,
-  }) : _databaseHelper =
-          databaseHelper ??
-          DatabaseHelper.instance;
-
-  static final TransactionRepository instance =
-      TransactionRepository._();
+  static final TransactionRepository instance = TransactionRepository._();
 
   final DatabaseHelper _databaseHelper;
 
-  Future<Database> get _database async =>
-      _databaseHelper.database;
+  Future<Database> get _database async => _databaseHelper.database;
 
-  static const String _table =
-      DatabaseConstants.transactionsTable;
-    // ==========================================================
+  static const String _table = DatabaseConstants.transactionsTable;
+  // ==========================================================
   // Private Helpers
   // ==========================================================
 
@@ -103,9 +93,7 @@ class TransactionRepository
   // ==========================================================
 
   @override
-  Future<bool> insert(
-    TransactionModel model,
-  ) async {
+  Future<bool> insert(TransactionModel model) async {
     final db = await _database;
 
     final id = await db.insert(
@@ -122,9 +110,7 @@ class TransactionRepository
   // ==========================================================
 
   @override
-  Future<bool> update(
-    TransactionModel model,
-  ) async {
+  Future<bool> update(TransactionModel model) async {
     if (model.id == null) {
       throw const TransactionNotFoundException();
     }
@@ -133,11 +119,7 @@ class TransactionRepository
 
     final updatedRows = await db.update(
       _table,
-      model
-          .copyWith(
-            updatedAt: DateTime.now(),
-          )
-          .toMap(),
+      model.copyWith(updatedAt: DateTime.now()).toMap(),
       where: '${DatabaseConstants.id} = ?',
       whereArgs: [model.id],
     );
@@ -154,9 +136,7 @@ class TransactionRepository
   // ==========================================================
 
   @override
-  Future<TransactionModel?> getById(
-    int id,
-  ) async {
+  Future<TransactionModel?> getById(int id) async {
     final db = await _database;
 
     final result = await db.query(
@@ -170,9 +150,7 @@ class TransactionRepository
       return null;
     }
 
-    return TransactionModel.fromMap(
-      result.first,
-    );
+    return TransactionModel.fromMap(result.first);
   }
 
   // ==========================================================
@@ -180,22 +158,17 @@ class TransactionRepository
   // ==========================================================
 
   @override
-  Future<List<TransactionModel>>
-      getActive() async {
+  Future<List<TransactionModel>> getActive() async {
     final db = await _database;
 
     final result = await db.query(
       _table,
-      where:
-          '${DatabaseConstants.isDeleted} = ?',
+      where: '${DatabaseConstants.isDeleted} = ?',
       whereArgs: [0],
-      orderBy:
-          '${DatabaseConstants.transactionDate} DESC',
+      orderBy: '${DatabaseConstants.transactionDate} DESC',
     );
 
-    return result
-        .map(TransactionModel.fromMap)
-        .toList();
+    return result.map(TransactionModel.fromMap).toList();
   }
 
   // ==========================================================
@@ -203,31 +176,24 @@ class TransactionRepository
   // ==========================================================
 
   @override
-  Future<List<TransactionModel>>
-      getDeleted() async {
+  Future<List<TransactionModel>> getDeleted() async {
     final db = await _database;
 
     final result = await db.query(
       _table,
-      where:
-          '${DatabaseConstants.isDeleted} = ?',
+      where: '${DatabaseConstants.isDeleted} = ?',
       whereArgs: [1],
-      orderBy:
-          '${DatabaseConstants.transactionDate} DESC',
+      orderBy: '${DatabaseConstants.transactionDate} DESC',
     );
 
-    return result
-        .map(TransactionModel.fromMap)
-        .toList();
+    return result.map(TransactionModel.fromMap).toList();
   }
-    // ==========================================================
+  // ==========================================================
   // SOFT DELETE
   // ==========================================================
 
   @override
-  Future<bool> softDelete(
-    int id,
-  ) async {
+  Future<bool> softDelete(int id) async {
     if (!await _exists(id)) {
       throw const TransactionNotFoundException();
     }
@@ -238,8 +204,7 @@ class TransactionRepository
       _table,
       {
         DatabaseConstants.isDeleted: 1,
-        DatabaseConstants.updatedAt:
-            DateTime.now().toIso8601String(),
+        DatabaseConstants.updatedAt: DateTime.now().toIso8601String(),
       },
       where: '${DatabaseConstants.id} = ?',
       whereArgs: [id],
@@ -253,9 +218,7 @@ class TransactionRepository
   // ==========================================================
 
   @override
-  Future<bool> restore(
-    int id,
-  ) async {
+  Future<bool> restore(int id) async {
     if (!await _exists(id)) {
       throw const TransactionNotFoundException();
     }
@@ -266,8 +229,7 @@ class TransactionRepository
       _table,
       {
         DatabaseConstants.isDeleted: 0,
-        DatabaseConstants.updatedAt:
-            DateTime.now().toIso8601String(),
+        DatabaseConstants.updatedAt: DateTime.now().toIso8601String(),
       },
       where: '${DatabaseConstants.id} = ?',
       whereArgs: [id],
@@ -281,27 +243,23 @@ class TransactionRepository
   // ==========================================================
 
   @override
-  Future<List<TransactionModel>> search(
-    String query,
-  ) async {
+  Future<List<TransactionModel>> search(String query) async {
     final db = await _database;
 
     final keyword = '%${query.trim()}%';
 
     final result = await db.query(
       _table,
-      where: '''
+      where:
+          '''
         ${DatabaseConstants.note} LIKE ?
         AND ${DatabaseConstants.isDeleted} = 0
       ''',
       whereArgs: [keyword],
-      orderBy:
-          '${DatabaseConstants.transactionDate} DESC',
+      orderBy: '${DatabaseConstants.transactionDate} DESC',
     );
 
-    return result
-        .map(TransactionModel.fromMap)
-        .toList();
+    return result.map(TransactionModel.fromMap).toList();
   }
 
   // ==========================================================
@@ -314,13 +272,10 @@ class TransactionRepository
 
     final result = await db.query(
       _table,
-      orderBy:
-          '${DatabaseConstants.transactionDate} DESC',
+      orderBy: '${DatabaseConstants.transactionDate} DESC',
     );
 
-    return result
-        .map(TransactionModel.fromMap)
-        .toList();
+    return result.map(TransactionModel.fromMap).toList();
   }
 
   // ==========================================================

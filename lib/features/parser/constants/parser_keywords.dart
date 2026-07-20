@@ -76,7 +76,13 @@ class ParserKeywords {
   // Cash Keywords
   // ==========================================================
 
-  static const List<String> cashKeywords = ['cash', 'Cash', 'રોકડ', 'કેશ'];
+  static const List<String> cashKeywords = [
+    'cash',
+    'કેશ',
+    'રોકડ',
+    'રોકડા',
+    'નગદ',
+  ];
 
   // ==========================================================
   // UPI Keywords
@@ -84,46 +90,65 @@ class ParserKeywords {
 
   static const List<String> upiKeywords = [
     'upi',
-    'UPI',
     'gpay',
-    'GPay',
     'googlepay',
-    'GooglePay',
+    'google pay',
     'phonepe',
-    'PhonePe',
+    'phone pe',
     'paytm',
-    'Paytm',
     'bhim',
-    'BHIM',
+    'bharatpe',
   ];
 
   // ==========================================================
-  // Bank Keywords
+  // Bank Transfer Keywords
   // ==========================================================
 
   static const List<String> bankKeywords = [
     'bank',
-    'Bank',
     'બેંક',
     'account',
-    'Account',
     'transfer',
-    'Transfer',
+    'bank transfer',
+    'online transfer',
     'neft',
     'rtgs',
     'imps',
+    'netbanking',
+    'net banking',
   ];
 
   // ==========================================================
-  // Card Keywords
+  // Debit Card Keywords
   // ==========================================================
 
-  static const List<String> cardKeywords = [
-    'card',
-    'Card',
-    'credit card',
+  static const List<String> debitCardKeywords = [
+    'debit',
     'debit card',
-    'ક્રેડિટ કાર્ડ',
+    'atm card',
+    'ડેબિટ',
     'ડેબિટ કાર્ડ',
+  ];
+
+  // ==========================================================
+  // Credit Card Keywords
+  // ==========================================================
+
+  static const List<String> creditCardKeywords = [
+    'credit',
+    'credit card',
+    'ક્રેડિટ',
+    'ક્રેડિટ કાર્ડ',
+  ];
+
+  // ==========================================================
+  // Cheque Keywords
+  // ==========================================================
+
+  static const List<String> chequeKeywords = [
+    'cheque',
+    'check',
+    'ચેક',
+    'ચેકથી',
   ];
 }
