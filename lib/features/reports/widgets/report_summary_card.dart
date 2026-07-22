@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../models/report_summary.dart';
+import '../../../app/app_colors.dart';
+import '../../../app/app_radius.dart';
+import '../../../app/app_spacing.dart';
 
 /// ==========================================================
 /// Report Summary Card
@@ -23,7 +26,7 @@ class ReportSummaryCard extends StatelessWidget {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.cardPadding,
         child: LayoutBuilder(
           builder: (context, constraints) {
             final isWide = constraints.maxWidth >= 700;
@@ -75,28 +78,28 @@ class ReportSummaryCard extends StatelessWidget {
         _SummaryTile(
           title: AppLocalizations.of(context)!.totalIncome,
           value: summary.totalIncome,
-          color: Colors.green,
+          color: AppColors.success,
           icon: Icons.trending_up,
         ),
         const SizedBox(height: 12),
         _SummaryTile(
           title: AppLocalizations.of(context)!.totalExpense,
           value: summary.totalExpense,
-          color: Colors.red,
+          color: AppColors.error,
           icon: Icons.trending_down,
         ),
         const SizedBox(height: 12),
         _SummaryTile(
           title: AppLocalizations.of(context)!.netBalance,
           value: summary.netBalance,
-          color: Colors.blue,
+          color: AppColors.info,
           icon: Icons.account_balance_wallet,
         ),
         const SizedBox(height: 12),
         _SummaryTile(
           title: AppLocalizations.of(context)!.totalTransactions,
           value: summary.totalTransactions.toDouble(),
-          color: Colors.deepPurple,
+          color: AppColors.primaryAccent,
           icon: Icons.receipt_long,
           isCurrency: false,
         ),
@@ -110,28 +113,28 @@ class ReportSummaryCard extends StatelessWidget {
         _SummaryTile(
           title: AppLocalizations.of(context)!.highestIncome,
           value: summary.highestIncome,
-          color: Colors.teal,
+          color: AppColors.secondaryAccent,
           icon: Icons.arrow_circle_up,
         ),
         const SizedBox(height: 12),
         _SummaryTile(
           title: AppLocalizations.of(context)!.highestExpense,
           value: summary.highestExpense,
-          color: Colors.orange,
+          color: AppColors.warning,
           icon: Icons.arrow_circle_down,
         ),
         const SizedBox(height: 12),
         _SummaryTile(
           title: AppLocalizations.of(context)!.averageIncome,
           value: summary.averageIncome,
-          color: Colors.green,
+          color: AppColors.success,
           icon: Icons.bar_chart,
         ),
         const SizedBox(height: 12),
         _SummaryTile(
           title: AppLocalizations.of(context)!.averageExpense,
           value: summary.averageExpense,
-          color: Colors.red,
+          color: AppColors.error,
           icon: Icons.stacked_bar_chart,
         ),
       ],
@@ -162,7 +165,7 @@ class _SummaryTile extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.medium,
         border: Border.all(color: color.withValues(alpha: 0.20)),
       ),
       child: Row(

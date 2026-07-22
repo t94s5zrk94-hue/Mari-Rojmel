@@ -15,6 +15,7 @@ import 'edit_profile_screen.dart';
 import '../repositories/account_repository.dart';
 import '../../settings/screens/settings_screen.dart';
 import 'backup_screen.dart';
+import '../../../app/app_spacing.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key, required this.repository});
@@ -72,7 +73,12 @@ class _AccountScreenState extends State<AccountScreen> {
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.xxl,
+          ),
           children: [
             _buildSectionTitle(AppLocalizations.of(context)!.profile),
             const SizedBox(height: 8),

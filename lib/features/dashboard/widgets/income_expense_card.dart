@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../app/app_colors.dart';
+import '../../../app/app_radius.dart';
+import '../../../app/app_spacing.dart';
 
 class IncomeExpenseCard extends StatelessWidget {
   const IncomeExpenseCard({
@@ -20,11 +23,9 @@ class IncomeExpenseCard extends StatelessWidget {
     return Card(
       elevation: 0,
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.large),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: AppSpacing.cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -41,7 +42,7 @@ class IncomeExpenseCard extends StatelessWidget {
               title: 'Income',
               amount: income,
               icon: Icons.arrow_downward_rounded,
-              color: Colors.green,
+              color: AppColors.success,
             ),
 
             const Divider(height: 28),
@@ -50,7 +51,7 @@ class IncomeExpenseCard extends StatelessWidget {
               title: 'Expense',
               amount: expense,
               icon: Icons.arrow_upward_rounded,
-              color: Colors.red,
+              color: AppColors.error,
             ),
 
             const Divider(height: 28),
@@ -59,9 +60,7 @@ class IncomeExpenseCard extends StatelessWidget {
               title: 'Net Balance',
               amount: balance,
               icon: Icons.account_balance_wallet_rounded,
-              color: balance >= 0
-                  ? Colors.blue
-                  : colorScheme.error,
+              color: balance >= 0 ? AppColors.info : colorScheme.error,
             ),
           ],
         ),
@@ -92,21 +91,12 @@ class _AmountTile extends StatelessWidget {
         CircleAvatar(
           radius: 20,
           backgroundColor: color.withValues(alpha: 0.12),
-          child: Icon(
-            icon,
-            color: color,
-            size: 20,
-          ),
+          child: Icon(icon, color: color, size: 20),
         ),
 
         const SizedBox(width: 14),
 
-        Expanded(
-          child: Text(
-            title,
-            style: theme.textTheme.titleSmall,
-          ),
-        ),
+        Expanded(child: Text(title, style: theme.textTheme.titleSmall)),
 
         Text(
           '₹${amount.toStringAsFixed(2)}',

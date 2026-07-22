@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../app/app_colors.dart';
 
 import '../../transactions/models/transaction_model.dart';
 
@@ -41,10 +42,8 @@ class RecentTransactions extends StatelessWidget {
           const _EmptyView()
         else
           ...items.map(
-            (transaction) => _TransactionTile(
-              transaction: transaction,
-              onTap: onTap,
-            ),
+            (transaction) =>
+                _TransactionTile(transaction: transaction, onTap: onTap),
           ),
       ],
     );
@@ -52,10 +51,7 @@ class RecentTransactions extends StatelessWidget {
 }
 
 class _TransactionTile extends StatelessWidget {
-  const _TransactionTile({
-    required this.transaction,
-    this.onTap,
-  });
+  const _TransactionTile({required this.transaction, this.onTap});
 
   final TransactionModel transaction;
   final ValueChanged<TransactionModel>? onTap;
@@ -64,9 +60,7 @@ class _TransactionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final isIncome = transaction.isIncome;
 
-    final color = isIncome
-        ? Colors.green
-        : Colors.red;
+    final color = isIncome ? AppColors.success : AppColors.error;
 
     final icon = isIncome
         ? Icons.arrow_downward_rounded
@@ -75,43 +69,26 @@ class _TransactionTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        onTap: onTap == null
-            ? null
-            : () => onTap!(transaction),
+        onTap: onTap == null ? null : () => onTap!(transaction),
         leading: CircleAvatar(
-          backgroundColor:
-              color.withValues(alpha: 0.12),
-          child: Icon(
-            icon,
-            color: color,
-          ),
+          backgroundColor: color.withValues(alpha: 0.12),
+          child: Icon(icon, color: color),
         ),
         title: Text(
-          transaction.note.isEmpty
-              ? 'No Note'
-              : transaction.note,
+          transaction.note.isEmpty ? 'No Note' : transaction.note,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        subtitle: Text(
-          _formatDate(
-            transaction.transactionDate,
-          ),
-        ),
+        subtitle: Text(_formatDate(transaction.transactionDate)),
         trailing: Text(
           '₹${transaction.amount.toStringAsFixed(2)}',
-          style: TextStyle(
-            color: color,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: color, fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
 
-  String _formatDate(
-    DateTime date,
-  ) {
+  String _formatDate(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}/'
         '${date.month.toString().padLeft(2, '0')}/'
         '${date.year}';
@@ -131,24 +108,18 @@ class _EmptyView extends StatelessWidget {
             Icon(
               Icons.receipt_long_outlined,
               size: 56,
-              color: Theme.of(context)
-                  .colorScheme
-                  .outline,
+              color: Theme.of(context).colorScheme.outline,
             ),
             const SizedBox(height: 16),
             Text(
               'No Recent Transactions',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             Text(
               'Your latest transactions will appear here.',
               textAlign: TextAlign.center,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/category_report_item.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../app/app_spacing.dart';
 
 /// ==========================================================
 /// Category Report Widget
@@ -19,7 +20,7 @@ class CategoryReport extends StatelessWidget {
     if (reportData.isEmpty) {
       return Card(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AppSpacing.xxl),
           child: Center(
             child: Text(
               AppLocalizations.of(context)!.noCategoryReportAvailable,
@@ -36,7 +37,7 @@ class CategoryReport extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

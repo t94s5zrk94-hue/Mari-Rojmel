@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/payment_mode_report_item.dart';
 import '../../../l10n/generated/app_localizations.dart';
 
+import '../../../app/app_spacing.dart';
+
 /// ==========================================================
 /// Payment Mode Report
 ///
@@ -19,7 +21,7 @@ class PaymentModeReport extends StatelessWidget {
     if (reportData.isEmpty) {
       return Card(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AppSpacing.xxl),
           child: Center(
             child: Text(
               AppLocalizations.of(context)!.noPaymentModeReportAvailable,
@@ -36,7 +38,7 @@ class PaymentModeReport extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

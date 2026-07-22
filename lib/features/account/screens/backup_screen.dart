@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../models/backup_model.dart';
 import '../../backup/services/backup_service.dart';
 import 'restore_screen.dart';
+import '../../../app/app_colors.dart';
+import '../../../app/app_spacing.dart';
+import '../../../app/app_sizes.dart';
 
 class BackupScreen extends StatefulWidget {
   const BackupScreen({super.key});
@@ -41,7 +44,7 @@ class _BackupScreenState extends State<BackupScreen> {
     }
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.cardPadding,
       children: [
         _buildErrorCard(),
 
@@ -111,8 +114,11 @@ class _BackupScreenState extends State<BackupScreen> {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
+        padding: AppSpacing.cardPadding,
+        child: Text(
+          _errorMessage!,
+          style: const TextStyle(color: AppColors.error),
+        ),
       ),
     );
   }
@@ -120,7 +126,7 @@ class _BackupScreenState extends State<BackupScreen> {
   Widget _buildBackupInfoCard() {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -148,7 +154,7 @@ class _BackupScreenState extends State<BackupScreen> {
   Widget _buildActionCard() {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.cardPadding,
         child: Column(
           children: [
             SizedBox(
@@ -186,13 +192,16 @@ class _BackupScreenState extends State<BackupScreen> {
   Widget _buildHistoryCard() {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               'Backup History',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: AppSizes.title,
+                fontWeight: FontWeight.bold,
+              ),
             ),
 
             const SizedBox(height: 12),

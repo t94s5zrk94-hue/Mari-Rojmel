@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../models/user_profile_model.dart';
 import '../repositories/account_repository.dart';
+import '../../../app/app_spacing.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key, required this.repository});
@@ -272,11 +273,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             key: _formKey,
             child: AutofillGroup(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                padding: AppSpacing.cardPadding,
                 child: Card(
                   elevation: 1,
                   child: Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(AppSpacing.xl),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [

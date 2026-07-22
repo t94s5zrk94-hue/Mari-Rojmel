@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../app/app_colors.dart';
+import '../../../app/app_spacing.dart';
 
 class QuickActionGrid extends StatelessWidget {
   const QuickActionGrid({
@@ -19,10 +21,7 @@ class QuickActionGrid extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Quick Actions',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        Text('Quick Actions', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
         GridView.count(
           crossAxisCount: 2,
@@ -35,25 +34,25 @@ class QuickActionGrid extends StatelessWidget {
             _ActionCard(
               title: 'Add Transaction',
               icon: Icons.add_circle_outline_rounded,
-              color: Colors.blue,
+              color: AppColors.info,
               onTap: onAddTransaction,
             ),
             _ActionCard(
               title: 'Categories',
               icon: Icons.category_outlined,
-              color: Colors.orange,
+              color: AppColors.warning,
               onTap: onCategories,
             ),
             _ActionCard(
               title: 'Payment Modes',
               icon: Icons.account_balance_wallet_outlined,
-              color: Colors.green,
+              color: AppColors.success,
               onTap: onPaymentModes,
             ),
             _ActionCard(
               title: 'Reports',
               icon: Icons.bar_chart_rounded,
-              color: Colors.deepPurple,
+              color: AppColors.primaryAccent,
               onTap: onReports,
               enabled: onReports != null,
             ),
@@ -86,26 +85,18 @@ class _ActionCard extends StatelessWidget {
     return Card(
       elevation: 0,
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: enabled ? onTap : null,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.cardPadding,
           child: Column(
-            mainAxisAlignment:
-                MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircleAvatar(
                 radius: 24,
-                backgroundColor:
-                    color.withValues(alpha: 0.12),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 26,
-                ),
+                backgroundColor: color.withValues(alpha: 0.12),
+                child: Icon(icon, color: color, size: 26),
               ),
               const SizedBox(height: 12),
               Text(

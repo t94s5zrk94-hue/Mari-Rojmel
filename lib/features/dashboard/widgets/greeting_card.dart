@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../../app/app_colors.dart';
 
 class GreetingCard extends StatelessWidget {
   const GreetingCard({super.key});
@@ -16,10 +17,7 @@ class GreetingCard extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Row(
           children: [
-            const CircleAvatar(
-              radius: 28,
-              child: Icon(Icons.waving_hand),
-            ),
+            const CircleAvatar(radius: 28, child: Icon(Icons.waving_hand)),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -27,26 +25,15 @@ class GreetingCard extends StatelessWidget {
                 children: [
                   const Text(
                     'Welcome',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 14, color: AppColors.grey),
                   ),
                   const SizedBox(height: 4),
                   const Text(
                     'Mari Rojmel',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    date,
-                    style: const TextStyle(
-                      color: Colors.grey,
-                    ),
-                  ),
+                  Text(date, style: const TextStyle(color: AppColors.grey)),
                 ],
               ),
             ),

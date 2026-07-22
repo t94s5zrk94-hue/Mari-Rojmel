@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/enums/transaction_type.dart';
 import '../models/transaction_model.dart';
+import '../../../app/app_colors.dart';
+import '../../../app/app_radius.dart';
 
 class TransactionCardWidget extends StatelessWidget {
   const TransactionCardWidget({
@@ -27,7 +29,7 @@ class TransactionCardWidget extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.large),
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Row(
@@ -72,7 +74,9 @@ class TransactionCardWidget extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
-                            color: isIncome ? Colors.green : Colors.red,
+                            color: isIncome
+                                ? AppColors.success
+                                : AppColors.error,
                           ),
                         ),
                       ),
@@ -108,7 +112,7 @@ class TransactionCardWidget extends StatelessWidget {
                         visualDensity: VisualDensity.compact,
                         icon: const Icon(
                           Icons.edit_outlined,
-                          color: Colors.blue,
+                          color: AppColors.info,
                         ),
                         onPressed: onEdit,
                       ),
@@ -118,7 +122,7 @@ class TransactionCardWidget extends StatelessWidget {
                         visualDensity: VisualDensity.compact,
                         icon: const Icon(
                           Icons.delete_outline,
-                          color: Colors.red,
+                          color: AppColors.error,
                         ),
                         onPressed: onDelete,
                       ),
@@ -131,10 +135,7 @@ class TransactionCardWidget extends StatelessWidget {
                       transaction.note,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
-                        fontSize: 14,
-                      ),
+                      style: TextStyle(color: AppColors.grey, fontSize: 14),
                     ),
                   ],
                 ],

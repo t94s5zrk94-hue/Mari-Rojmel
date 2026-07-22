@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/enums/transaction_type.dart';
 import '../models/transaction_model.dart';
 import '../repositories/transaction_repository.dart';
+import '../../../app/app_colors.dart';
 
 class EditTransactionScreen extends StatefulWidget {
   final TransactionModel transaction;
@@ -143,7 +144,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
             ListTile(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
-                side: const BorderSide(color: Colors.grey),
+                side: const BorderSide(color: AppColors.grey),
               ),
               leading: const Icon(Icons.calendar_today),
               title: const Text("Transaction Date"),

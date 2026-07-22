@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../app/app_spacing.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -16,7 +17,7 @@ class AboutScreen extends StatelessWidget {
       appBar: AppBar(title: Text(AppLocalizations.of(context)!.about)),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.cardPadding,
           children: [
             const SizedBox(height: 16),
 

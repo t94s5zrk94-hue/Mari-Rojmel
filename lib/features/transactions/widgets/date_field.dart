@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../app/app_radius.dart';
 
 class DateField extends StatelessWidget {
   const DateField({super.key, required this.selectedDate, required this.onTap});
@@ -12,7 +13,7 @@ class DateField extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: AppRadius.medium,
       child: InputDecorator(
         decoration: InputDecoration(
           labelText: AppLocalizations.of(context)!.date,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../app/app_radius.dart';
 
 class TransactionDateHeader extends StatelessWidget {
   const TransactionDateHeader({
@@ -27,7 +28,7 @@ class TransactionDateHeader extends StatelessWidget {
             height: 44,
             decoration: BoxDecoration(
               color: colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: AppRadius.medium,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

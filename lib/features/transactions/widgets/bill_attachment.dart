@@ -1,6 +1,7 @@
 import 'dart:io';
 import '../../../l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
+import '../../../app/app_radius.dart';
 
 class BillAttachment extends StatelessWidget {
   const BillAttachment({
@@ -34,7 +35,7 @@ class BillAttachment extends StatelessWidget {
           Column(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppRadius.medium,
                 child: Image.file(
                   billImage!,
                   height: 180,

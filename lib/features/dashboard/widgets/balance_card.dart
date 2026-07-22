@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../../app/app_colors.dart';
+import '../../../app/app_radius.dart';
+import '../../../app/app_spacing.dart';
 
 class BalanceCard extends StatelessWidget {
-  const BalanceCard({
-    super.key,
-    required this.balance,
-  });
+  const BalanceCard({super.key, required this.balance});
 
   final double balance;
 
@@ -14,19 +14,17 @@ class BalanceCard extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     final Color amountColor = switch (balance.compareTo(0)) {
-      > 0 => Colors.green,
-      < 0 => Colors.red,
+      > 0 => AppColors.success,
+      < 0 => AppColors.error,
       _ => colorScheme.primary,
     };
 
     return Card(
       elevation: 0,
       color: colorScheme.primaryContainer,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.extraLarge),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         child: Row(
           children: [
             CircleAvatar(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../app/app_spacing.dart';
 
 class EmptyTransactionWidget extends StatelessWidget {
   const EmptyTransactionWidget({super.key});
@@ -9,7 +10,7 @@ class EmptyTransactionWidget extends StatelessWidget {
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

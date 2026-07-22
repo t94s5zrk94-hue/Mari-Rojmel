@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../models/payment_mode_model.dart';
 import '../repositories/payment_mode_repository.dart';
+import '../../../app/app_colors.dart';
+import '../../../app/app_spacing.dart';
+import '../../../app/app_radius.dart';
+import '../../../app/app_sizes.dart';
 
 class PaymentModeScreen extends StatefulWidget {
   const PaymentModeScreen({super.key, required this.repository});
@@ -140,9 +144,7 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
       barrierDismissible: false,
       builder: (dialogContext) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.extraLarge),
           insetPadding: const EdgeInsets.symmetric(
             horizontal: 24,
             vertical: 24,
@@ -248,9 +250,7 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
       barrierDismissible: false,
       builder: (dialogContext) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.extraLarge),
           insetPadding: const EdgeInsets.symmetric(
             horizontal: 24,
             vertical: 24,
@@ -420,7 +420,7 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
   Widget _buildCard(PaymentModeModel model) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.medium),
       child: ListTile(
         leading: Text(model.icon, style: const TextStyle(fontSize: 24)),
         title: Text(model.name),
@@ -482,15 +482,18 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
 
   Widget _buildErrorView() => Center(
     child: Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AppSpacing.xxl),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: 56, color: Colors.red),
+          const Icon(Icons.error_outline, size: 56, color: AppColors.error),
           const SizedBox(height: 16),
           Text(
             AppLocalizations.of(context)!.paymentModeLoadError,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            style: const TextStyle(
+              fontSize: AppSizes.title,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 8),
           Text(_errorMessage ?? 'Unknown error', textAlign: TextAlign.center),
@@ -507,15 +510,18 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
 
   Widget _buildEmptyView() => Center(
     child: Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AppSpacing.xxl),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.account_balance_wallet_outlined, size: 56),
+          const Icon(Icons.error_outline, size: 56, color: AppColors.error),
           const SizedBox(height: 16),
           Text(
             AppLocalizations.of(context)!.noPaymentModesYet,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            style: const TextStyle(
+              fontSize: AppSizes.title,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 8),
           Text(

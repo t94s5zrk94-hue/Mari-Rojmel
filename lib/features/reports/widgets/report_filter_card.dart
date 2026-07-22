@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../services/report_service.dart';
+import '../../../app/app_spacing.dart';
 
 /// ==========================================================
 /// Report Filter Card
@@ -31,7 +32,7 @@ class ReportFilterCard extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.cardPadding,
         child: LayoutBuilder(
           builder: (context, constraints) {
             return Column(
@@ -86,7 +87,7 @@ class ReportFilterCard extends StatelessWidget {
                 ),
                 if (selectedFilter.type == ReportFilterType.custom)
                   Padding(
-                    padding: const EdgeInsets.only(top: 16),
+                    padding: const EdgeInsets.only(top: AppSpacing.lg),
                     child: Text(
                       _dateRangeText(context),
                       style: theme.textTheme.bodyMedium,

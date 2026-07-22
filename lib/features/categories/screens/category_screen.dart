@@ -4,6 +4,8 @@ import '../models/category_model.dart';
 import '../repositories/category_repository.dart';
 import '../../../core/enums/transaction_type.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../app/app_spacing.dart';
+import '../../../app/app_sizes.dart';
 
 /// Screen responsible for managing Categories in the Mari-Rojmel application.
 /// Implementation finalized to production-grade standards.
@@ -419,7 +421,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           Chip(
             label: Text(
               model.transactionType.name.toUpperCase(),
-              style: const TextStyle(fontSize: 10),
+              style: const TextStyle(fontSize: AppSizes.caption),
             ),
             visualDensity: VisualDensity.compact,
           ),
@@ -427,7 +429,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
             Chip(
               label: Text(
                 AppLocalizations.of(context)!.defaultLabel,
-                style: const TextStyle(fontSize: 10),
+                style: const TextStyle(fontSize: AppSizes.caption),
               ),
               visualDensity: VisualDensity.compact,
             ),
@@ -468,7 +470,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Widget _buildErrorView() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -506,7 +508,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Widget _buildEmptyView() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

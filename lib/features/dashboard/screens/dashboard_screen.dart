@@ -20,6 +20,8 @@ import '../../../core/database/database_helper.dart';
 import '../../transactions/screens/transaction_entry_screen.dart';
 import '../models/dashboard_summary.dart';
 import '../services/dashboard_service.dart';
+import '../../../app/app_colors.dart';
+import '../../../app/app_spacing.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -132,11 +134,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Color _amountColor(double value) {
     if (value > 0) {
-      return Colors.green;
+      return AppColors.success;
     }
 
     if (value < 0) {
-      return Colors.red;
+      return AppColors.error;
     }
 
     return Theme.of(context).colorScheme.primary;
@@ -149,7 +151,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Color _transactionColor(TransactionModel model) {
-    return model.isIncome ? Colors.green : Colors.red;
+    return model.isIncome ? AppColors.success : AppColors.error;
   }
 
   @override
@@ -201,7 +203,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: RefreshIndicator(
         onRefresh: _refresh,
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.cardPadding,
           children: [
             Text(
               _greeting(),
@@ -255,7 +257,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     title: AppLocalizations.of(context)!.income,
                     value: _currency(summary.todayIncome),
                     icon: Icons.arrow_downward_rounded,
-                    color: Colors.green,
+                    color: AppColors.success,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -264,7 +266,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     title: AppLocalizations.of(context)!.expense,
                     value: _currency(summary.todayExpense),
                     icon: Icons.arrow_upward_rounded,
-                    color: Colors.red,
+                    color: AppColors.error,
                   ),
                 ),
               ],
@@ -279,7 +281,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     title: AppLocalizations.of(context)!.balance,
                     value: _currency(summary.balance),
                     icon: Icons.account_balance_wallet,
-                    color: Colors.blue,
+                    color: AppColors.info,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -288,7 +290,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     title: AppLocalizations.of(context)!.transactionCount,
                     value: summary.transactionCount.toString(),
                     icon: Icons.receipt_long,
-                    color: Colors.deepPurple,
+                    color: AppColors.primaryAccent,
                   ),
                 ),
               ],
@@ -313,7 +315,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 _quickActionCard(
                   title: AppLocalizations.of(context)!.addTransaction,
                   icon: Icons.add_circle_outline,
-                  color: Colors.blue,
+                  color: AppColors.info,
                   onTap: () async {
                     final result = await Navigator.of(context).push(
                       MaterialPageRoute(
@@ -329,19 +331,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 _quickActionCard(
                   title: AppLocalizations.of(context)!.categories,
                   icon: Icons.category_outlined,
-                  color: Colors.orange,
+                  color: AppColors.warning,
                   onTap: _openCategories,
                 ),
                 _quickActionCard(
                   title: AppLocalizations.of(context)!.paymentModes,
                   icon: Icons.account_balance_wallet_outlined,
-                  color: Colors.green,
+                  color: AppColors.success,
                   onTap: _openPaymentModes,
                 ),
                 _quickActionCard(
                   title: AppLocalizations.of(context)!.reports,
                   icon: Icons.bar_chart_outlined,
-                  color: Colors.deepPurple,
+                  color: AppColors.primaryAccent,
                   onTap: _openReports,
                 ),
               ],
@@ -368,7 +370,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             if (_recentTransactions.isEmpty)
               Card(
                 child: Padding(
-                  padding: EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(AppSpacing.xxl),
                   child: Center(
                     child: Text(
                       AppLocalizations.of(context)!.noTransactionsFound,
@@ -441,7 +443,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.cardPadding,
         child: Column(
           children: [
             CircleAvatar(
@@ -474,7 +476,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.cardPadding,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

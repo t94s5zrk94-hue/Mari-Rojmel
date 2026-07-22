@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-
+import '../../../app/app_spacing.dart';
+import '../../../app/app_sizes.dart';
 import '../../backup/services/backup_service.dart';
 
 class RestoreScreen extends StatefulWidget {
@@ -127,7 +128,7 @@ class _RestoreScreenState extends State<RestoreScreen> {
     }
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.cardPadding,
       children: [
         _buildWarningCard(),
         const SizedBox(height: 16),
@@ -139,7 +140,7 @@ class _RestoreScreenState extends State<RestoreScreen> {
   Widget _buildWarningCard() {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
@@ -160,13 +161,16 @@ class _RestoreScreenState extends State<RestoreScreen> {
   Widget _buildRestoreHistoryCard() {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               'Available Backups',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: AppSizes.title,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             FilledButton.icon(
               onPressed: _isLoading
