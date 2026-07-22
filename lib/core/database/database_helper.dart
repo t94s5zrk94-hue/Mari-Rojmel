@@ -123,6 +123,21 @@ class DatabaseHelper {
       ${DatabaseConstants.updatedAt} TEXT NOT NULL
     )
   ''');
+    final now = DateTime.now().toIso8601String();
+    await db.insert(
+      DatabaseConstants.appSettingsTable,
+      {
+        DatabaseConstants.columnSettingsId: 1,
+        DatabaseConstants.columnThemeMode: 'system',
+        DatabaseConstants.columnLanguage: 'gu',
+        DatabaseConstants.columnCurrencySymbol: '₹',
+        DatabaseConstants.columnDateFormat: 'dd/MM/yyyy',
+        DatabaseConstants.columnNotificationsEnabled: 1,
+        DatabaseConstants.createdAt: now,
+        DatabaseConstants.updatedAt: now,
+      },
+      conflictAlgorithm: ConflictAlgorithm.ignore,
+    );
   }
   // ==========================================================
   // Transactions Table
@@ -147,7 +162,7 @@ class DatabaseHelper {
 
   Future<void> _createUserProfileTable(Database db) async {
     await db.execute('''
-    CREATE TABLE ${DatabaseConstants.userProfileTable} (
+    CREATE TABLE IF NOT EXISTS ${DatabaseConstants.userProfileTable} (
       ${DatabaseConstants.columnUserId} INTEGER PRIMARY KEY,
       ${DatabaseConstants.columnUserName} TEXT NOT NULL,
       ${DatabaseConstants.columnUserMobileNumber} TEXT,
@@ -244,6 +259,9 @@ class DatabaseHelper {
         ${DatabaseConstants.updatedAt}
       FROM payment_modes_old
     ''');
+
+      // 4. Remove old table
+      await txn.execute('DROP TABLE IF EXISTS payment_modes_old');
     });
   }
   // ==========================================================

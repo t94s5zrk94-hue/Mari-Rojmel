@@ -158,9 +158,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
         _showSnackBar(l10n.categoryAdded);
       });
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      nameController.dispose();
-    });
+
+    nameController.dispose();
+
     focusNode.dispose();
   }
 
@@ -224,9 +224,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
       ),
     );
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      nameController.dispose();
-    });
+    nameController.dispose();
+
     focusNode.dispose();
 
     if (result == true) {

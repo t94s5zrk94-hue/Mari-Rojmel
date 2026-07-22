@@ -344,12 +344,14 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
     final defaultCategory = await _categoryRepository.getDefaultCategory(
       _selectedType,
     );
+
     for (final category in _categories) {
       debugPrint('Category: ${category.id} - ${category.name}');
+      debugPrint('CATEGORY COUNT = ${categories.length}');
     }
 
     if (!mounted) return;
-    debugPrint('Category Count = ${_categories.length}');
+
     setState(() {
       _categories
         ..clear()
@@ -375,6 +377,22 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
     final paymentModes = await repository.getActive();
 
     final defaultPayment = await repository.getDefaultPayment();
+
+    final db = await DatabaseHelper.instance.database;
+
+    final result = await db.rawQuery('''
+SELECT id,
+       name,
+       is_default
+FROM payment_modes
+''');
+
+    print(result);
+
+    debugPrint(
+      'DEFAULT PAYMENT = ${defaultPayment?.id} - ${defaultPayment?.name}',
+    );
+    debugPrint('PAYMENT COUNT = ${paymentModes.length}');
 
     if (!mounted) return;
 

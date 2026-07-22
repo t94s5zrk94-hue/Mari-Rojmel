@@ -138,4 +138,8 @@ class SettingsRepository implements ISettingsRepository {
 
     return count > 0;
   }
+
+  Future<bool> restoreSettings(Map<String, dynamic> settings) async {
+    return saveSettings(AppSettingsModel.fromMap(settings));
+  }
 }

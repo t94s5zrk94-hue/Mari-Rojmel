@@ -11,6 +11,7 @@
 import 'package:sqflite/sqflite.dart';
 import '../../../core/database/database_helper.dart';
 import '../models/payment_mode_model.dart';
+import 'package:flutter/foundation.dart';
 
 /// Thrown when a payment mode with the same name already exists.
 class DuplicatePaymentModeException implements Exception {
@@ -101,6 +102,24 @@ class PaymentModeRepository implements IPaymentModeRepository {
   Future<PaymentModeModel?> getDefaultPayment() async {
     final db = await _dbHelper.database;
 
+    // Debug: Raw database records
+    final allRows = await db.rawQuery('''
+    SELECT
+      id,
+      name,
+      is_default,
+      is_active
+    FROM $_tableName
+    ORDER BY id
+  ''');
+
+    debugPrint('==============================');
+    debugPrint('RAW PAYMENT MODE TABLE');
+    for (final row in allRows) {
+      debugPrint(row.toString());
+    }
+    debugPrint('==============================');
+
     final result = await db.query(
       _tableName,
       where:
@@ -111,11 +130,24 @@ class PaymentModeRepository implements IPaymentModeRepository {
       limit: 1,
     );
 
+    debugPrint('DEFAULT PAYMENT QUERY RESULT: $result');
+
     if (result.isEmpty) {
+      debugPrint('DEFAULT PAYMENT = NULL');
       return null;
     }
 
-    return _mapToModel(result.first);
+    final model = _mapToModel(result.first);
+
+    debugPrint(
+      'DEFAULT PAYMENT => '
+      'id=${model.id}, '
+      'name=${model.name}, '
+      'default=${model.isDefault}, '
+      'active=${model.isActive}',
+    );
+
+    return model;
   }
 
   @override
@@ -173,9 +205,21 @@ class PaymentModeRepository implements IPaymentModeRepository {
       return false;
     }
 
+    final db = await _dbHelper.database;
+
+    debugPrint('====================================');
+    debugPrint('UPDATE PAYMENT');
+    debugPrint('MODEL => ${model.toMap()}');
+
+    final rowsBefore = await db.query(_tableName);
+    debugPrint('BEFORE UPDATE => $rowsBefore');
+
     final existing = await getById(model.id!);
 
-    if (existing == null) return false;
+    if (existing == null) {
+      debugPrint('ERROR: Existing payment mode not found');
+      return false;
+    }
 
     if (existing.isDefault && existing.name != model.name) {
       throw DefaultPaymentModeException();
@@ -185,9 +229,10 @@ class PaymentModeRepository implements IPaymentModeRepository {
       throw DuplicatePaymentModeException();
     }
 
-    final db = await _dbHelper.database;
     final data = _toMap(model);
     data[colUpdatedAt] = DateTime.now().toIso8601String();
+
+    debugPrint('DATA TO UPDATE => $data');
 
     final count = await db.update(
       _tableName,
@@ -195,6 +240,12 @@ class PaymentModeRepository implements IPaymentModeRepository {
       where: '$colId = ?',
       whereArgs: [model.id!],
     );
+
+    debugPrint('ROWS UPDATED => $count');
+
+    final rowsAfter = await db.query(_tableName);
+    debugPrint('AFTER UPDATE => $rowsAfter');
+    debugPrint('====================================');
 
     return count > 0;
   }
@@ -233,6 +284,28 @@ class PaymentModeRepository implements IPaymentModeRepository {
       'SELECT COUNT(*) FROM $_tableName WHERE $colIsActive = 1',
     );
     return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  Future<void> clearAll() async {
+    final db = await _dbHelper.database;
+
+    await db.delete(_tableName, where: '$colIsDefault = ?', whereArgs: [0]);
+  }
+
+  Future<void> restoreAll(List<Map<String, dynamic>> paymentModes) async {
+    final db = await _dbHelper.database;
+
+    final batch = db.batch();
+
+    for (final paymentMode in paymentModes) {
+      batch.insert(
+        _tableName,
+        paymentMode,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    await batch.commit(noResult: true);
   }
 
   Map<String, dynamic> _toMap(PaymentModeModel model) => {

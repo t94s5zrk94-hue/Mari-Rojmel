@@ -11,9 +11,10 @@
 import '../../../l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'about_screen.dart';
-import 'profile_screen.dart';
+import 'edit_profile_screen.dart';
 import '../repositories/account_repository.dart';
 import '../../settings/screens/settings_screen.dart';
+import 'backup_screen.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key, required this.repository});
@@ -38,7 +39,7 @@ class _AccountScreenState extends State<AccountScreen> {
   Future<void> _openProfile() async {
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => ProfileScreen(repository: widget.repository),
+        builder: (_) => EditProfileScreen(repository: widget.repository),
       ),
     );
 
@@ -47,12 +48,6 @@ class _AccountScreenState extends State<AccountScreen> {
     }
 
     setState(() {});
-  }
-
-  void _showComingSoon(String title) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.comingSoon(title))),
-    );
   }
 
   // ==========================================================
@@ -128,7 +123,11 @@ class _AccountScreenState extends State<AccountScreen> {
                     leading: const Icon(Icons.backup_outlined),
                     title: Text(AppLocalizations.of(context)!.backupRestore),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () => _showComingSoon('Backup & Restore'),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const BackupScreen()),
+                      );
+                    },
                   ),
                   const Divider(height: 1),
                   ListTile(

@@ -72,13 +72,16 @@ class AppSettingsModel {
     return AppSettingsModel(
       themeMode: AppThemeMode.values.firstWhere(
         (e) => e.name == map[DatabaseConstants.columnThemeMode],
+        orElse: () => AppThemeMode.system,
       ),
       language: AppLanguage.values.firstWhere(
         (e) => e.name == map[DatabaseConstants.columnLanguage],
+        orElse: () => AppLanguage.english,
       ),
       currencySymbol: map[DatabaseConstants.columnCurrencySymbol] as String,
       dateFormat: DateFormatType.values.firstWhere(
         (e) => e.name == map[DatabaseConstants.columnDateFormat],
+        orElse: () => DateFormatType.ddMMyyyy,
       ),
       notificationsEnabled:
           (map[DatabaseConstants.columnNotificationsEnabled] as int) == 1,

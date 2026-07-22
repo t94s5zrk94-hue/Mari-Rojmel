@@ -287,4 +287,25 @@ class TransactionRepository implements ITransactionRepository {
     // Transactions are user-generated.
     // No default seed data required.
   }
+  Future<void> clearAll() async {
+    final db = await _database;
+
+    await db.delete(_table);
+  }
+
+  Future<void> restoreAll(List<Map<String, dynamic>> transactions) async {
+    final db = await _database;
+
+    final batch = db.batch();
+
+    for (final transaction in transactions) {
+      batch.insert(
+        _table,
+        transaction,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    await batch.commit(noResult: true);
+  }
 }

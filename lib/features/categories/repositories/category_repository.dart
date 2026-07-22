@@ -12,6 +12,7 @@ import 'package:sqflite/sqflite.dart';
 import '../../../core/enums/transaction_type.dart';
 import '../../../core/database/database_helper.dart';
 import '../models/category_model.dart';
+import 'package:flutter/foundation.dart';
 
 /// Thrown when a category with the same name and transaction type
 /// already exists.
@@ -94,6 +95,25 @@ class CategoryRepository implements ICategoryRepository {
   ) async {
     final db = await _databaseHelper.database;
 
+    // Debug: Raw database records
+    final allRows = await db.rawQuery('''
+    SELECT
+      id,
+      name,
+      transaction_type,
+      is_default,
+      is_active
+    FROM $tableName
+    ORDER BY id
+  ''');
+
+    debugPrint('==============================');
+    debugPrint('RAW CATEGORY TABLE');
+    for (final row in allRows) {
+      debugPrint(row.toString());
+    }
+    debugPrint('==============================');
+
     final result = await db.query(
       tableName,
       where:
@@ -106,11 +126,24 @@ class CategoryRepository implements ICategoryRepository {
       limit: 1,
     );
 
+    debugPrint('DEFAULT CATEGORY QUERY RESULT: $result');
+
     if (result.isEmpty) {
+      debugPrint('DEFAULT CATEGORY = NULL');
       return null;
     }
 
-    return _mapToModel(result.first);
+    final model = _mapToModel(result.first);
+
+    debugPrint(
+      'DEFAULT CATEGORY => '
+      'id=${model.id}, '
+      'name=${model.name}, '
+      'default=${model.isDefault}, '
+      'active=${model.isActive}',
+    );
+
+    return model;
   }
 
   @override
@@ -333,6 +366,28 @@ class CategoryRepository implements ICategoryRepository {
     final result = await db.rawQuery(sql, args);
 
     return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  Future<void> clearAll() async {
+    final db = await _databaseHelper.database;
+
+    await db.delete(tableName, where: '$colIsDefault = ?', whereArgs: [0]);
+  }
+
+  Future<void> restoreAll(List<Map<String, dynamic>> categories) async {
+    final db = await _databaseHelper.database;
+
+    final batch = db.batch();
+
+    for (final category in categories) {
+      batch.insert(
+        tableName,
+        category,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    await batch.commit(noResult: true);
   }
 
   Map<String, dynamic> _toMap(CategoryModel model) {

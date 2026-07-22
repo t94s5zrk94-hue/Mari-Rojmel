@@ -73,18 +73,6 @@ FROM categories
         'created_at': now,
         'updated_at': now,
       });
-
-      await txn.insert('categories', {
-        'name': 'Food',
-        'icon': 'restaurant',
-        'color': 0xFFFF9800,
-        'transaction_type': 'expense',
-        'sort_order': 2,
-        'is_default': 1,
-        'is_active': 1,
-        'created_at': now,
-        'updated_at': now,
-      });
     });
   }
 
@@ -112,28 +100,6 @@ FROM payment_modes
         'icon': 'cash',
         'color': 0xFF4CAF50,
         'sort_order': 1,
-        'is_default': 1,
-        'is_active': 1,
-        'created_at': now,
-        'updated_at': now,
-      });
-
-      await txn.insert('payment_modes', {
-        'name': 'UPI',
-        'icon': 'upi',
-        'color': 0xFF2196F3,
-        'sort_order': 2,
-        'is_default': 1,
-        'is_active': 1,
-        'created_at': now,
-        'updated_at': now,
-      });
-
-      await txn.insert('payment_modes', {
-        'name': 'Bank',
-        'icon': 'account_balance',
-        'color': 0xFFFF9800,
-        'sort_order': 3,
         'is_default': 1,
         'is_active': 1,
         'created_at': now,

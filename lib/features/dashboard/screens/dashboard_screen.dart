@@ -17,7 +17,7 @@ import '../../reports/screens/reports_screen.dart';
 import '../../transactions/models/transaction_model.dart';
 import '../../transactions/repositories/transaction_repository.dart';
 import '../../../core/database/database_helper.dart';
-
+import '../../transactions/screens/transaction_entry_screen.dart';
 import '../models/dashboard_summary.dart';
 import '../services/dashboard_service.dart';
 
@@ -314,8 +314,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   title: AppLocalizations.of(context)!.addTransaction,
                   icon: Icons.add_circle_outline,
                   color: Colors.blue,
-                  onTap: () {
-                    // Navigate to AddTransactionScreen
+                  onTap: () async {
+                    final result = await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const TransactionEntryScreen(),
+                      ),
+                    );
+
+                    if (result == true) {
+                      _loadDashboard();
+                    }
                   },
                 ),
                 _quickActionCard(

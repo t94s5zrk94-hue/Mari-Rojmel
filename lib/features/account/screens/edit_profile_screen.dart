@@ -14,16 +14,16 @@ import '../../../l10n/generated/app_localizations.dart';
 import '../models/user_profile_model.dart';
 import '../repositories/account_repository.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key, required this.repository});
+class EditProfileScreen extends StatefulWidget {
+  const EditProfileScreen({super.key, required this.repository});
 
   final IAccountRepository repository;
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _EditProfileScreenState extends State<EditProfileScreen> {
   // ==========================================================
   // Form Key
   // ==========================================================

@@ -43,7 +43,7 @@ class PaymentModeModel {
   factory PaymentModeModel.fromMap(Map<String, dynamic> map) {
     return PaymentModeModel(
       id: map['id'] as int?,
-      name: map['payment_mode_name'] as String,
+      name: map['name'] as String,
       icon: (map['icon'] ?? '💳') as String,
       isDefault: (map['is_default'] ?? 0) == 1,
       isActive: (map['is_active'] ?? 1) == 1,
@@ -55,7 +55,7 @@ class PaymentModeModel {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'payment_mode_name': name,
+      'name': name,
       'icon': icon,
       'is_default': isDefault ? 1 : 0,
       'is_active': isActive ? 1 : 0,

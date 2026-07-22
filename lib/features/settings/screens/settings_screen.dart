@@ -18,6 +18,8 @@ import '../services/settings_service.dart';
 import '../../language/screens/language_screen.dart';
 import '../../../core/localization/app_locale.dart';
 import '../../../main.dart';
+import '../../account/screens/backup_screen.dart';
+import '../../account/screens/restore_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -66,7 +68,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('SETTINGS SCREEN BUILD');
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -103,7 +104,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               subtitle: Text(_themeText(_settings!.themeMode)),
               trailing: const Icon(Icons.chevron_right),
               onTap: () {
-                debugPrint('THEME TILE TAPPED');
                 _selectTheme();
               },
             ),
@@ -174,6 +174,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 setState(() {
                   _settings = settings;
                 });
+              },
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          _SectionHeader(title: 'Backup & Restore'),
+
+          const SizedBox(height: 8),
+
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.backup_outlined),
+              title: const Text('Create Backup'),
+              subtitle: const Text('Create a backup of your data'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => const BackupScreen()));
+              },
+            ),
+          ),
+
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.restore_outlined),
+              title: const Text('Restore Backup'),
+              subtitle: const Text('Restore data from a backup'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const RestoreScreen()),
+                );
               },
             ),
           ),
