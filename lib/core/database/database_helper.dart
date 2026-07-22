@@ -74,6 +74,9 @@ class DatabaseHelper {
     await _createUserProfileTable(db);
     await _createAppSettingsTable(db);
     await _createIndexes(db);
+
+    // Seed default data
+    await DatabaseInitializer.instance.initialize(db);
   }
 
   // ==========================================================
@@ -353,6 +356,6 @@ class DatabaseHelper {
     _database = await _initializeDatabase();
 
     // Seed default data
-    await DatabaseInitializer.instance.initialize();
+    await DatabaseInitializer.instance.initialize(_database!);
   }
 }

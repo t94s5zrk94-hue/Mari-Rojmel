@@ -290,9 +290,8 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
       if (success) {
         Navigator.pop(context, true);
       }
-    } catch (e, s) {
-      debugPrint("SAVE ERROR = $e");
-      debugPrint("$s");
+    } catch (_) {
+      return;
     }
   }
 
@@ -345,11 +344,6 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
       _selectedType,
     );
 
-    for (final category in _categories) {
-      debugPrint('Category: ${category.id} - ${category.name}');
-      debugPrint('CATEGORY COUNT = ${categories.length}');
-    }
-
     if (!mounted) return;
 
     setState(() {
@@ -377,22 +371,6 @@ class _TransactionEntryScreenState extends State<TransactionEntryScreen> {
     final paymentModes = await repository.getActive();
 
     final defaultPayment = await repository.getDefaultPayment();
-
-    final db = await DatabaseHelper.instance.database;
-
-    final result = await db.rawQuery('''
-SELECT id,
-       name,
-       is_default
-FROM payment_modes
-''');
-
-    print(result);
-
-    debugPrint(
-      'DEFAULT PAYMENT = ${defaultPayment?.id} - ${defaultPayment?.name}',
-    );
-    debugPrint('PAYMENT COUNT = ${paymentModes.length}');
 
     if (!mounted) return;
 

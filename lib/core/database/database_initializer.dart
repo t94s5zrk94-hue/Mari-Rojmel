@@ -8,8 +8,6 @@
 
 import 'package:sqflite/sqflite.dart';
 
-import 'database_helper.dart';
-
 class DatabaseInitializer {
   DatabaseInitializer._();
 
@@ -21,15 +19,12 @@ class DatabaseInitializer {
   // Initialize Database
   // ==========================================================
 
-  Future<void> initialize() async {
+  Future<void> initialize(Database db) async {
     if (_initialized) {
       return;
     }
 
-    final db = await DatabaseHelper.instance.database;
-
     await _initializeDefaults(db);
-
     _initialized = true;
   }
 

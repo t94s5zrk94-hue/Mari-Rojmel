@@ -7,7 +7,6 @@
 //
 // Production Ready
 // ===============================================================
-import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
@@ -200,19 +199,11 @@ class BackupService {
   Future<List<Map<String, dynamic>>> exportCategories() async {
     final categories = await _categoryRepository.getActive();
 
-    for (final c in categories) {
-      debugPrint('CATEGORY: ${c.name} default=${c.isDefault}');
-    }
-
     return categories.map((category) => category.toMap()).toList();
   }
 
   Future<List<Map<String, dynamic>>> exportPaymentModes() async {
     final paymentModes = await _paymentModeRepository.getActive();
-
-    for (final p in paymentModes) {
-      debugPrint('PAYMENT: ${p.name} default=${p.isDefault}');
-    }
 
     return paymentModes.map((paymentMode) => paymentMode.toMap()).toList();
   }
@@ -258,15 +249,7 @@ class BackupService {
 
     await file.writeAsString(json, flush: true);
 
-    debugPrint('========================');
-    debugPrint('TEMP FILE : ${file.path}');
-    debugPrint('========================');
-
     final savedPath = await saveBackupToDownloads(file);
-
-    debugPrint('========================');
-    debugPrint('TEMP FILE : ${file.path}');
-    debugPrint('========================');
 
     if (savedPath == null) {
       throw Exception('Backup save cancelled.');
@@ -363,8 +346,6 @@ class BackupService {
     final categories = (backup['categories'] as List<dynamic>)
         .cast<Map<String, dynamic>>();
 
-    print('JSON CATEGORIES => $categories');
-
     await _categoryRepository.clearAll();
 
     await _categoryRepository.restoreAll(categories);
@@ -385,7 +366,7 @@ class BackupService {
         'updated_at': e['updated_at'],
       };
     }).toList();
-    print('JSON PAYMENT MODES => $mappedPaymentModes');
+
     await _paymentModeRepository.clearAll();
 
     await _paymentModeRepository.restoreAll(mappedPaymentModes);
@@ -410,16 +391,6 @@ class BackupService {
     await _transactionRepository.clearAll();
 
     await _transactionRepository.restoreAll(transactions);
-
-    final db = await DatabaseHelper.instance.database;
-
-    final rows = await db.query('payment_modes');
-
-    print('AFTER RESTORE PAYMENT MODES => $rows');
-
-    final categoryRows = await db.query('categories');
-
-    print('AFTER RESTORE CATEGORIES => $categoryRows');
 
     return backup;
   }
