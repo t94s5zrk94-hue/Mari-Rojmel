@@ -22,6 +22,9 @@ import '../models/dashboard_summary.dart';
 import '../services/dashboard_service.dart';
 import '../../../app/app_colors.dart';
 import '../../../app/app_spacing.dart';
+import '../widgets/summary_card.dart';
+import '../widgets/quick_action_grid.dart';
+import '../widgets/recent_transactions.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -144,16 +147,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Theme.of(context).colorScheme.primary;
   }
 
-  IconData _transactionIcon(TransactionModel model) {
-    return model.isIncome
-        ? Icons.arrow_downward_rounded
-        : Icons.arrow_upward_rounded;
-  }
-
-  Color _transactionColor(TransactionModel model) {
-    return model.isIncome ? AppColors.success : AppColors.error;
-  }
-
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -253,16 +246,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Row(
               children: [
                 Expanded(
-                  child: _summaryCard(
+                  child: SummaryCard(
                     title: AppLocalizations.of(context)!.income,
                     value: _currency(summary.todayIncome),
                     icon: Icons.arrow_downward_rounded,
                     color: AppColors.success,
                   ),
                 ),
+
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _summaryCard(
+                  child: SummaryCard(
                     title: AppLocalizations.of(context)!.expense,
                     value: _currency(summary.todayExpense),
                     icon: Icons.arrow_upward_rounded,
@@ -277,7 +271,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Row(
               children: [
                 Expanded(
-                  child: _summaryCard(
+                  child: SummaryCard(
                     title: AppLocalizations.of(context)!.balance,
                     value: _currency(summary.balance),
                     icon: Icons.account_balance_wallet,
@@ -286,7 +280,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _summaryCard(
+                  child: SummaryCard(
                     title: AppLocalizations.of(context)!.transactionCount,
                     value: summary.transactionCount.toString(),
                     icon: Icons.receipt_long,
@@ -304,115 +298,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             const SizedBox(height: 12),
 
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 1.35,
-              children: [
-                _quickActionCard(
-                  title: AppLocalizations.of(context)!.addTransaction,
-                  icon: Icons.add_circle_outline,
-                  color: AppColors.info,
-                  onTap: () async {
-                    final result = await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const TransactionEntryScreen(),
-                      ),
-                    );
+            QuickActionGrid(
+              onAddTransaction: () async {
+                final result = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const TransactionEntryScreen(),
+                  ),
+                );
 
-                    if (result == true) {
-                      _loadDashboard();
-                    }
-                  },
-                ),
-                _quickActionCard(
-                  title: AppLocalizations.of(context)!.categories,
-                  icon: Icons.category_outlined,
-                  color: AppColors.warning,
-                  onTap: _openCategories,
-                ),
-                _quickActionCard(
-                  title: AppLocalizations.of(context)!.paymentModes,
-                  icon: Icons.account_balance_wallet_outlined,
-                  color: AppColors.success,
-                  onTap: _openPaymentModes,
-                ),
-                _quickActionCard(
-                  title: AppLocalizations.of(context)!.reports,
-                  icon: Icons.bar_chart_outlined,
-                  color: AppColors.primaryAccent,
-                  onTap: _openReports,
-                ),
-              ],
+                if (result == true) {
+                  _loadDashboard();
+                }
+              },
+              onCategories: _openCategories,
+              onPaymentModes: _openPaymentModes,
+              onReports: _openReports,
             ),
-
             const SizedBox(height: 24),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.recentTransactions,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                Text(
-                  '${_recentTransactions.length} ${AppLocalizations.of(context)!.items}',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ],
-            ),
+            RecentTransactions(transactions: _recentTransactions),
 
-            const SizedBox(height: 12),
-
-            if (_recentTransactions.isEmpty)
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.xxl),
-                  child: Center(
-                    child: Text(
-                      AppLocalizations.of(context)!.noTransactionsFound,
-                    ),
-                  ),
-                ),
-              )
-            else
-              ..._recentTransactions.map(
-                (transaction) => Card(
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: _transactionColor(
-                        transaction,
-                      ).withValues(alpha: .15),
-                      child: Icon(
-                        _transactionIcon(transaction),
-                        color: _transactionColor(transaction),
-                      ),
-                    ),
-                    title: Text(
-                      transaction.note.isEmpty
-                          ? AppLocalizations.of(context)!.noNote
-                          : transaction.note,
-                    ),
-                    subtitle: Text(
-                      transaction.transactionDate
-                          .toLocal()
-                          .toString()
-                          .split(' ')
-                          .first,
-                    ),
-                    trailing: Text(
-                      _currency(transaction.amount),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: _transactionColor(transaction),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            const SizedBox(height: 24),
 
             const SizedBox(height: 24),
           ],
@@ -433,64 +339,5 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
 
     return AppLocalizations.of(context)!.goodEvening;
-  }
-
-  Widget _summaryCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required Color color,
-  }) {
-    return Card(
-      child: Padding(
-        padding: AppSpacing.cardPadding,
-        child: Column(
-          children: [
-            CircleAvatar(
-              backgroundColor: color.withValues(alpha: .15),
-              child: Icon(icon, color: color),
-            ),
-            const SizedBox(height: 12),
-            Text(title, style: Theme.of(context).textTheme.titleSmall),
-            const SizedBox(height: 6),
-            Text(
-              value,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _quickActionCard({
-    required String title,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: AppSpacing.cardPadding,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 34, color: color),
-              const SizedBox(height: 12),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

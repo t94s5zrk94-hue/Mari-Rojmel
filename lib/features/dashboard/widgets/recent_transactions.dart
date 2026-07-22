@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../app/app_colors.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 import '../../transactions/models/transaction_model.dart';
 
@@ -25,12 +26,12 @@ class RecentTransactions extends StatelessWidget {
         Row(
           children: [
             Text(
-              'Recent Transactions',
+              AppLocalizations.of(context)!.recentTransactions,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const Spacer(),
             Text(
-              '${items.length} items',
+              '${items.length} ${AppLocalizations.of(context)!.items}',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
@@ -75,13 +76,15 @@ class _TransactionTile extends StatelessWidget {
           child: Icon(icon, color: color),
         ),
         title: Text(
-          transaction.note.isEmpty ? 'No Note' : transaction.note,
+          transaction.note.isEmpty
+              ? AppLocalizations.of(context)!.noNote
+              : transaction.note,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
         subtitle: Text(_formatDate(transaction.transactionDate)),
         trailing: Text(
-          '₹${transaction.amount.toStringAsFixed(2)}',
+          '₹ ${transaction.amount.toStringAsFixed(2)}',
           style: TextStyle(color: color, fontWeight: FontWeight.bold),
         ),
       ),
@@ -112,7 +115,7 @@ class _EmptyView extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'No Recent Transactions',
+              AppLocalizations.of(context)!.noTransactionsFound,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
