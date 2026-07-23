@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class MonthSelectorWidget extends StatelessWidget {
   const MonthSelectorWidget({
@@ -21,7 +22,7 @@ class MonthSelectorWidget extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            tooltip: 'Previous Month',
+            tooltip: AppLocalizations.of(context)!.previousMonth,
             onPressed: onPrevious,
             icon: const Icon(Icons.chevron_left),
           ),
@@ -39,7 +40,7 @@ class MonthSelectorWidget extends StatelessWidget {
           ),
 
           IconButton(
-            tooltip: 'Next Month',
+            tooltip: AppLocalizations.of(context)!.nextMonth,
             onPressed: isCurrentMonth ? null : onNext,
             icon: const Icon(Icons.chevron_right),
           ),

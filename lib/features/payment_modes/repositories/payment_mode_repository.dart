@@ -11,7 +11,6 @@
 import 'package:sqflite/sqflite.dart';
 import '../../../core/database/database_helper.dart';
 import '../models/payment_mode_model.dart';
-import 'package:flutter/foundation.dart';
 
 /// Thrown when a payment mode with the same name already exists.
 class DuplicatePaymentModeException implements Exception {
@@ -102,24 +101,6 @@ class PaymentModeRepository implements IPaymentModeRepository {
   Future<PaymentModeModel?> getDefaultPayment() async {
     final db = await _dbHelper.database;
 
-    // Debug: Raw database records
-    final allRows = await db.rawQuery('''
-    SELECT
-      id,
-      name,
-      is_default,
-      is_active
-    FROM $_tableName
-    ORDER BY id
-  ''');
-
-    debugPrint('==============================');
-    debugPrint('RAW PAYMENT MODE TABLE');
-    for (final row in allRows) {
-      debugPrint(row.toString());
-    }
-    debugPrint('==============================');
-
     final result = await db.query(
       _tableName,
       where:
@@ -130,22 +111,11 @@ class PaymentModeRepository implements IPaymentModeRepository {
       limit: 1,
     );
 
-    debugPrint('DEFAULT PAYMENT QUERY RESULT: $result');
-
     if (result.isEmpty) {
-      debugPrint('DEFAULT PAYMENT = NULL');
       return null;
     }
 
     final model = _mapToModel(result.first);
-
-    debugPrint(
-      'DEFAULT PAYMENT => '
-      'id=${model.id}, '
-      'name=${model.name}, '
-      'default=${model.isDefault}, '
-      'active=${model.isActive}',
-    );
 
     return model;
   }
@@ -207,17 +177,9 @@ class PaymentModeRepository implements IPaymentModeRepository {
 
     final db = await _dbHelper.database;
 
-    debugPrint('====================================');
-    debugPrint('UPDATE PAYMENT');
-    debugPrint('MODEL => ${model.toMap()}');
-
-    final rowsBefore = await db.query(_tableName);
-    debugPrint('BEFORE UPDATE => $rowsBefore');
-
     final existing = await getById(model.id!);
 
     if (existing == null) {
-      debugPrint('ERROR: Existing payment mode not found');
       return false;
     }
 
@@ -232,20 +194,12 @@ class PaymentModeRepository implements IPaymentModeRepository {
     final data = _toMap(model);
     data[colUpdatedAt] = DateTime.now().toIso8601String();
 
-    debugPrint('DATA TO UPDATE => $data');
-
     final count = await db.update(
       _tableName,
       data,
       where: '$colId = ?',
       whereArgs: [model.id!],
     );
-
-    debugPrint('ROWS UPDATED => $count');
-
-    final rowsAfter = await db.query(_tableName);
-    debugPrint('AFTER UPDATE => $rowsAfter');
-    debugPrint('====================================');
 
     return count > 0;
   }

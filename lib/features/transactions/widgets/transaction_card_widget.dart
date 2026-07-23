@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../core/enums/transaction_type.dart';
 import '../models/transaction_model.dart';
 import '../../../app/app_colors.dart';
@@ -71,13 +71,13 @@ class TransactionCardWidget extends StatelessWidget {
                       Expanded(
                         child: Text(
                           "₹ ${transaction.amount.toStringAsFixed(0)}",
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: isIncome
-                                ? AppColors.success
-                                : AppColors.error,
-                          ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: isIncome
+                                    ? AppColors.success
+                                    : AppColors.error,
+                              ),
                         ),
                       ),
 
@@ -100,15 +100,13 @@ class TransactionCardWidget extends StatelessWidget {
                       Expanded(
                         child: Text(
                           categoryName,
-                          style: const TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w600),
                         ),
                       ),
 
                       IconButton(
-                        tooltip: 'Edit',
+                        tooltip: AppLocalizations.of(context)!.edit,
                         visualDensity: VisualDensity.compact,
                         icon: const Icon(
                           Icons.edit_outlined,
@@ -118,7 +116,7 @@ class TransactionCardWidget extends StatelessWidget {
                       ),
 
                       IconButton(
-                        tooltip: 'Delete',
+                        tooltip: AppLocalizations.of(context)!.delete,
                         visualDensity: VisualDensity.compact,
                         icon: const Icon(
                           Icons.delete_outline,
@@ -135,7 +133,9 @@ class TransactionCardWidget extends StatelessWidget {
                       transaction.note,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: AppColors.grey, fontSize: 14),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: AppColors.grey),
                     ),
                   ],
                 ],

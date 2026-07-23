@@ -11,10 +11,6 @@ class TransactionDateHeader extends StatelessWidget {
   final DateTime date;
   final EdgeInsetsGeometry margin;
 
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -36,10 +32,9 @@ class TransactionDateHeader extends StatelessWidget {
                 const Icon(Icons.calendar_month, size: 16),
                 Text(
                   '${date.day}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -49,8 +44,10 @@ class TransactionDateHeader extends StatelessWidget {
 
           Expanded(
             child: Text(
-              _formatDate(date),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              MaterialLocalizations.of(context).formatCompactDate(date),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
         ],

@@ -76,12 +76,13 @@ class PaymentModeModel {
         other.icon == icon &&
         other.isDefault == isDefault &&
         other.isActive == isActive &&
-        other.sortOrder == sortOrder;
+        other.sortOrder == sortOrder &&
+        other.color == color;
   }
 
   @override
   int get hashCode =>
-      Object.hash(id, name, icon, isDefault, isActive, sortOrder);
+      Object.hash(id, name, icon, isDefault, isActive, sortOrder, color);
 
   @override
   String toString() {

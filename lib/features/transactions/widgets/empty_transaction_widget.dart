@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../app/app_spacing.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class EmptyTransactionWidget extends StatelessWidget {
   const EmptyTransactionWidget({super.key});
@@ -23,7 +24,7 @@ class EmptyTransactionWidget extends StatelessWidget {
             const SizedBox(height: 16),
 
             Text(
-              'No Transactions Found',
+              AppLocalizations.of(context)!.noTransactionsFound,
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -33,7 +34,7 @@ class EmptyTransactionWidget extends StatelessWidget {
             const SizedBox(height: 8),
 
             Text(
-              'Add your first income or expense transaction to get started.',
+              AppLocalizations.of(context)!.addFirstTransactionMessage,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),

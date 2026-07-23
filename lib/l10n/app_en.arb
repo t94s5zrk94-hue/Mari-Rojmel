@@ -588,7 +588,20 @@
 "indianRupee": "₹ Indian Rupee (INR)",
 "@indianRupee": {},
 "defaultDateFormat": "dd/MM/yyyy (India)",
-"@defaultDateFormat": {}
+"@defaultDateFormat": {},
+
+"addFirstTransactionMessage": "Add your first income or expense transaction to get started.",
+"@addFirstTransactionMessage": {},
+"camera": "Camera",
+"@camera": {},
+
+"gallery": "Gallery",
+"@gallery": {},
+"previousMonth": "Previous Month",
+"@previousMonth": {},
+
+"nextMonth": "Next Month",
+"@nextMonth": {}
 }
 
 

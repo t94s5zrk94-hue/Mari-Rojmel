@@ -51,15 +51,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
 
-    debugPrint('Dashboard initState');
-    debugPrint('Calling _loadDashboard');
-
     _loadDashboard();
   }
 
   Future<void> _loadDashboard() async {
-    debugPrint('1. Dashboard Start');
-
     if (!mounted) return;
 
     setState(() {
@@ -68,14 +63,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
 
     try {
-      debugPrint('2. Calling getSummary()');
       final summary = await _dashboardService.getSummary();
-      debugPrint('3. Summary Loaded');
-
-      debugPrint('4. Loading Transactions');
 
       final transactions = await _transactionRepository.getActive();
-      debugPrint('5. Transactions Loaded');
 
       if (!mounted) {
         return;
@@ -88,7 +78,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
         _isLoading = false;
       });
-      debugPrint('6. Dashboard Done');
     } on Exception catch (e) {
       if (!mounted) {
         return;

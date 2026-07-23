@@ -287,5 +287,19 @@
 "dark": "ડાર્ક",
 "settingsNotFound": "સેટિંગ્સ મળી નથી",
 "indianRupee": "₹ ભારતીય રૂપિયા (INR)",
-"defaultDateFormat": "dd/MM/yyyy (ભારત)"
+"defaultDateFormat": "dd/MM/yyyy (ભારત)",
+
+
+"addFirstTransactionMessage": "શરૂઆત કરવા માટે તમારું પ્રથમ આવક અથવા ખર્ચ ટ્રાન્ઝેક્શન ઉમેરો.",
+"@addFirstTransactionMessage": {},
+"camera": "કેમેરા",
+"@camera": {},
+
+"gallery": "ગેલેરી",
+"@gallery": {},
+"previousMonth": "પાછલો મહિનો",
+"@previousMonth": {},
+
+"nextMonth": "આગલો મહિનો",
+"@nextMonth": {}
 }

@@ -231,12 +231,16 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
       },
     );
 
-    if (result == true) {
-      await _loadData();
+    try {
+      if (result == true) {
+        await _loadData();
 
-      if (!mounted) return;
+        if (!mounted) return;
 
-      _showSnackBar(l10n.paymentModeAdded);
+        _showSnackBar(l10n.paymentModeAdded);
+      }
+    } finally {
+      nameController.dispose();
     }
   }
 
@@ -326,12 +330,16 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
       },
     );
 
-    if (result == true) {
-      await _loadData();
+    try {
+      if (result == true) {
+        await _loadData();
 
-      if (!mounted) return;
+        if (!mounted) return;
 
-      _showSnackBar(l10n.paymentModeUpdated);
+        _showSnackBar(l10n.paymentModeAdded);
+      }
+    } finally {
+      nameController.dispose();
     }
   }
 

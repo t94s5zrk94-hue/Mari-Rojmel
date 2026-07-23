@@ -23,10 +23,26 @@ class BillAttachment extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        OutlinedButton.icon(
-          onPressed: onGalleryTap,
-          icon: const Icon(Icons.attach_file),
-          label: Text(AppLocalizations.of(context)!.addBill),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: onCameraTap,
+                icon: const Icon(Icons.camera_alt_outlined),
+                label: Text(AppLocalizations.of(context)!.camera),
+              ),
+            ),
+
+            const SizedBox(width: 12),
+
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: onGalleryTap,
+                icon: const Icon(Icons.photo_library_outlined),
+                label: Text(AppLocalizations.of(context)!.gallery),
+              ),
+            ),
+          ],
         ),
 
         const SizedBox(height: 12),

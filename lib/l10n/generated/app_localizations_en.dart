@@ -561,4 +561,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get defaultDateFormat => 'dd/MM/yyyy (India)';
+
+  @override
+  String get addFirstTransactionMessage =>
+      'Add your first income or expense transaction to get started.';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get previousMonth => 'Previous Month';
+
+  @override
+  String get nextMonth => 'Next Month';
 }

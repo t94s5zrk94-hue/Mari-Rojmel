@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../app/app_colors.dart';
 import '../../../app/app_radius.dart';
 import '../../../app/app_spacing.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class BalanceCard extends StatelessWidget {
   const BalanceCard({super.key, required this.balance});
@@ -42,7 +43,7 @@ class BalanceCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Current Balance',
+                    AppLocalizations.of(context)!.currentBalance,
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: colorScheme.onPrimaryContainer,
                     ),

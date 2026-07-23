@@ -563,4 +563,20 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get defaultDateFormat => 'dd/MM/yyyy (ભારત)';
+
+  @override
+  String get addFirstTransactionMessage =>
+      'શરૂઆત કરવા માટે તમારું પ્રથમ આવક અથવા ખર્ચ ટ્રાન્ઝેક્શન ઉમેરો.';
+
+  @override
+  String get camera => 'કેમેરા';
+
+  @override
+  String get gallery => 'ગેલેરી';
+
+  @override
+  String get previousMonth => 'પાછલો મહિનો';
+
+  @override
+  String get nextMonth => 'આગલો મહિનો';
 }

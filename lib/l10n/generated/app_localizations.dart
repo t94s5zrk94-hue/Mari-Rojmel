@@ -1165,6 +1165,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'dd/MM/yyyy (India)'**
   String get defaultDateFormat;
+
+  /// No description provided for @addFirstTransactionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first income or expense transaction to get started.'**
+  String get addFirstTransactionMessage;
+
+  /// No description provided for @camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get camera;
+
+  /// No description provided for @gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get gallery;
+
+  /// No description provided for @previousMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous Month'**
+  String get previousMonth;
+
+  /// No description provided for @nextMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Month'**
+  String get nextMonth;
 }
 
 class _AppLocalizationsDelegate
