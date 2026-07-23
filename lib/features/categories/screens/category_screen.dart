@@ -132,15 +132,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
                     const SizedBox(height: 16),
 
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Text(
-                        selectedEmoji,
-                        style: const TextStyle(fontSize: 28),
-                      ),
-                      title: const Text('Category Emoji'),
-                      subtitle: const Text('Tap to select'),
-                      trailing: const Icon(Icons.chevron_right),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(12),
                       onTap: () async {
                         final emoji = await EmojiPickerDialog.pick(
                           context,
@@ -153,6 +146,40 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           });
                         }
                       },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).dividerColor,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              selectedEmoji,
+                              style: const TextStyle(fontSize: 28),
+                            ),
+                            const SizedBox(width: 12),
+                            const Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Category Emoji'),
+                                  Text(
+                                    'Tap to change',
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(Icons.chevron_right),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -224,7 +251,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
     final formKey = GlobalKey<FormState>();
     final focusNode = FocusNode();
 
-    String selectedEmoji = model.icon;
+    String selectedEmoji =
+        (model.icon.trim().isEmpty || model.icon == 'category')
+        ? '📁'
+        : model.icon;
 
     final result = await showDialog<bool>(
       context: context,
@@ -257,15 +287,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
                     const SizedBox(height: 16),
 
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Text(
-                        selectedEmoji,
-                        style: const TextStyle(fontSize: 28),
-                      ),
-                      title: const Text('Category Emoji'),
-                      subtitle: const Text('Tap to change'),
-                      trailing: const Icon(Icons.chevron_right),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(12),
                       onTap: () async {
                         final emoji = await EmojiPickerDialog.pick(
                           context,
@@ -278,6 +301,40 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           });
                         }
                       },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).dividerColor,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              selectedEmoji,
+                              style: const TextStyle(fontSize: 28),
+                            ),
+                            const SizedBox(width: 12),
+                            const Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Category Emoji'),
+                                  Text(
+                                    'Tap to change',
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(Icons.chevron_right),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -497,9 +554,20 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Widget _buildCard(CategoryModel model) => Card(
     margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     child: ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Color(model.color),
-        child: Text(model.icon),
+      leading: Container(
+        width: 44,
+        height: 44,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          (model.icon.trim().isEmpty || model.icon == 'category')
+              ? '📁'
+              : model.icon,
+          style: const TextStyle(fontSize: 24),
+        ),
       ),
       title: Semantics(
         label: AppLocalizations.of(context)!.categoryName,
