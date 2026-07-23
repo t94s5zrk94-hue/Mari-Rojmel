@@ -78,7 +78,8 @@ class AppSettingsModel {
         (e) => e.name == map[DatabaseConstants.columnLanguage],
         orElse: () => AppLanguage.english,
       ),
-      currencySymbol: map[DatabaseConstants.columnCurrencySymbol] as String,
+      currencySymbol:
+          map[DatabaseConstants.columnCurrencySymbol] as String? ?? '₹',
       dateFormat: DateFormatType.values.firstWhere(
         (e) => e.name == map[DatabaseConstants.columnDateFormat],
         orElse: () => DateFormatType.ddMMyyyy,

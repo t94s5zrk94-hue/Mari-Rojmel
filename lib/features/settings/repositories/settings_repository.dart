@@ -56,6 +56,7 @@ class SettingsRepository implements ISettingsRepository {
   static const String _tableName = DatabaseConstants.appSettingsTable;
 
   static const String _colId = DatabaseConstants.columnSettingsId;
+  static const int _settingsId = 1;
 
   @override
   Future<AppSettingsModel> getSettings() async {
@@ -64,7 +65,7 @@ class SettingsRepository implements ISettingsRepository {
     final result = await db.query(
       _tableName,
       where: '$_colId = ?',
-      whereArgs: const [1],
+      whereArgs: const [_settingsId],
       limit: 1,
     );
 
@@ -84,13 +85,12 @@ class SettingsRepository implements ISettingsRepository {
 
     final result = await db.rawQuery(
       '''
-      SELECT COUNT(*)
-      FROM $_tableName
-      WHERE $_colId = ?
-      ''',
-      [1],
+  SELECT COUNT(*)
+  FROM $_tableName
+  WHERE $_colId = ?
+  ''',
+      [_settingsId],
     );
-
     return (Sqflite.firstIntValue(result) ?? 0) > 0;
   }
 
@@ -100,7 +100,7 @@ class SettingsRepository implements ISettingsRepository {
 
     final data = settings.copyWith(updatedAt: DateTime.now()).toMap();
 
-    data[_colId] = 1;
+    data[_colId] = _settingsId;
 
     final id = await db.insert(
       _tableName,
@@ -127,13 +127,13 @@ class SettingsRepository implements ISettingsRepository {
         .copyWith(createdAt: existing.createdAt, updatedAt: now)
         .toMap();
 
-    data[_colId] = 1;
+    data[_colId] = _settingsId;
 
     final count = await db.update(
       _tableName,
       data,
       where: '$_colId = ?',
-      whereArgs: const [1],
+      whereArgs: const [_settingsId],
     );
 
     return count > 0;
