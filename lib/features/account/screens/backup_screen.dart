@@ -107,6 +107,30 @@ class _BackupScreenState extends State<BackupScreen> {
     }
   }
 
+  Future<bool> _confirmDelete() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Backup'),
+          content: const Text('Are you sure you want to delete this backup?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    return result ?? false;
+  }
+
   Widget _buildErrorCard() {
     if (_errorMessage == null) {
       return const SizedBox.shrink();
@@ -216,11 +240,19 @@ class _BackupScreenState extends State<BackupScreen> {
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
                     onPressed: () async {
+                      final confirmed = await _confirmDelete();
+
+                      if (!confirmed) {
+                        return;
+                      }
+
                       await _backupService.deleteBackup(file as File);
 
                       await _loadBackupInformation();
 
-                      if (!mounted) return;
+                      if (!mounted) {
+                        return;
+                      }
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

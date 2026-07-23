@@ -52,6 +52,7 @@ class AccountRepository implements IAccountRepository {
 
   static const String _tableName = DatabaseConstants.userProfileTable;
   static const String _colId = DatabaseConstants.columnUserId;
+  static const int _profileId = 1;
   // ===============================================================
   // Get User Profile
   // ===============================================================
@@ -63,7 +64,7 @@ class AccountRepository implements IAccountRepository {
     final result = await db.query(
       _tableName,
       where: '$_colId = ?',
-      whereArgs: const [1],
+      whereArgs: const [_profileId],
       limit: 1,
     );
 
@@ -103,7 +104,7 @@ class AccountRepository implements IAccountRepository {
 
     final data = profile
         .copyWith(
-          id: 1,
+          id: _profileId,
           createdAt: profile.createdAt ?? DateTime.now(),
           updatedAt: DateTime.now(),
         )
@@ -134,7 +135,7 @@ class AccountRepository implements IAccountRepository {
 
     final data = profile
         .copyWith(
-          id: 1,
+          id: _profileId,
           createdAt: existing.createdAt,
           updatedAt: DateTime.now(),
         )
@@ -144,7 +145,7 @@ class AccountRepository implements IAccountRepository {
       _tableName,
       data,
       where: '$_colId = ?',
-      whereArgs: const [1],
+      whereArgs: const [_profileId],
     );
 
     return count > 0;

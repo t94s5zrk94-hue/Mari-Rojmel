@@ -46,8 +46,6 @@ class _RestoreScreenState extends State<RestoreScreen> {
   }
 
   Future<void> _confirmRestore(File file) async {
-    debugPrint("STEP 1 - Restore Started");
-
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) {
@@ -79,7 +77,6 @@ class _RestoreScreenState extends State<RestoreScreen> {
 
     try {
       await _backupService.restoreBackup(file);
-      debugPrint("STEP 2 - Restore Completed");
 
       await _loadBackups();
 
@@ -90,10 +87,7 @@ class _RestoreScreenState extends State<RestoreScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Backup restored successfully.')),
       );
-    } catch (e, s) {
-      debugPrint("RESTORE ERROR: $e");
-      debugPrint("$s");
-
+    } catch (e) {
       if (!mounted) {
         return;
       }
