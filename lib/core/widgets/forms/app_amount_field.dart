@@ -59,7 +59,7 @@ class AppAmountField extends StatelessWidget {
       labelText: labelText,
       hintText: hintText,
       helperText: helperText,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      keyboardType: TextInputType.numberWithOptions(decimal: allowDecimal),
       inputFormatters: [
         FilteringTextInputFormatter.allow(
           RegExp(allowDecimal ? r'^\d*\.?\d{0,2}' : r'^\d*'),

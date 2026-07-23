@@ -16,6 +16,7 @@ class DatabaseHelper {
   DatabaseHelper._();
 
   static final DatabaseHelper instance = DatabaseHelper._();
+  static const int _defaultSettingsId = 1;
 
   Database? _database;
 
@@ -130,7 +131,7 @@ class DatabaseHelper {
     await db.insert(
       DatabaseConstants.appSettingsTable,
       {
-        DatabaseConstants.columnSettingsId: 1,
+        DatabaseConstants.columnSettingsId: _defaultSettingsId,
         DatabaseConstants.columnThemeMode: 'system',
         DatabaseConstants.columnLanguage: 'gu',
         DatabaseConstants.columnCurrencySymbol: '₹',
