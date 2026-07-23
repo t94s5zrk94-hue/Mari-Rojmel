@@ -6,6 +6,7 @@ import '../../../core/enums/transaction_type.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../app/app_spacing.dart';
 import '../../../app/app_sizes.dart';
+import '../widgets/emoji_picker_dialog.dart';
 
 /// Screen responsible for managing Categories in the Mari-Rojmel application.
 /// Implementation finalized to production-grade standards.
@@ -98,55 +99,101 @@ class _CategoryScreenState extends State<CategoryScreen> {
     final formKey = GlobalKey<FormState>();
     final focusNode = FocusNode();
 
+    String selectedEmoji = '📁';
+
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.addCategory),
-        content: Form(
-          key: formKey,
-          child: TextFormField(
-            controller: nameController,
-            focusNode: focusNode,
-            autofocus: true,
-            decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.categoryName,
-              border: const OutlineInputBorder(),
-            ),
-            validator: (v) => (v == null || v.trim().isEmpty)
-                ? AppLocalizations.of(context)!.nameRequired
-                : null,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(AppLocalizations.of(context)!.cancel),
-          ),
-          FilledButton(
-            onPressed: () async {
-              if (!formKey.currentState!.validate()) return;
-              try {
-                final model = CategoryModel.empty().copyWith(
-                  name: nameController.text.trim(),
-                  transactionType: _selectedType,
-                );
-                await widget.repository.insert(model);
-                if (!ctx.mounted) return;
-                Navigator.of(ctx).pop(true);
-              } on DuplicateCategoryException {
-                _showSnackBar(l10n.categoryAlreadyExists);
-              } on Exception catch (e, stackTrace) {
-                debugPrint('CATEGORY ADD ERROR: $e');
-                debugPrintStack(stackTrace: stackTrace);
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text(l10n.addCategory),
+              content: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormField(
+                      controller: nameController,
+                      focusNode: focusNode,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        labelText: l10n.categoryName,
+                        border: const OutlineInputBorder(),
+                      ),
+                      validator: (v) {
+                        if (v == null || v.trim().isEmpty) {
+                          return l10n.nameRequired;
+                        }
+                        return null;
+                      },
+                    ),
 
-                _showSnackBar(l10n.categoryAddFailed);
-              }
-            },
-            child: Text(AppLocalizations.of(context)!.save),
-          ),
-        ],
-      ),
+                    const SizedBox(height: 16),
+
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Text(
+                        selectedEmoji,
+                        style: const TextStyle(fontSize: 28),
+                      ),
+                      title: const Text('Category Emoji'),
+                      subtitle: const Text('Tap to select'),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () async {
+                        final emoji = await EmojiPickerDialog.pick(
+                          context,
+                          selected: selectedEmoji,
+                        );
+
+                        if (emoji != null) {
+                          setDialogState(() {
+                            selectedEmoji = emoji;
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: Text(l10n.cancel),
+                ),
+                FilledButton(
+                  onPressed: () async {
+                    if (!formKey.currentState!.validate()) return;
+
+                    try {
+                      final model = CategoryModel.empty().copyWith(
+                        name: nameController.text.trim(),
+                        icon: selectedEmoji,
+                        transactionType: _selectedType,
+                      );
+
+                      await widget.repository.insert(model);
+
+                      if (!ctx.mounted) return;
+
+                      Navigator.of(ctx).pop(true);
+                    } on DuplicateCategoryException {
+                      _showSnackBar(l10n.categoryAlreadyExists);
+                    } on Exception catch (e, stackTrace) {
+                      debugPrint('CATEGORY ADD ERROR: $e');
+                      debugPrintStack(stackTrace: stackTrace);
+
+                      _showSnackBar(l10n.categoryAddFailed);
+                    }
+                  },
+                  child: Text(l10n.save),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
 
     if (result == true && mounted) {
@@ -162,14 +209,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
     }
 
     nameController.dispose();
-
     focusNode.dispose();
   }
 
   Future<void> _showEditDialog(CategoryModel model) async {
     final l10n = AppLocalizations.of(context)!;
+
     if (model.isDefault) {
-      _showSnackBar(AppLocalizations.of(context)!.defaultCategoryProtected);
+      _showSnackBar(l10n.defaultCategoryProtected);
       return;
     }
 
@@ -177,57 +224,100 @@ class _CategoryScreenState extends State<CategoryScreen> {
     final formKey = GlobalKey<FormState>();
     final focusNode = FocusNode();
 
+    String selectedEmoji = model.icon;
+
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.editCategory),
-        content: Form(
-          key: formKey,
-          child: TextFormField(
-            controller: nameController,
-            focusNode: focusNode,
-            autofocus: true,
-            decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.categoryName,
-              border: const OutlineInputBorder(),
-            ),
-            validator: (v) => (v == null || v.trim().isEmpty)
-                ? AppLocalizations.of(context)!.nameRequired
-                : null,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(AppLocalizations.of(context)!.cancel),
-          ),
-          FilledButton(
-            onPressed: () async {
-              if (!formKey.currentState!.validate()) return;
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text(l10n.editCategory),
+              content: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormField(
+                      controller: nameController,
+                      focusNode: focusNode,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        labelText: l10n.categoryName,
+                        border: const OutlineInputBorder(),
+                      ),
+                      validator: (v) {
+                        if (v == null || v.trim().isEmpty) {
+                          return l10n.nameRequired;
+                        }
+                        return null;
+                      },
+                    ),
 
-              try {
-                await widget.repository.update(
-                  model.copyWith(name: nameController.text.trim()),
-                );
+                    const SizedBox(height: 16),
 
-                if (!ctx.mounted) return;
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Text(
+                        selectedEmoji,
+                        style: const TextStyle(fontSize: 28),
+                      ),
+                      title: const Text('Category Emoji'),
+                      subtitle: const Text('Tap to change'),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () async {
+                        final emoji = await EmojiPickerDialog.pick(
+                          context,
+                          selected: selectedEmoji,
+                        );
 
-                Navigator.of(ctx).pop(true);
-              } on DuplicateCategoryException {
-                _showSnackBar(l10n.categoryNameTaken);
-              } on Exception {
-                _showSnackBar(l10n.categoryUpdateFailed);
-              }
-            },
-            child: Text(AppLocalizations.of(context)!.save),
-          ),
-        ],
-      ),
+                        if (emoji != null) {
+                          setDialogState(() {
+                            selectedEmoji = emoji;
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: Text(l10n.cancel),
+                ),
+                FilledButton(
+                  onPressed: () async {
+                    if (!formKey.currentState!.validate()) return;
+
+                    try {
+                      await widget.repository.update(
+                        model.copyWith(
+                          name: nameController.text.trim(),
+                          icon: selectedEmoji,
+                        ),
+                      );
+
+                      if (!ctx.mounted) return;
+
+                      Navigator.of(ctx).pop(true);
+                    } on DuplicateCategoryException {
+                      _showSnackBar(l10n.categoryNameTaken);
+                    } on Exception {
+                      _showSnackBar(l10n.categoryUpdateFailed);
+                    }
+                  },
+                  child: Text(l10n.save),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
 
     nameController.dispose();
-
     focusNode.dispose();
 
     if (result == true) {
@@ -235,7 +325,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
       if (!mounted) return;
 
-      _showSnackBar(AppLocalizations.of(context)!.categoryUpdated);
+      _showSnackBar(l10n.categoryUpdated);
     }
   }
 

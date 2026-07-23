@@ -23,6 +23,12 @@ class QuickEntryCard extends StatelessWidget {
         hintText: AppLocalizations.of(context)!.quickEntryHint,
         prefixIcon: const Icon(Icons.flash_on),
         border: const OutlineInputBorder(),
+
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
       onChanged: onChanged,
     );

@@ -25,6 +25,8 @@ import '../../../app/app_spacing.dart';
 import '../widgets/summary_card.dart';
 import '../widgets/quick_action_grid.dart';
 import '../widgets/recent_transactions.dart';
+import '../../account/models/user_profile_model.dart';
+import '../../account/repositories/account_repository.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -35,6 +37,11 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final DashboardService _dashboardService = DashboardService.instance;
+  final IAccountRepository _accountRepository = AccountRepository(
+    DatabaseHelper.instance,
+  );
+
+  UserProfileModel? _profile;
 
   final TransactionRepository _transactionRepository =
       TransactionRepository.instance;
@@ -51,7 +58,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
 
+    _loadProfile();
     _loadDashboard();
+  }
+
+  Future<void> _loadProfile() async {
+    final profile = await _accountRepository.getProfile();
+
+    if (!mounted) return;
+
+    setState(() {
+      _profile = profile;
+    });
   }
 
   Future<void> _loadDashboard() async {
@@ -193,12 +211,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 context,
               ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
+
             const SizedBox(height: 6),
 
             Text(
-              AppLocalizations.of(context)!.welcomeBack,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              _profile?.name.trim().isNotEmpty == true
+                  ? _profile!.name
+                  : AppLocalizations.of(context)!.welcomeBack,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
               ),
             ),
 

@@ -21,7 +21,6 @@ class QuickActionGrid extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Quick Actions', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
         GridView.count(
           crossAxisCount: 2,

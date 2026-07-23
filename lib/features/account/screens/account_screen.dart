@@ -16,6 +16,7 @@ import '../repositories/account_repository.dart';
 import '../../settings/screens/settings_screen.dart';
 import 'backup_screen.dart';
 import '../../../app/app_spacing.dart';
+import '../models/user_profile_model.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key, required this.repository});
@@ -27,12 +28,26 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
+  UserProfileModel? _profile;
   // ==========================================================
   // Constants
   // ==========================================================
 
-  static const String _appVersion = 'v1.0.0';
+  @override
+  void initState() {
+    super.initState();
+    _loadProfile();
+  }
 
+  Future<void> _loadProfile() async {
+    final profile = await widget.repository.getProfile();
+
+    if (!mounted) return;
+
+    setState(() {
+      _profile = profile;
+    });
+  }
   // ==========================================================
   // Navigation
   // ==========================================================
@@ -48,7 +63,7 @@ class _AccountScreenState extends State<AccountScreen> {
       return;
     }
 
-    setState(() {});
+    await _loadProfile();
   }
 
   // ==========================================================
@@ -87,9 +102,21 @@ class _AccountScreenState extends State<AccountScreen> {
                 children: [
                   ListTile(
                     leading: const CircleAvatar(child: Icon(Icons.person)),
-                    title: Text(AppLocalizations.of(context)!.profile),
+                    title: Text(
+                      (_profile != null && _profile!.name.trim().isNotEmpty)
+                          ? _profile!.name
+                          : AppLocalizations.of(context)!.profile,
+                    ),
                     subtitle: Text(
-                      AppLocalizations.of(context)!.profileDescription,
+                      _profile == null
+                          ? AppLocalizations.of(context)!.profileDescription
+                          : (_profile!.mobileNumber?.trim().isNotEmpty == true
+                                ? _profile!.mobileNumber!
+                                : (_profile!.email?.trim().isNotEmpty == true
+                                      ? _profile!.email!
+                                      : AppLocalizations.of(
+                                          context,
+                                        )!.profileDescription)),
                     ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: _openProfile,
@@ -97,16 +124,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.info_outline),
-                title: Text(AppLocalizations.of(context)!.version),
-                subtitle: const Text(_appVersion),
-                enabled: false,
-              ),
-            ),
-            const SizedBox(height: 24),
+
             _buildSectionTitle(AppLocalizations.of(context)!.application),
             const SizedBox(height: 8),
             Card(
