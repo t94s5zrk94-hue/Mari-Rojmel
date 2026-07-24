@@ -92,7 +92,7 @@ FROM payment_modes
     await db.transaction((txn) async {
       await txn.insert('payment_modes', {
         'name': 'Cash',
-        'icon': 'cash',
+        'icon': '💵',
         'color': 0xFF4CAF50,
         'sort_order': 1,
         'is_default': 1,

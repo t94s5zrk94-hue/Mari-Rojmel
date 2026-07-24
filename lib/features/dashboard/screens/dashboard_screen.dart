@@ -142,18 +142,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return '₹${value.toStringAsFixed(2)}';
   }
 
-  Color _amountColor(double value) {
-    if (value > 0) {
-      return AppColors.success;
-    }
-
-    if (value < 0) {
-      return AppColors.error;
-    }
-
-    return Theme.of(context).colorScheme.primary;
-  }
-
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -226,76 +214,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             const SizedBox(height: 24),
 
-            Card(
-              elevation: 0,
-              color: Theme.of(context).colorScheme.primaryContainer,
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.currentBalance,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      _currency(summary.balance),
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: _amountColor(summary.balance),
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
             Row(
               children: [
                 Expanded(
                   child: SummaryCard(
                     title: AppLocalizations.of(context)!.income,
                     value: _currency(summary.todayIncome),
-                    icon: Icons.arrow_downward_rounded,
+                    icon: Icons.wallet_rounded,
                     color: AppColors.success,
                   ),
                 ),
 
                 const SizedBox(width: 12),
+
                 Expanded(
                   child: SummaryCard(
                     title: AppLocalizations.of(context)!.expense,
                     value: _currency(summary.todayExpense),
-                    icon: Icons.arrow_upward_rounded,
+                    icon: Icons.payments_rounded,
                     color: AppColors.error,
                   ),
                 ),
-              ],
-            ),
 
-            const SizedBox(height: 12),
+                const SizedBox(width: 12),
 
-            Row(
-              children: [
                 Expanded(
                   child: SummaryCard(
                     title: AppLocalizations.of(context)!.balance,
                     value: _currency(summary.balance),
-                    icon: Icons.account_balance_wallet,
+                    icon: Icons.savings_rounded,
                     color: AppColors.info,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: SummaryCard(
-                    title: AppLocalizations.of(context)!.transactionCount,
-                    value: summary.transactionCount.toString(),
-                    icon: Icons.receipt_long,
-                    color: AppColors.primaryAccent,
                   ),
                 ),
               ],
