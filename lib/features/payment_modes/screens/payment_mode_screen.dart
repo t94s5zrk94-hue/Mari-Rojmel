@@ -8,6 +8,7 @@ import '../../../app/app_spacing.dart';
 import '../../../app/app_radius.dart';
 import '../../../app/app_sizes.dart';
 import '../../../core/emoji/emoji_picker_dialog.dart';
+import '../../../core/colors/color_picker.dart';
 
 class PaymentModeScreen extends StatefulWidget {
   const PaymentModeScreen({super.key, required this.repository});
@@ -140,6 +141,7 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
     final nameController = TextEditingController();
 
     String selectedEmoji = '💳';
+    Color selectedColor = const Color(0xFF4CAF50);
 
     final result = await showDialog<bool>(
       context: context,
@@ -217,6 +219,26 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
                         icon: const Icon(Icons.emoji_emotions_outlined),
                         label: const Text('Choose Emoji'),
                       ),
+                      const SizedBox(height: 20),
+
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Color',
+                          style: Theme.of(dialogContext).textTheme.titleSmall,
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      ColorPicker(
+                        selectedColor: selectedColor,
+                        onChanged: (color) {
+                          setStateDialog(() {
+                            selectedColor = color;
+                          });
+                        },
+                      ),
 
                       const SizedBox(height: 20),
 
@@ -269,7 +291,7 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
                         id: null,
                         name: nameController.text.trim(),
                         icon: selectedEmoji,
-                        color: 0xFF4CAF50,
+                        color: selectedColor.toARGB32(),
                         isDefault: false,
                         isActive: true,
                         sortOrder: _paymentModes.length + 1,
@@ -332,7 +354,7 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
     final nameController = TextEditingController(text: model.name);
 
     String selectedEmoji = model.icon;
-
+    Color selectedColor = Color(model.color);
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -409,9 +431,28 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
                         icon: const Icon(Icons.emoji_emotions_outlined),
                         label: const Text('Change Emoji'),
                       ),
-
                       const SizedBox(height: 20),
 
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Color',
+                          style: Theme.of(dialogContext).textTheme.titleSmall,
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      ColorPicker(
+                        selectedColor: selectedColor,
+                        onChanged: (color) {
+                          setStateDialog(() {
+                            selectedColor = color;
+                          });
+                        },
+                      ),
+
+                      const SizedBox(height: 20),
                       TextFormField(
                         controller: nameController,
                         autofocus: true,
@@ -460,7 +501,7 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
                         id: model.id,
                         name: nameController.text.trim(),
                         icon: selectedEmoji,
-                        color: model.color,
+                        color: selectedColor.toARGB32(),
                         isDefault: model.isDefault,
                         isActive: model.isActive,
                         sortOrder: model.sortOrder,
@@ -594,7 +635,10 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       shape: RoundedRectangleBorder(borderRadius: AppRadius.medium),
       child: ListTile(
-        leading: Text(model.icon, style: const TextStyle(fontSize: 24)),
+        leading: CircleAvatar(
+          backgroundColor: Color(model.color).withValues(alpha: 0.15),
+          child: Text(model.icon, style: const TextStyle(fontSize: 20)),
+        ),
         title: Text(model.name),
         subtitle: model.isDefault
             ? Align(
