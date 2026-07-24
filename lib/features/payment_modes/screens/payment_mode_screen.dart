@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../models/payment_mode_model.dart';
@@ -8,6 +7,7 @@ import '../../../app/app_colors.dart';
 import '../../../app/app_spacing.dart';
 import '../../../app/app_radius.dart';
 import '../../../app/app_sizes.dart';
+import '../../../core/emoji/emoji_picker_dialog.dart';
 
 class PaymentModeScreen extends StatefulWidget {
   const PaymentModeScreen({super.key, required this.repository});
@@ -139,94 +139,174 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
     final formKey = GlobalKey<FormState>();
     final nameController = TextEditingController();
 
+    String selectedEmoji = '💳';
+
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: AppRadius.extraLarge),
-          insetPadding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 24,
-          ),
-          contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
-          actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          title: Text(l10n.addPaymentMode),
-          content: Form(
-            key: formKey,
-            child: TextFormField(
-              controller: nameController,
-
-              autofocus: true,
-              maxLength: 50,
-              textCapitalization: TextCapitalization.words,
-              textInputAction: TextInputAction.done,
-              decoration: InputDecoration(
-                labelText: l10n.paymentModeName,
-                hintText: l10n.paymentModeNameHint,
-                prefixIcon: const Icon(Icons.account_balance_wallet_outlined),
-                border: const OutlineInputBorder(),
+        return StatefulBuilder(
+          builder: (dialogContext, setStateDialog) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: AppRadius.extraLarge),
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 24,
               ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return l10n.paymentModeRequired;
-                }
+              contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+              actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              title: Text(l10n.addPaymentMode),
+              content: Form(
+                key: formKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () async {
+                          final emoji = await EmojiPickerDialog.pick(
+                            dialogContext,
+                            selectedEmoji: selectedEmoji,
+                          );
 
-                return null;
-              },
-              onFieldSubmitted: (_) {
-                FocusScope.of(dialogContext).unfocus();
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop(false);
-              },
-              child: Text(l10n.cancel),
-            ),
-            FilledButton(
-              onPressed: () async {
-                if (!formKey.currentState!.validate()) {
-                  return;
-                }
+                          if (emoji == null) {
+                            return;
+                          }
 
-                FocusScope.of(dialogContext).unfocus();
+                          setStateDialog(() {
+                            selectedEmoji = emoji;
+                          });
+                        },
+                        child: Container(
+                          width: 72,
+                          height: 72,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(
+                                dialogContext,
+                              ).colorScheme.outlineVariant,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            selectedEmoji,
+                            style: const TextStyle(fontSize: 34),
+                          ),
+                        ),
+                      ),
 
-                try {
-                  final model = PaymentModeModel(
-                    id: null,
-                    name: nameController.text.trim(),
-                    icon: '💳',
-                    color: 0xFF4CAF50,
-                    isDefault: false,
-                    isActive: true,
-                    sortOrder: _paymentModes.length + 1,
-                  );
+                      const SizedBox(height: 8),
 
-                  final success = await widget.repository.insert(model);
+                      TextButton.icon(
+                        onPressed: () async {
+                          final emoji = await EmojiPickerDialog.pick(
+                            dialogContext,
+                            selectedEmoji: selectedEmoji,
+                          );
 
-                  if (!dialogContext.mounted) return;
+                          if (emoji == null) {
+                            return;
+                          }
 
-                  FocusManager.instance.primaryFocus?.unfocus();
+                          setStateDialog(() {
+                            selectedEmoji = emoji;
+                          });
+                        },
+                        icon: const Icon(Icons.emoji_emotions_outlined),
+                        label: const Text('Choose Emoji'),
+                      ),
 
-                  await Future<void>.delayed(const Duration(milliseconds: 50));
+                      const SizedBox(height: 20),
 
-                  if (!dialogContext.mounted) return;
+                      TextFormField(
+                        controller: nameController,
+                        autofocus: true,
+                        maxLength: 50,
+                        textCapitalization: TextCapitalization.words,
+                        textInputAction: TextInputAction.done,
+                        decoration: InputDecoration(
+                          labelText: l10n.paymentModeName,
+                          hintText: l10n.paymentModeNameHint,
+                          prefixIcon: const Icon(
+                            Icons.account_balance_wallet_outlined,
+                          ),
+                          border: const OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return l10n.paymentModeRequired;
+                          }
 
-                  Navigator.of(dialogContext).pop(success);
-                } on DuplicatePaymentModeException {
-                  _showSnackBar(l10n.paymentModeAlreadyExists);
-                } catch (e) {
-                  if (!dialogContext.mounted) return;
+                          return null;
+                        },
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(dialogContext).unfocus();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop(false);
+                  },
+                  child: Text(l10n.cancel),
+                ),
+                FilledButton(
+                  onPressed: () async {
+                    if (!formKey.currentState!.validate()) {
+                      return;
+                    }
 
-                  _showSnackBar(l10n.paymentModeAddFailed);
-                }
-              },
-              child: Text(l10n.save),
-            ),
-          ],
+                    FocusScope.of(dialogContext).unfocus();
+
+                    try {
+                      final model = PaymentModeModel(
+                        id: null,
+                        name: nameController.text.trim(),
+                        icon: selectedEmoji,
+                        color: 0xFF4CAF50,
+                        isDefault: false,
+                        isActive: true,
+                        sortOrder: _paymentModes.length + 1,
+                      );
+
+                      final success = await widget.repository.insert(model);
+
+                      if (!dialogContext.mounted) {
+                        return;
+                      }
+
+                      FocusManager.instance.primaryFocus?.unfocus();
+
+                      await Future<void>.delayed(
+                        const Duration(milliseconds: 50),
+                      );
+
+                      if (!dialogContext.mounted) {
+                        return;
+                      }
+
+                      Navigator.of(dialogContext).pop(success);
+                    } on DuplicatePaymentModeException {
+                      _showSnackBar(l10n.paymentModeAlreadyExists);
+                    } catch (_) {
+                      if (!dialogContext.mounted) {
+                        return;
+                      }
+
+                      _showSnackBar(l10n.paymentModeAddFailed);
+                    }
+                  },
+                  child: Text(l10n.save),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -235,7 +315,9 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
       if (result == true) {
         await _loadData();
 
-        if (!mounted) return;
+        if (!mounted) {
+          return;
+        }
 
         _showSnackBar(l10n.paymentModeAdded);
       }
@@ -249,83 +331,163 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
     final formKey = GlobalKey<FormState>();
     final nameController = TextEditingController(text: model.name);
 
+    String selectedEmoji = model.icon;
+
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: AppRadius.extraLarge),
-          insetPadding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 24,
-          ),
-          contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
-          actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          title: Text(l10n.editPaymentMode),
-          content: Form(
-            key: formKey,
-            child: TextFormField(
-              controller: nameController,
-              autofocus: true,
-              maxLength: 50,
-              textCapitalization: TextCapitalization.words,
-              textInputAction: TextInputAction.done,
-              decoration: InputDecoration(
-                labelText: l10n.paymentModeName,
-                prefixIcon: Icon(Icons.account_balance_wallet_outlined),
-                border: OutlineInputBorder(),
+        return StatefulBuilder(
+          builder: (dialogContext, setStateDialog) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: AppRadius.extraLarge),
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 24,
               ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return l10n.paymentModeRequired;
-                }
+              contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+              actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              title: Text(l10n.editPaymentMode),
+              content: Form(
+                key: formKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () async {
+                          final emoji = await EmojiPickerDialog.pick(
+                            dialogContext,
+                            selectedEmoji: selectedEmoji,
+                          );
 
-                return null;
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop(false);
-              },
-              child: Text(l10n.cancel),
-            ),
-            FilledButton(
-              onPressed: () async {
-                if (!formKey.currentState!.validate()) {
-                  return;
-                }
+                          if (emoji == null) {
+                            return;
+                          }
 
-                FocusScope.of(dialogContext).unfocus();
+                          setStateDialog(() {
+                            selectedEmoji = emoji;
+                          });
+                        },
+                        child: Container(
+                          width: 72,
+                          height: 72,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(
+                                dialogContext,
+                              ).colorScheme.outlineVariant,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            selectedEmoji,
+                            style: const TextStyle(fontSize: 34),
+                          ),
+                        ),
+                      ),
 
-                try {
-                  final updatedModel = PaymentModeModel(
-                    id: model.id,
-                    name: nameController.text.trim(),
-                    icon: model.icon,
-                    color: model.color,
-                    isDefault: model.isDefault,
-                    isActive: model.isActive,
-                    sortOrder: model.sortOrder,
-                  );
+                      const SizedBox(height: 8),
 
-                  final success = await widget.repository.update(updatedModel);
+                      TextButton.icon(
+                        onPressed: () async {
+                          final emoji = await EmojiPickerDialog.pick(
+                            dialogContext,
+                            selectedEmoji: selectedEmoji,
+                          );
 
-                  if (!dialogContext.mounted) return;
+                          if (emoji == null) {
+                            return;
+                          }
 
-                  Navigator.of(dialogContext).pop(success);
-                } on DuplicatePaymentModeException {
-                  _showSnackBar(l10n.paymentModeAlreadyExists);
-                } on DefaultPaymentModeException {
-                  _showSnackBar(l10n.paymentModeUpdateFailed);
-                } on Exception {
-                  _showSnackBar(l10n.paymentModeUpdateFailed);
-                }
-              },
-              child: Text(l10n.save),
-            ),
-          ],
+                          setStateDialog(() {
+                            selectedEmoji = emoji;
+                          });
+                        },
+                        icon: const Icon(Icons.emoji_emotions_outlined),
+                        label: const Text('Change Emoji'),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      TextFormField(
+                        controller: nameController,
+                        autofocus: true,
+                        maxLength: 50,
+                        textCapitalization: TextCapitalization.words,
+                        textInputAction: TextInputAction.done,
+                        decoration: InputDecoration(
+                          labelText: l10n.paymentModeName,
+                          prefixIcon: const Icon(
+                            Icons.account_balance_wallet_outlined,
+                          ),
+                          border: const OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return l10n.paymentModeRequired;
+                          }
+
+                          return null;
+                        },
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(dialogContext).unfocus();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop(false);
+                  },
+                  child: Text(l10n.cancel),
+                ),
+                FilledButton(
+                  onPressed: () async {
+                    if (!formKey.currentState!.validate()) {
+                      return;
+                    }
+
+                    FocusScope.of(dialogContext).unfocus();
+
+                    try {
+                      final updatedModel = PaymentModeModel(
+                        id: model.id,
+                        name: nameController.text.trim(),
+                        icon: selectedEmoji,
+                        color: model.color,
+                        isDefault: model.isDefault,
+                        isActive: model.isActive,
+                        sortOrder: model.sortOrder,
+                      );
+
+                      final success = await widget.repository.update(
+                        updatedModel,
+                      );
+
+                      if (!dialogContext.mounted) {
+                        return;
+                      }
+
+                      Navigator.of(dialogContext).pop(success);
+                    } on DuplicatePaymentModeException {
+                      _showSnackBar(l10n.paymentModeAlreadyExists);
+                    } on DefaultPaymentModeException {
+                      _showSnackBar(l10n.paymentModeUpdateFailed);
+                    } catch (_) {
+                      _showSnackBar(l10n.paymentModeUpdateFailed);
+                    }
+                  },
+                  child: Text(l10n.save),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -334,9 +496,11 @@ class _PaymentModeScreenState extends State<PaymentModeScreen> {
       if (result == true) {
         await _loadData();
 
-        if (!mounted) return;
+        if (!mounted) {
+          return;
+        }
 
-        _showSnackBar(l10n.paymentModeAdded);
+        _showSnackBar(l10n.paymentModeUpdated);
       }
     } finally {
       nameController.dispose();

@@ -6,7 +6,7 @@ import '../../../core/enums/transaction_type.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../app/app_spacing.dart';
 import '../../../app/app_sizes.dart';
-import '../widgets/emoji_picker_dialog.dart';
+import '../../../core/emoji/emoji_picker_dialog.dart';
 
 /// Screen responsible for managing Categories in the Mari-Rojmel application.
 /// Implementation finalized to production-grade standards.
@@ -135,11 +135,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     InkWell(
                       borderRadius: BorderRadius.circular(12),
                       onTap: () async {
-                        final emoji = await EmojiPickerDialog.pick(
+                        final emoji = await EmojiPickerDialog.show(
                           context,
-                          selected: selectedEmoji,
+                          selectedEmoji: selectedEmoji,
                         );
-
                         if (emoji != null) {
                           setDialogState(() {
                             selectedEmoji = emoji;
@@ -290,9 +289,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     InkWell(
                       borderRadius: BorderRadius.circular(12),
                       onTap: () async {
-                        final emoji = await EmojiPickerDialog.pick(
+                        final emoji = await EmojiPickerDialog.show(
                           context,
-                          selected: selectedEmoji,
+                          selectedEmoji: selectedEmoji,
                         );
 
                         if (emoji != null) {
